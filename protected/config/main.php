@@ -14,7 +14,7 @@ return array(
 	'name'=>'My Web Application',
 
 	// preloading 'log' component
-	'preload'=>array('log'),
+	'preload'=>array('log', 'bootstrap'),
 
 	// autoloading model and component classes
 	'import'=>array(
@@ -54,9 +54,6 @@ return array(
 			),
 		),
 		
-		/*'db'=>array(
-			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-		),*/
 		// uncomment the following to use a MySQL database
 		
 		'db'=>array(
@@ -86,8 +83,9 @@ return array(
 				*/
 			),
 		),
-                'bootstrap'=>array(
-                    'class'=>'bootstrap.components.Bootstrap',
+                'bootstrap' => array(
+                    'class' => 'ext.bootstrap.components.Bootstrap',
+                    'responsiveCss' => true,
                 ),
 	),
 
