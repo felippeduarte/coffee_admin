@@ -1,3 +1,9 @@
 #page {
-    padding-top: 60px;
+    padding-top: 10px;
+
+}
+
+#modal-cadastro {
+    left:40%;
+    width:60%;
 }

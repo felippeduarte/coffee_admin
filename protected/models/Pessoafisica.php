@@ -16,6 +16,9 @@
  */
 class Pessoafisica extends CActiveRecord
 {
+    const TP_PESSOAFISICA_FORNECEDOR = 'F';
+    const TP_PESSOAFISICA_COLABORADOR = 'C';
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -42,9 +45,11 @@ class Pessoafisica extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_pessoa, nu_cpf, tp_pessoaFisica', 'required'),
+			array('id_pessoa, nu_cpf, tp_pessoaFisica', 'required', 'on'=>'insert'),
+            array('nu_cpf', 'required', 'on'=>'cadastro'),
 			array('id_pessoa', 'numerical', 'integerOnly'=>true),
 			array('nu_cpf', 'length', 'max'=>11),
+            array('nu_cpf', 'unique', 'className'=>'Pessoafisica'),
 			array('nm_apelido', 'length', 'max'=>200),
 			array('nu_rg', 'length', 'max'=>20),
 			array('tp_pessoaFisica', 'length', 'max'=>1),
@@ -74,10 +79,10 @@ class Pessoafisica extends CActiveRecord
 	{
 		return array(
 			'id_pessoa' => 'Id Pessoa',
-			'nu_cpf' => 'Nu Cpf',
-			'nm_apelido' => 'Nm Apelido',
-			'nu_rg' => 'Nu Rg',
-			'tp_pessoaFisica' => 'Tp Pessoa Fisica',
+			'nu_cpf' => 'CPF',
+			'nm_apelido' => 'Apelido',
+			'nu_rg' => 'RG',
+			'tp_pessoaFisica' => 'Tipo Pessoa Fisica',
 		);
 	}
 
@@ -102,4 +107,34 @@ class Pessoafisica extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    protected function beforeValidate()
+    {
+        // convert to storage format
+        $this->nu_cpf = Yii::app()->bulebar->removeMascaraApenasNumeros($this->nu_cpf);
+
+        return parent::beforeValidate();
+    }
+    
+    protected function afterValidate()
+    {
+        if($this->hasErrors())
+        {
+            if(!empty($this->nu_cpf))
+            {
+                // convert to view format
+                $this->nu_cpf = Yii::app()->bulebar->adicionaMascaraCPF($this->nu_cpf);
+            }
+        }
+        
+        return parent::afterValidate();
+    }
+    
+    protected function afterSave()
+    {
+        // convert to view format
+        $this->nu_cpf = Yii::app()->bulebar->adicionaMascaraCPF($this->nu_cpf);
+        
+        return parent::afterSave();
+    }
 }

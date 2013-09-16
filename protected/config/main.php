@@ -11,6 +11,8 @@ Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
+    
+    'language' => 'pt_br',
 	'name'=>'My Web Application',
 
 	// preloading 'log' component
@@ -42,15 +44,25 @@ return array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
 		),
+        'bulebar'=>array(
+            'class'=>'application.extensions.bulebar.Funcoes',
+        ),
 		// uncomment the following to enable URLs in path-format
 		
 		'urlManager'=>array(
 			'urlFormat'=>'path',
                         'showScriptName'=>false,
 			'rules'=>array(
+                'cadastro/getUsuario'=>'cadastro/getUsuario',
+                'cadastro/getColaborador'=>'cadastro/getColaborador',
+                'cadastro/getFornecedor'=>'cadastro/getFornecedor',
+                'cadastro/delPessoa'=>'cadastro/delPessoa',
+                'cadastro/delUsuario'=>'cadastro/delUsuario',
+                'cadastro/<action:\w+>'=>'cadastro/index',
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+                
 			),
 		),
 		
@@ -62,6 +74,8 @@ return array(
 			'username' => 'bulebar',
 			'password' => 'bulebar',
 			'charset' => 'utf8',
+            'enableProfiling'=>true,
+            'enableParamLogging'=>true,
 		),
 		
 		'errorHandler'=>array(
@@ -73,14 +87,15 @@ return array(
 			'routes'=>array(
 				array(
 					'class'=>'CFileLogRoute',
-					'levels'=>'error, warning',
+                    'logPath'=>'C:\Users\Felippe\Documents\Projetos\bulebar\log',
 				),
 				// uncomment the following to show log messages on web pages
-				/*
-				array(
+				
+				/*array(
 					'class'=>'CWebLogRoute',
-				),
-				*/
+                    'categories'=>'system.db.*',
+				),*/
+				
 			),
 		),
                 'bootstrap' => array(
@@ -96,4 +111,11 @@ return array(
 		'adminEmail'=>'felippeduarte@gmail.com',
 	),
         'theme'=>'bootstrap', // requires you to copy the theme under your themes directory
+    
+        //forçar login
+        'behaviors' => array(
+          'onBeginRequest' => array(
+                'class' => 'application.components.RequireLogin'
+            )
+        ),
 );

@@ -1,25 +1,30 @@
 <?php
 
 /**
- * This is the model class for table "usuario".
+ * This is the model class for table "fornecedor".
  *
- * The followings are the available columns in table 'usuario':
+ * The followings are the available columns in table 'fornecedor':
  * @property integer $id_pessoa
- * @property string $nm_login
- * @property string $de_senha
  *
  * The followings are the available model relations:
- * @property Lancamento[] $lancamentos
- * @property Colaborador $idPessoa
+ * @property Pessoafisica $idPessoa
  */
-class Usuario extends CActiveRecord
+class Fornecedor extends CActiveRecord
 {
-    public $de_senha_confirmacao;
+    public $identificador;
+    public $nm_pessoa = null;
+    public $tp_pessoa;
+    public $dt_nascimento;
+    public $nu_cpf;
+    public $nm_apelido;
+    public $nu_cnpj;
+    public $nm_nomeFantasia;
+    public $nu_inscricaoEstadual;
     
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return Usuario the static model class
+	 * @return Fornecedor the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
@@ -31,7 +36,7 @@ class Usuario extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'usuario';
+		return 'fornecedor';
 	}
 
 	/**
@@ -42,16 +47,11 @@ class Usuario extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_pessoa, nm_login, de_senha, de_senha_confirmacao', 'required','on'=>'insert'),
+			array('id_pessoa', 'required'),
 			array('id_pessoa', 'numerical', 'integerOnly'=>true),
-			array('nm_login', 'length', 'max'=>40),
-			array('de_senha', 'length', 'max'=>45),
-            array('id_pessoa, nm_login, de_senha,de_senha_confirmacao', 'safe'),
-            array('de_senha', 'senhaConfirmada'),
-            array('id_pessoa, nm_login', 'required','on' => 'update'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id_pessoa, nm_login, de_senha', 'safe', 'on'=>'search'),
+			array('id_pessoa, nm_pessoa', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -63,9 +63,9 @@ class Usuario extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'lancamentos' => array(self::HAS_MANY, 'Lancamento', 'id_pessoaUsuario'),
-            'idPessoa' => array(self::BELONGS_TO, 'Pessoa', 'id_pessoa'),
-			'idColaborador' => array(self::BELONGS_TO, 'Colaborador', 'id_pessoa'),
+			'idPessoa' => array(self::BELONGS_TO, 'Pessoa', 'id_pessoa'),
+            'pessoaFisica' => array(self::HAS_MANY, 'Pessoafisica', 'id_pessoa'),
+            'pessoaJuridica' => array(self::HAS_MANY, 'Pessoajuridica', 'id_pessoa'),
 		);
 	}
 
@@ -75,10 +75,7 @@ class Usuario extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id_pessoa' => 'Colaborador',
-			'nm_login' => 'Login',
-			'de_senha' => 'Senha',
-            'de_senha_confirmacao' => 'Confirme a senha',
+			'id_pessoa' => 'Id Pessoa',
 		);
 	}
 
@@ -93,34 +90,20 @@ class Usuario extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id_pessoa',$this->id_pessoa);
-		$criteria->compare('nm_login',$this->nm_login,true);
-		$criteria->compare('de_senha',$this->de_senha,true);
-
+        $criteria->with = 'idPessoa';
+		$criteria->compare('id_pessoa', $this->id_pessoa);
+        $criteria->compare('idPessoa.id_pessoa', $this->id_pessoa, true);
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
     
-    public function login()
-	{
-		$criteria=new CDbCriteria;
-
-		$criteria->addCondition("nm_login = '$this->nm_login'");
-		$criteria->addCondition("de_senha = '$this->de_senha'");
-
-		return self::model()->find($criteria);
-	}
-    
-    public function senhaConfirmada($attribute)
-    {
-        if($this->de_senha != $this->de_senha_confirmacao)
-        {
-            $this->addError($attribute, 'Senhas não conferem');
-        }
-    }
-    
-    public function getUsuarioGrid()
+    /**
+	 * Retrieves a list of models based on the current search/filter conditions.
+	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+	 */
+	public function getFornecedorGrid()
 	{
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
@@ -131,10 +114,13 @@ class Usuario extends CActiveRecord
         
         $criteria->with = array(
             'idPessoa' => array('select'=>'nm_pessoa'),
+            'pessoaFisica',
+            'pessoaJuridica'
         );
         
         $criteria->select = array(
-            'id_pessoa','nm_login'
+            'id_pessoa',
+            'CONCAT(COALESCE(pessoaFisica.nu_cpf,""),COALESCE(pessoaJuridica.nu_cnpj,"")) as identificador'
         );
         
         $criteria->condition = 'idPessoa.fl_inativo = :fl_inativo';
@@ -142,25 +128,44 @@ class Usuario extends CActiveRecord
             ':fl_inativo' => false,
         );
         
+        $criteria->compare('t.id_pessoa', $this->id_pessoa);
+        $criteria->compare('pessoaFisica.nu_cpf', $this->identificador, true, 'AND');
+        $criteria->compare('pessoaJuridica.nu_cnpj', $this->identificador, true, 'OR');
+        $criteria->compare('idPessoa.nm_pessoa', $this->nm_pessoa, true);
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
     
-    public function getUsuarioCompleto($id)
+    public function getFornecedorCompleto($id)
 	{
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
 
 		$criteria=new CDbCriteria;
+
+        //$criteria->together = true;
         
         $criteria->with = array(
-            'idPessoa' => array('select'=>array('nm_pessoa', 'dt_nascimento')),
-            'pessoaFisica' => array('select'=>'nu_cpf,nm_apelido,nu_rg'),
+            'idPessoa' => array('select'=>array('nm_pessoa', 'tp_pessoa', 'dt_nascimento')),
+            'pessoaFisica' => array('select'=>'nu_cpf,nm_apelido'),
+            'pessoaJuridica' => array('select'=>'nu_cnpj, nm_nomeFantasia, nu_inscricaoEstadual'),
         );
+    
+        /*select 
+        p.id_pessoa, p.nm_pessoa, p.tp_pessoa, p.dt_nascimento,
+        pf.nu_cpf, pf.nm_apelido, pj.nu_cnpj, pj.nm_nomeFantasia, pj.nu_inscricaoEstadual
+
+        from pessoa p
+        left join pessoaFisica pf on p.id_pessoa = pf.id_pessoa
+        left join pessoaJuridica pj on p.id_pessoa = pj.id_pessoa
+        left join Fornecedor f on p.id_pessoa = f.id_pessoa
+        where p.id_pessoa = 14
+        */
         
         $criteria->select = array(
-            'id_pessoa','id_cargoColaborador'
+            'id_pessoa',//'nm_pessoa'
         );
         //$criteria->condition= "id_pessoa = $id";
         $criteria->condition = 'idPessoa.id_pessoa = :id_pessoa';

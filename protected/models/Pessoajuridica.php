@@ -43,6 +43,7 @@ class Pessoajuridica extends CActiveRecord
 			array('id_pessoa, nu_cnpj', 'required'),
 			array('id_pessoa', 'numerical', 'integerOnly'=>true),
 			array('nu_cnpj', 'length', 'max'=>14),
+            array('nu_cnpj', 'unique', 'className'=>'Pessoajuridica'),
 			array('nm_nomeFantasia', 'length', 'max'=>200),
 			array('nu_inscricaoEstadual', 'length', 'max'=>45),
 			// The following rule is used by search().
@@ -70,9 +71,9 @@ class Pessoajuridica extends CActiveRecord
 	{
 		return array(
 			'id_pessoa' => 'Id Pessoa',
-			'nu_cnpj' => 'Nu Cnpj',
-			'nm_nomeFantasia' => 'Nm Nome Fantasia',
-			'nu_inscricaoEstadual' => 'Nu Inscricao Estadual',
+			'nu_cnpj' => 'CNPJ',
+			'nm_nomeFantasia' => 'Nome Fantasia',
+			'nu_inscricaoEstadual' => 'Nº Inscricao Estadual',
 		);
 	}
 
@@ -96,4 +97,12 @@ class Pessoajuridica extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    protected function beforeValidate()
+    {
+        // convert to storage format
+        $this->nu_cnpj = preg_replace("/[^0-9]/","",$this->nu_cnpj);
+
+        return parent::beforeValidate();
+    }
 }
