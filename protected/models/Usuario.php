@@ -142,6 +142,9 @@ class Usuario extends CActiveRecord
             ':fl_inativo' => false,
         );
         
+        $criteria->compare('t.id_pessoa', $this->id_pessoa);
+        $criteria->compare('t.nm_login', $this->nm_login, true);
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

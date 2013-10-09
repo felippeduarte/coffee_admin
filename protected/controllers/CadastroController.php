@@ -300,6 +300,17 @@ class CadastroController extends Controller
                 }
             }
 		}
+
+        //filtro do grid
+        if(isset($_GET['Colaborador']))
+        {
+            $modelColaborador->unsetAttributes();
+            $modelColaborador->id_pessoa = $_GET['Colaborador']['id_pessoa'];
+            $modelColaborador->nu_cpf = $_GET['Colaborador']['nu_cpf'];
+            $modelColaborador->nm_pessoa = $_GET['Colaborador']['nm_pessoa'];
+            $modelColaborador->nu_colaborador = $_GET['Colaborador']['nu_colaborador'];
+            $modelColaborador->nm_cargoColaborador = $_GET['Colaborador']['nm_cargoColaborador'];
+        }
         
 		return $this->renderPartial('colaborador',
                             array('modelPessoa' => $modelPessoa,
@@ -387,20 +398,20 @@ class CadastroController extends Controller
                     Yii::app()->user->setFlash('success', "Usuário $modelUsuario->nm_login cadastrado com sucesso!");
                 }   
             }
+            
+            $modelUsuario = new Usuario();
         }
         
-        /*var_dump($modelUsuario->getErrors()); 
-        var_dump("<hr>");
-        var_dump($modelColaborador->getErrors()); 
-        var_dump("<hr>");
-        var_dump($modelUsuario->attributes);
-        var_dump("<hr>");
-        var_dump($modelColaborador->attributes);
-        die('');*/
-
+        if(isset($_GET['Usuario']))
+        {
+            $modelUsuario->unsetAttributes();
+            $modelUsuario->id_pessoa = $_GET['Usuario']['id_pessoa'];
+            $modelUsuario->nm_login = $_GET['Usuario']['nm_login'];
+        }
+        
 		return $this->renderPartial('usuario',
                             array('modelColaborador' => new Colaborador(),
-                                  'modelUsuario' => new Usuario()),
+                                  'modelUsuario' => $modelUsuario),
                             true
                         );
 	}

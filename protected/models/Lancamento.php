@@ -25,6 +25,11 @@
  */
 class Lancamento extends CActiveRecord
 {
+    public $nm_pessoa;
+    public $nm_estabelecimento;
+    public $nm_categoriaLancamento;
+    public $tp_categoriaLancamento;
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -121,6 +126,39 @@ class Lancamento extends CActiveRecord
 		$criteria->compare('id_pessoaUsuario',$this->id_pessoaUsuario);
 		$criteria->compare('dt_ultimaAlteracao',$this->dt_ultimaAlteracao,true);
 
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+    
+    public function getLancamentoGrid()
+	{
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
+
+		$criteria = new CDbCriteria;
+
+        $criteria->together = true;
+        
+        $criteria->with = array(
+            'idPessoaLancamento' => array('select'=>'nm_pessoa'),
+            'idEstabelecimento' => array('select'=>'nm_estabelecimento'),
+            'idCategoriaLancamento' => array('select'=>'nm_categoriaLancamento,tp_categoriaLancamento'),
+            'idPessoaLancamento' => array('select'=>'nm_pessoa'),
+        );
+        
+        $criteria->select = array(
+            'id_lancamento','dt_lancamento','vl_lancamento'
+        );
+        
+        
+        $criteria->compare('t.id_lancamento', $this->id_lancamento);
+        $criteria->compare('t.dt_lancamento', $this->dt_lancamento, true);
+        $criteria->compare('idEstabelecimento.nm_estabelecimento', $this->nm_estabelecimento, true);
+        $criteria->compare('idCategoriaLancamento.nm_categoriaLancamento', $this->nm_categoriaLancamento, true);
+        $criteria->compare('idPessoaLancamento.nm_pessoa', $this->nm_pessoa, true);
+        $criteria->compare('t.vl_lancamento', $this->dt_lancamento, true);
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

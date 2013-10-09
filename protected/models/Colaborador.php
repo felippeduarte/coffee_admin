@@ -142,6 +142,12 @@ class Colaborador extends CActiveRecord
             ':fl_inativo' => false,
         );
         
+        $criteria->compare('t.id_pessoa', $this->id_pessoa);
+        $criteria->compare('idPessoa.nm_pessoa', $this->nm_pessoa, true);
+        $criteria->compare('pessoaFisica.nu_cpf', $this->nu_cpf, true);
+        $criteria->compare('t.nu_colaborador', $this->nu_colaborador, true);
+        $criteria->compare('idCargoColaborador.nm_cargoColaborador', $this->nm_cargoColaborador, true);
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
