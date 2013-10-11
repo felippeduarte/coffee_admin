@@ -38,6 +38,7 @@ class Cargocolaborador extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+            array('nm_cargoColaborador', 'required'),
 			array('nm_cargoColaborador', 'length', 'max'=>50),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -64,7 +65,7 @@ class Cargocolaborador extends CActiveRecord
 	{
 		return array(
 			'id_cargoColaborador' => 'Id Cargo Colaborador',
-			'nm_cargoColaborador' => 'Nm Cargo Colaborador',
+			'nm_cargoColaborador' => 'Nome do Cargo do Colaborador',
 		);
 	}
 
@@ -82,6 +83,36 @@ class Cargocolaborador extends CActiveRecord
 		$criteria->compare('id_cargoColaborador',$this->id_cargoColaborador);
 		$criteria->compare('nm_cargoColaborador',$this->nm_cargoColaborador,true);
 
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+    
+    public function getComboCargoColaborador()
+    {
+        $criteria=new CDbCriteria;
+        
+        $criteria->select = array(
+            'id_cargoColaborador','nm_cargoColaborador'
+        );
+        
+        return $this->findAll($criteria);
+    }
+    
+    public function getCargoColaboradorGrid()
+	{
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
+
+		$criteria = new CDbCriteria;
+        
+        $criteria->select = array(
+            'id_cargoColaborador', 'nm_cargoColaborador'
+        );
+        
+        $criteria->compare('id_cargoColaborador', $this->id_cargoColaborador);
+        $criteria->compare('nm_cargoColaborador', $this->nm_cargoColaborador, true);
+                
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

@@ -53,15 +53,21 @@ return array(
 			'urlFormat'=>'path',
                         'showScriptName'=>false,
 			'rules'=>array(
-                'cadastro/getEstabelecimento'=>'cadastro/getEstabelecimento',
-                'cadastro/getUsuario'=>'cadastro/getUsuario',
-                'cadastro/getColaborador'=>'cadastro/getColaborador',
-                'cadastro/getFornecedor'=>'cadastro/getFornecedor',
-                'cadastro/getCategoriaLancamento'=>'cadastro/getCategoriaLancamento',
-                'cadastro/delEstabelecimento'=>'cadastro/delEstabelecimento',
-                'cadastro/delPessoa'=>'cadastro/delPessoa',
-                'cadastro/delUsuario'=>'cadastro/delUsuario',
-                'cadastro/delCategoriaLancamento'=>'cadastro/delCategoriaLancamento',
+                'cadastro/<action:(getGrupoEstabelecimento|'.
+                                  'getEstabelecimento|'.
+                                  'getUsuario|'.
+                                  'getColaborador|'.
+                                  'getCargoColaborador|'.
+                                  'getFornecedor|'.
+                                  'getCategoriaLancamento|'.
+                                  'getFormaPagamento|'.
+                                  'delFormaPagamento|'.
+                                  'delGrupoEstabelecimento|'.
+                                  'delEstabelecimento|'.
+                                  'delPessoa|'.
+                                  'delCargoColaborador|'.
+                                  'delUsuario|'.
+                                  'delCategoriaLancamento)>'=>'cadastro/<action>',
                 'cadastro/<action:\w+>'=>'cadastro/index',
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',

@@ -16,14 +16,17 @@ $this->breadcrumbs=array(
     $this->widget('bootstrap.widgets.TbMenu', array(
         'type'=>'list',
         'items' => array(
-                array('label'=>'Cadastros', 'itemOptions'=>array('class'=>'nav-header')),
+                array('label'=>'Pessoas', 'itemOptions'=>array('class'=>'nav-header')),
                 array('label'=>'Fornecedor', 'url'=>Yii::app()->createUrl('cadastro/fornecedor'), 'itemOptions'=>$itemOptions['Fornecedor']),
                 array('label'=>'Colaborador', 'url'=>Yii::app()->createUrl('cadastro/colaborador'), 'itemOptions'=>$itemOptions['Colaborador']),
+                array('label'=>'Cargo Colaborador', 'url'=>Yii::app()->createUrl('cadastro/cargocolaborador'), 'itemOptions'=>$itemOptions['CargoColaborador']),
                 array('label'=>'Usuário', 'url'=>Yii::app()->createUrl('cadastro/usuario'), 'itemOptions'=> $itemOptions['Usuario']),
-                array('label'=>'______________'),    
+                array('label'=>'Estabelecimentos', 'itemOptions'=>array('class'=>'nav-header')),
                 array('label'=>'Estabelecimento', 'url'=>Yii::app()->createUrl('cadastro/estabelecimento'), 'itemOptions'=> $itemOptions['Estabelecimento']),
-                array('label'=>'______________'),
+                array('label'=>'Grupo Estabelecimento', 'url'=>Yii::app()->createUrl('cadastro/grupoestabelecimento'), 'itemOptions'=> $itemOptions['GrupoEstabelecimento']),
+                array('label'=>'Categorias e taxas', 'itemOptions'=>array('class'=>'nav-header')),
                 array('label'=>'Categoria', 'url'=>Yii::app()->createUrl('cadastro/categorialancamento'), 'itemOptions'=> $itemOptions['CategoriaLancamento']),
+                array('label'=>'Forma de Pagamento', 'url'=>Yii::app()->createUrl('cadastro/formapagamento'), 'itemOptions'=> $itemOptions['FormaPagamento']),
         )
     ));
     ?>

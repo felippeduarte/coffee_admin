@@ -43,9 +43,12 @@ class CadastroController extends Controller
             $itemOptions = array(
                 'Fornecedor' => array(),
                 'Colaborador' => array(),
+                'CargoColaborador' => array(),
                 'Usuario' => array(),
                 'Estabelecimento' => array(),
+                'GrupoEstabelecimento' => array(),
                 'CategoriaLancamento' => array(),
+                'FormaPagamento' => array(),
             );
             $optionsAtivo = array('class'=>'active');
 
@@ -66,6 +69,11 @@ class CadastroController extends Controller
                     $itemOptions['Colaborador'] = $optionsAtivo;
                     $viewForm = $this->actionColaborador();
                     break;
+                case 'cargocolaborador':
+                    $titleBox = 'Cargo Colaborador';
+                    $itemOptions['CargoColaborador'] = $optionsAtivo;
+                    $viewForm = $this->actionCargoColaborador();
+                    break;
                 case 'usuario':
                     $titleBox = 'Usuário';
                     $itemOptions['Usuario'] = $optionsAtivo;
@@ -76,10 +84,20 @@ class CadastroController extends Controller
                     $itemOptions['Estabelecimento'] = $optionsAtivo;
                     $viewForm = $this->actionEstabelecimento();
                     break;
+                case 'grupoestabelecimento':
+                    $titleBox = 'Gupo Estabelecimento';
+                    $itemOptions['GrupoEstabelecimento'] = $optionsAtivo;
+                    $viewForm = $this->actionGrupoEstabelecimento();
+                    break;
                 case 'categorialancamento':
                     $titleBox = 'Categoria Lancamento';
                     $itemOptions['CategoriaLancamento'] = $optionsAtivo;
                     $viewForm = $this->actionCategoriaLancamento();
+                    break;
+                case 'formapagamento':
+                    $titleBox = 'Forma Pagamento';
+                    $itemOptions['FormaPagamento'] = $optionsAtivo;
+                    $viewForm = $this->actionFormaPagamento();
                     break;
                 default:
                     break;
@@ -437,18 +455,16 @@ class CadastroController extends Controller
         if(isset($_POST['Estabelecimento']))
 		{
             $modelEstabelecimento->id_estabelecimento = $_POST['Estabelecimento']['id_estabelecimento'];
-            $estabelecimento = Estabelecimento::model()->findByPk($modelEstabelecimento->id_estabelecimento);
             
             $modelEstabelecimento->attributes = $_POST['Estabelecimento'];
             
-            $pk = $modelEstabelecimento->id_estabelecimento;
             $modelEstabelecimento->id_estabelecimento = $_POST['Estabelecimento']['id_estabelecimento'];
             
             if($modelEstabelecimento->validate())
             {
                 if(!empty($_POST['Estabelecimento']['id_estabelecimento']))
                 {
-                    Estabelecimento::model()->updateByPk($pk,$modelEstabelecimento->attributes);
+                    Estabelecimento::model()->updateByPk($modelEstabelecimento->id_estabelecimento,$modelEstabelecimento->attributes);
                     Yii::app()->user->setFlash('success', "Estabelecimento $modelEstabelecimento->nm_estabelecimento alterado com sucesso!");
                 } else {
                     $modelEstabelecimento->save();
@@ -469,6 +485,156 @@ class CadastroController extends Controller
         
 		return $this->renderPartial('estabelecimento',
                             array('modelEstabelecimento' => $modelEstabelecimento),
+                            true
+                        );
+	}
+    
+    /**
+	 * Página de Cadastro de Cargo do Colaborador
+	 */
+	protected function actionCargoColaborador()
+	{
+        $modelCargoColaborador = new CargoColaborador();
+                
+        if(isset($_POST['ajax']) && $_POST['ajax']==='cadastroCargoColaborador')
+		{
+            echo CActiveForm::validate(array($modelCargoColaborador));
+			Yii::app()->end();
+		}
+        
+        if(isset($_POST['Cargocolaborador']))
+		{
+            $modelCargoColaborador->id_cargoColaborador = $_POST['Cargocolaborador']['id_cargoColaborador'];
+            
+            $modelCargoColaborador->attributes = $_POST['Cargocolaborador'];
+            
+            $modelCargoColaborador->id_cargoColaborador = $_POST['Cargocolaborador']['id_cargoColaborador'];
+            
+            if($modelCargoColaborador->validate())
+            {
+                if(!empty($_POST['Cargocolaborador']['id_cargoColaborador']))
+                {
+                    CargoColaborador::model()->updateByPk($modelCargoColaborador->id_cargoColaborador,$modelCargoColaborador->attributes);
+                    Yii::app()->user->setFlash('success', "Cargo do Colaborador $modelCargoColaborador->nm_cargoColaborador alterado com sucesso!");
+                } else {
+                    $modelCargoColaborador->save();
+                    Yii::app()->user->setFlash('success', "Cargo do Colaborador $modelCargoColaborador->nm_cargoColaborador cadastrado com sucesso!");
+                }   
+            }
+            
+            $modelCargoColaborador = new CargoColaborador();
+        }
+        
+        //filtro do grid
+        if(isset($_GET['Cargocolaborador']))
+        {
+            $modelCargoColaborador->unsetAttributes();
+            $modelCargoColaborador->id_cargoColaborador = $_GET['Cargocolaborador']['id_cargoColaborador'];
+            $modelCargoColaborador->nm_cargoColaborador = $_GET['Cargocolaborador']['nm_cargoColaborador'];
+        }
+        
+		return $this->renderPartial('cargoColaborador',
+                            array('modelCargoColaborador' => $modelCargoColaborador),
+                            true
+                        );
+	}
+    
+    /**
+	 * Página de Cadastro de Grupo Estabelecimento
+	 */
+	protected function actionGrupoEstabelecimento()
+	{
+        $modelGrupoEstabelecimento = new GrupoEstabelecimento();
+                
+        if(isset($_POST['ajax']) && $_POST['ajax']==='cadastroGrupoEstabelecimento')
+		{
+            echo CActiveForm::validate(array($modelGrupoEstabelecimento));
+			Yii::app()->end();
+		}
+        
+        if(isset($_POST['Grupoestabelecimento']))
+		{
+            $modelGrupoEstabelecimento->id_grupoEstabelecimento = $_POST['Grupoestabelecimento']['id_grupoEstabelecimento'];
+            
+            $modelGrupoEstabelecimento->attributes = $_POST['Grupoestabelecimento'];
+            
+            $modelGrupoEstabelecimento->id_grupoEstabelecimento = $_POST['Grupoestabelecimento']['id_grupoEstabelecimento'];
+            
+            if($modelGrupoEstabelecimento->validate())
+            {
+                if(!empty($_POST['Grupoestabelecimento']['id_grupoEstabelecimento']))
+                {
+                    GrupoEstabelecimento::model()->updateByPk($modelGrupoEstabelecimento->id_grupoEstabelecimento,$modelGrupoEstabelecimento->attributes);
+                    Yii::app()->user->setFlash('success', "Grupo Estabelecimento $modelGrupoEstabelecimento->nm_grupoEstabelecimento alterado com sucesso!");
+                } else {
+                    $modelGrupoEstabelecimento->save();
+                    Yii::app()->user->setFlash('success', "Grupo Estabelecimento $modelGrupoEstabelecimento->nm_grupoEstabelecimento cadastrado com sucesso!");
+                }   
+            }
+            
+            $modelGrupoEstabelecimento = new GrupoEstabelecimento();
+        }
+        
+        //filtro do grid
+        if(isset($_GET['Grupoestabelecimento']))
+        {
+            $modelGrupoEstabelecimento->unsetAttributes();
+            $modelGrupoEstabelecimento->id_grupoEstabelecimento = $_GET['Grupoestabelecimento']['id_grupoEstabelecimento'];
+            $modelGrupoEstabelecimento->nm_grupoEstabelecimento = $_GET['Grupoestabelecimento']['nm_grupoEstabelecimento'];
+        }
+        
+		return $this->renderPartial('grupoEstabelecimento',
+                            array('modelGrupoEstabelecimento' => $modelGrupoEstabelecimento),
+                            true
+                        );
+	}
+    
+    /**
+	 * Página de Cadastro de Forma Pagamento
+	 */
+	protected function actionFormaPagamento()
+	{
+        $modelFormaPagamento = new FormaPagamento();
+                
+        if(isset($_POST['ajax']) && $_POST['ajax']==='cadastroFormaPagamento')
+		{
+            echo CActiveForm::validate(array($modelFormaPagamento));
+			Yii::app()->end();
+		}
+        
+        if(isset($_POST['Formapagamento']))
+		{
+            $modelFormaPagamento->id_formaPagamento = $_POST['Formapagamento']['id_formaPagamento'];
+            
+            $modelFormaPagamento->attributes = $_POST['Formapagamento'];
+            
+            $modelFormaPagamento->id_formaPagamento = $_POST['Formapagamento']['id_formaPagamento'];
+            
+            if($modelFormaPagamento->validate())
+            {
+                if(!empty($_POST['Formapagamento']['id_formaPagamento']))
+                {
+                    FormaPagamento::model()->updateByPk($modelFormaPagamento->id_formaPagamento,$modelFormaPagamento->attributes);
+                    Yii::app()->user->setFlash('success', "Forma de Pagamento $modelFormaPagamento->nm_formaPagamento alterado com sucesso!");
+                } else {
+                    $modelFormaPagamento->save();
+                    Yii::app()->user->setFlash('success', "Forma de Pagamento $modelFormaPagamento->nm_formaPagamento cadastrado com sucesso!");
+                }   
+            }
+            
+            $modelFormaPagamento = new FormaPagamento();
+        }
+        
+        //filtro do grid
+        if(isset($_GET['Formapagamento']))
+        {
+            $modelFormaPagamento->unsetAttributes();
+            $modelFormaPagamento->id_formaPagamento = $_GET['Formapagamento']['id_formaPagamento'];
+            $modelFormaPagamento->nm_formaPagamento = $_GET['Formapagamento']['nm_formaPagamento'];
+        }
+        
+		return $this->renderPartial('formaPagamento',
+                            array('modelFormaPagamento' => $modelFormaPagamento),
                             true
                         );
 	}
@@ -629,6 +795,63 @@ class CadastroController extends Controller
         Yii::app()->end();
     }
     
+    public function actionGetCargoColaborador()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+        
+        $cargoColaborador = CargoColaborador::model()->findByPk($_POST['idCargoColaborador']);
+        
+        $json = new stdClass();
+        
+        foreach ($cargoColaborador as $key=>$value) {
+            $json->$key = $value;
+        }
+        
+        echo CJSON::encode(array('CargoColaborador'=>$json));
+
+        Yii::app()->end();
+    }   
+    
+    public function actionGetGrupoEstabelecimento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+        
+        $grupoEstabelecimento = GrupoEstabelecimento::model()->findByPk($_POST['idGrupoEstabelecimento']);
+        
+        $json = new stdClass();
+        
+        foreach ($grupoEstabelecimento as $key=>$value) {
+            $json->$key = $value;
+        }
+        
+        echo CJSON::encode(array('GrupoEstabelecimento'=>$json));
+
+        Yii::app()->end();
+    }    
+    
+    public function actionGetFormaPagamento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+        
+        $grupoEstabelecimento = FormaPagamento::model()->findByPk($_POST['idFormaPagamento']);
+        
+        $json = new stdClass();
+        
+        foreach ($grupoEstabelecimento as $key=>$value) {
+            $json->$key = $value;
+        }
+        
+        echo CJSON::encode(array('FormaPagamento'=>$json));
+
+        Yii::app()->end();
+    }    
+    
     public function actionGetCategoriaLancamento()
     {
         if (!Yii::app()->request->isAjaxRequest) {
@@ -703,6 +926,64 @@ class CadastroController extends Controller
             Yii::app()->user->setFlash('success', "$modelEstabelecimento->nm_estabelecimento removido(a) com sucesso!");
         } else {
             Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover $modelEstabelecimento->nm_estabelecimento!");
+        }
+        Yii::app()->end();
+    }
+    
+    public function actionDelCargoColaborador()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+
+        if (isset($_POST['idCargoColaborador']))
+        {
+            $id = $_POST['idCargoColaborador'];
+            $modelCargoColaborador = CargoColaborador::model()->findByPk($id);
+            $modelCargoColaborador->delete();
+            
+            Yii::app()->user->setFlash('success', "$modelCargoColaborador->nm_cargoColaborador removido(a) com sucesso!");
+        } else {
+            Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover $modelCargoColaborador->nm_cargoColaborador!");
+        }
+        Yii::app()->end();
+    }
+    
+    public function actionDelGrupoEstabelecimento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+
+        if (isset($_POST['idGrupoEstabelecimento']))
+        {
+            $id = $_POST['idGrupoEstabelecimento'];
+            $modelGrupoEstabelecimento = GrupoEstabelecimento::model()->findByPk($id);
+            $modelGrupoEstabelecimento->delete();
+            
+            Yii::app()->user->setFlash('success', "$modelGrupoEstabelecimento->nm_grupoEstabelecimento removido(a) com sucesso!");
+        } else {
+            Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover $modelGrupoEstabelecimento->nm_grupoEstabelecimento!");
+        }
+        Yii::app()->end();
+    }
+    
+    public function actionDelFormaPagamento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+
+        if (isset($_POST['idFormaPagamento']))
+        {
+            $id = $_POST['idFormaPagamento'];
+            $modelFormaPagamento = FormaPagamento::model()->findByPk($id);
+            $modelFormaPagamento->fl_inativo = true;
+            $modelFormaPagamento->save();
+            
+            Yii::app()->user->setFlash('success', "$modelFormaPagamento->nm_formaPagamento removido(a) com sucesso!");
+        } else {
+            Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover $modelFormaPagamento->nm_formaPagamento!");
         }
         Yii::app()->end();
     }

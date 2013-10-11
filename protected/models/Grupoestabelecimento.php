@@ -65,7 +65,7 @@ class Grupoestabelecimento extends CActiveRecord
 	{
 		return array(
 			'id_grupoEstabelecimento' => 'Id Grupo Estabelecimento',
-			'nm_grupoEstabelecimento' => 'Nm Grupo Estabelecimento',
+			'nm_grupoEstabelecimento' => 'Nome Grupo Estabelecimento',
 		);
 	}
 
@@ -98,4 +98,23 @@ class Grupoestabelecimento extends CActiveRecord
         
         return $this->findAll($criteria);
     }
+    
+    public function getGrupoEstabelecimentoGrid()
+	{
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
+
+		$criteria = new CDbCriteria;
+        
+        $criteria->select = array(
+            'id_grupoEstabelecimento', 'nm_grupoEstabelecimento'
+        );
+        
+        $criteria->compare('t.id_grupoEstabelecimento', $this->id_grupoEstabelecimento);
+        $criteria->compare('t.nm_grupoEstabelecimento', $this->nm_grupoEstabelecimento, true);
+        
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
 }

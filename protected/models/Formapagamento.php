@@ -67,7 +67,7 @@ class Formapagamento extends CActiveRecord
 	{
 		return array(
 			'id_formaPagamento' => 'Id Forma Pagamento',
-			'nm_formaPagamento' => 'Nm Forma Pagamento',
+			'nm_formaPagamento' => 'Nome Forma de Pagamento',
 		);
 	}
 
@@ -85,6 +85,46 @@ class Formapagamento extends CActiveRecord
 		$criteria->compare('id_formaPagamento',$this->id_formaPagamento);
 		$criteria->compare('nm_formaPagamento',$this->nm_formaPagamento,true);
 
+        return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+    
+    public function getComboFormaPagamento()
+    {
+        $criteria=new CDbCriteria;
+        
+        $criteria->select = array(
+            'id_formaPagamento','nm_formaPagamento'
+        );
+        
+        $criteria->condition = 't.fl_inativo = :fl_inativo';
+        $criteria->params = array(
+            ':fl_inativo' => false,
+        );
+        
+        return $this->findAll($criteria);
+    }
+    
+    public function getFormaPagamentoGrid()
+	{
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
+
+		$criteria = new CDbCriteria;
+        
+        $criteria->select = array(
+            'id_formaPagamento', 'nm_formaPagamento'
+        );
+        
+        $criteria->condition = 't.fl_inativo = :fl_inativo';
+        $criteria->params = array(
+            ':fl_inativo' => false,
+        );
+        
+        $criteria->compare('id_formaPagamento', $this->id_formaPagamento);
+        $criteria->compare('nm_formaPagamento', $this->nm_formaPagamento, true);
+                
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
