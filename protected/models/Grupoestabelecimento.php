@@ -87,4 +87,15 @@ class Grupoestabelecimento extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    public function getComboGrupoEstabelecimento()
+    {
+        $criteria=new CDbCriteria;
+        
+        $criteria->select = array(
+            'id_grupoEstabelecimento','nm_grupoEstabelecimento'
+        );
+        
+        return $this->findAll($criteria);
+    }
 }

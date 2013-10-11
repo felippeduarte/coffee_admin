@@ -53,11 +53,15 @@ return array(
 			'urlFormat'=>'path',
                         'showScriptName'=>false,
 			'rules'=>array(
+                'cadastro/getEstabelecimento'=>'cadastro/getEstabelecimento',
                 'cadastro/getUsuario'=>'cadastro/getUsuario',
                 'cadastro/getColaborador'=>'cadastro/getColaborador',
                 'cadastro/getFornecedor'=>'cadastro/getFornecedor',
+                'cadastro/getCategoriaLancamento'=>'cadastro/getCategoriaLancamento',
+                'cadastro/delEstabelecimento'=>'cadastro/delEstabelecimento',
                 'cadastro/delPessoa'=>'cadastro/delPessoa',
                 'cadastro/delUsuario'=>'cadastro/delUsuario',
+                'cadastro/delCategoriaLancamento'=>'cadastro/delCategoriaLancamento',
                 'cadastro/<action:\w+>'=>'cadastro/index',
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
@@ -87,7 +91,6 @@ return array(
 			'routes'=>array(
 				array(
 					'class'=>'CFileLogRoute',
-                    'logPath'=>'C:\Users\Felippe\Documents\Projetos\bulebar\log',
 				),
 				// uncomment the following to show log messages on web pages
 				

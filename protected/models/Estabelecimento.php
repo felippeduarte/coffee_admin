@@ -15,6 +15,8 @@
  */
 class Estabelecimento extends CActiveRecord
 {
+    public $nm_grupoEstabelecimento;
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -41,7 +43,7 @@ class Estabelecimento extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nm_estabelecimento, id_grupoEstabelecimento', 'required'),
+			array('nm_estabelecimento', 'required'),
 			array('id_grupoEstabelecimento', 'numerical', 'integerOnly'=>true),
 			array('nm_estabelecimento', 'length', 'max'=>200),
 			// The following rule is used by search().
@@ -71,8 +73,8 @@ class Estabelecimento extends CActiveRecord
 	{
 		return array(
 			'id_estabelecimento' => 'Id Estabelecimento',
-			'nm_estabelecimento' => 'Nm Estabelecimento',
-			'id_grupoEstabelecimento' => 'Id Grupo Estabelecimento',
+			'nm_estabelecimento' => 'Nome Estabelecimento',
+			'id_grupoEstabelecimento' => 'Grupo Estabelecimento',
 		);
 	}
 
@@ -91,6 +93,32 @@ class Estabelecimento extends CActiveRecord
 		$criteria->compare('nm_estabelecimento',$this->nm_estabelecimento,true);
 		$criteria->compare('id_grupoEstabelecimento',$this->id_grupoEstabelecimento);
 
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+    
+    public function getEstabelecimentoGrid()
+	{
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
+
+		$criteria = new CDbCriteria;
+
+        $criteria->together = true;
+        
+        $criteria->with = array(
+            'idGrupoEstabelecimento' => array('select'=>'nm_grupoEstabelecimento'),
+        );
+        
+        $criteria->select = array(
+            'id_estabelecimento', 'nm_estabelecimento'
+        );
+        
+        $criteria->compare('t.id_estabelecimento', $this->id_estabelecimento);
+        $criteria->compare('t.nm_estabelecimento', $this->nm_estabelecimento, true);
+        $criteria->compare('idGrupoEstabelecimento.nm_grupoEstabelecimento', $this->nm_grupoEstabelecimento, true);
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

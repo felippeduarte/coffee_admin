@@ -20,6 +20,10 @@ $this->breadcrumbs=array(
                 array('label'=>'Fornecedor', 'url'=>Yii::app()->createUrl('cadastro/fornecedor'), 'itemOptions'=>$itemOptions['Fornecedor']),
                 array('label'=>'Colaborador', 'url'=>Yii::app()->createUrl('cadastro/colaborador'), 'itemOptions'=>$itemOptions['Colaborador']),
                 array('label'=>'Usuário', 'url'=>Yii::app()->createUrl('cadastro/usuario'), 'itemOptions'=> $itemOptions['Usuario']),
+                array('label'=>'______________'),    
+                array('label'=>'Estabelecimento', 'url'=>Yii::app()->createUrl('cadastro/estabelecimento'), 'itemOptions'=> $itemOptions['Estabelecimento']),
+                array('label'=>'______________'),
+                array('label'=>'Categoria', 'url'=>Yii::app()->createUrl('cadastro/categorialancamento'), 'itemOptions'=> $itemOptions['CategoriaLancamento']),
         )
     ));
     ?>

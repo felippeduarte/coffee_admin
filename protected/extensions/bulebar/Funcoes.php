@@ -64,6 +64,12 @@ class Funcoes extends CApplicationComponent
     {
         return md5($senha);
     }
+    
+    public function getTipoCategoria($abreviacao)
+    {
+        if ($abreviacao == 'D') return "Despesa";
+        else if ($abreviacao == 'R') return "Receita";
+    }
 }
 
 ?>

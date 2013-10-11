@@ -16,6 +16,8 @@
  */
 class Categorialancamento extends CActiveRecord
 {
+    public $nm_categoriaLancamentoPai;
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -42,7 +44,7 @@ class Categorialancamento extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nm_categoriaLancamento, tp_categoriaLancamento, id_categoriaLancamentoPai', 'required'),
+			array('nm_categoriaLancamento, tp_categoriaLancamento', 'required'),
 			array('id_categoriaLancamentoPai', 'numerical', 'integerOnly'=>true),
 			array('nm_categoriaLancamento', 'length', 'max'=>45),
 			array('tp_categoriaLancamento', 'length', 'max'=>1),
@@ -73,9 +75,9 @@ class Categorialancamento extends CActiveRecord
 	{
 		return array(
 			'id_categoriaLancamento' => 'Id Categoria Lancamento',
-			'nm_categoriaLancamento' => 'Nm Categoria Lancamento',
-			'tp_categoriaLancamento' => 'Tp Categoria Lancamento',
-			'id_categoriaLancamentoPai' => 'Id Categoria Lancamento Pai',
+			'nm_categoriaLancamento' => 'Nome Categoria Lancamento',
+			'tp_categoriaLancamento' => 'Tipo Categoria Lancamento',
+			'id_categoriaLancamentoPai' => 'Categoria Lancamento Pai',
 		);
 	}
 
@@ -90,8 +92,10 @@ class Categorialancamento extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+        $criteria->with = 'idCategoriaLancamentoPai';
 		$criteria->compare('id_categoriaLancamento',$this->id_categoriaLancamento);
 		$criteria->compare('nm_categoriaLancamento',$this->nm_categoriaLancamento,true);
+        $criteria->compare('idCategoriaLancamentoPai.nm_categoriaLancamento',$this->nm_categoriaLancamentoPai,true);
 		$criteria->compare('tp_categoriaLancamento',$this->tp_categoriaLancamento,true);
 		$criteria->compare('id_categoriaLancamentoPai',$this->id_categoriaLancamentoPai);
 
@@ -99,4 +103,46 @@ class Categorialancamento extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    public function getCategoriaLancamentoGrid()
+	{
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
+
+		$criteria = new CDbCriteria;
+
+        $criteria->together = true;
+        
+        $criteria->with = array(
+            'idCategoriaLancamentoPai' => array('select'=>'nm_categoriaLancamento'),
+        );
+        
+        $criteria->select = array(
+            'id_categoriaLancamento','nm_categoriaLancamento','tp_categoriaLancamento'
+        );
+        
+        $criteria->compare('t.id_categoriaLancamento', $this->id_categoriaLancamento);
+        $criteria->compare('t.nm_categoriaLancamento', $this->nm_categoriaLancamento, true);
+        $criteria->compare('t.tp_categoriaLancamento', $this->tp_categoriaLancamento, true);
+        $criteria->compare('idCategoriaLancamentoPai.nm_categoriaLancamento', $this->nm_categoriaLancamentoPai, true);
+        
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+    
+    public function getComboCategoriaLancamento()
+    {
+        $criteria=new CDbCriteria;
+
+        $criteria->select = array('id_categoriaLancamento','nm_categoriaLancamento');
+        
+        return $this->findAll($criteria);
+    }
+    
+    public function getNextId()
+    {
+        $id = Yii::app()->db->createCommand('SHOW TABLE STATUS LIKE "categorialancamento"')->queryAll();
+        return $id[0]['Auto_increment'];
+    }
 }

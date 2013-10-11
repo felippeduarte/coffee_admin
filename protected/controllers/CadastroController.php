@@ -43,7 +43,9 @@ class CadastroController extends Controller
             $itemOptions = array(
                 'Fornecedor' => array(),
                 'Colaborador' => array(),
-                'Usuario' => array()
+                'Usuario' => array(),
+                'Estabelecimento' => array(),
+                'CategoriaLancamento' => array(),
             );
             $optionsAtivo = array('class'=>'active');
 
@@ -68,6 +70,16 @@ class CadastroController extends Controller
                     $titleBox = 'Usuário';
                     $itemOptions['Usuario'] = $optionsAtivo;
                     $viewForm = $this->actionUsuario();
+                    break;
+                case 'estabelecimento':
+                    $titleBox = 'Estabelecimento';
+                    $itemOptions['Estabelecimento'] = $optionsAtivo;
+                    $viewForm = $this->actionEstabelecimento();
+                    break;
+                case 'categorialancamento':
+                    $titleBox = 'Categoria Lancamento';
+                    $itemOptions['CategoriaLancamento'] = $optionsAtivo;
+                    $viewForm = $this->actionCategoriaLancamento();
                     break;
                 default:
                     break;
@@ -329,8 +341,14 @@ class CadastroController extends Controller
         $modelUsuario = new Usuario();
         $modelColaborador = new Colaborador('usuario');
         
-        if(isset($_POST['Usuario']))
+        if(isset($_POST['Usuario']) && isset($_POST['Colaborador']))
 		{
+            $modelUsuario->attributes = $_POST['Usuario'];
+            if(isset($_POST['Usuario']['de_senha_confirmacao']))
+            {
+                $modelUsuario->de_senha_confirmacao = $_POST['Usuario']['de_senha_confirmacao'];
+            }
+            
             if(!empty($_POST['Usuario']['id_pessoa']))
             {
                 $update = true;
@@ -354,26 +372,6 @@ class CadastroController extends Controller
                     $modelColaborador->addCustomError('id_pessoa','Este colaborador já está associado à um usuário');
                 }
             }
-            else
-            {
-                if($update)
-                {
-                    
-                    
-                    if(!empty($_POST['Usuario']['de_senha']))
-                    {
-                        $modelUsuario->de_senha = Yii::app()->bulebar->criptografaSenha($modelUsuario->de_senha);
-                        $modelUsuario->de_senha_confirmacao = Yii::app()->bulebar->criptografaSenha($modelUsuario->de_senha_confirmacao);
-                    }
-                }
-                else {
-                  $modelUsuario->de_senha = Yii::app()->bulebar->criptografaSenha($modelUsuario->de_senha);
-                  $modelUsuario->de_senha_confirmacao = Yii::app()->bulebar->criptografaSenha($modelUsuario->de_senha_confirmacao);
-                }
-                        
-                $modelUsuario->attributes = $_POST['Usuario'];
-                $modelUsuario->de_senha_confirmacao = $_POST['Usuario']['de_senha_confirmacao'];
-            }
         }
         
         if(isset($_POST['ajax']) && $_POST['ajax']==='cadastroUsuario')
@@ -382,13 +380,20 @@ class CadastroController extends Controller
 			Yii::app()->end();
 		}
         
-        if(isset($_POST['Usuario']))
+        if(isset($_POST['Usuario']) && isset($_POST['Colaborador']))
 		{
+            
             $pk = $modelUsuario->id_pessoa;
             $modelUsuario->id_pessoa = $_POST['Colaborador']['id_pessoa'];
             
             if($modelUsuario->validate() && $modelColaborador->validate())
             {
+                if(!$update || ($update && !empty($_POST['Usuario']['de_senha'])))
+                {
+                    $modelUsuario->de_senha = Yii::app()->bulebar->criptografaSenha($modelUsuario->de_senha);
+                    $modelUsuario->de_senha_confirmacao = Yii::app()->bulebar->criptografaSenha($modelUsuario->de_senha_confirmacao);
+                }
+                
                 if($update)
                 {
                     Usuario::model()->updateByPk($pk,$modelUsuario->attributes);
@@ -416,16 +421,118 @@ class CadastroController extends Controller
                         );
 	}
     
+    /**
+	 * Página de Cadastro de Estabelecimento
+	 */
+	protected function actionEstabelecimento()
+	{
+        $modelEstabelecimento = new Estabelecimento();
+                
+        if(isset($_POST['ajax']) && $_POST['ajax']==='cadastroEstabelecimento')
+		{
+            echo CActiveForm::validate(array($modelEstabelecimento));
+			Yii::app()->end();
+		}
+        
+        if(isset($_POST['Estabelecimento']))
+		{
+            $modelEstabelecimento->id_estabelecimento = $_POST['Estabelecimento']['id_estabelecimento'];
+            $estabelecimento = Estabelecimento::model()->findByPk($modelEstabelecimento->id_estabelecimento);
+            
+            $modelEstabelecimento->attributes = $_POST['Estabelecimento'];
+            
+            $pk = $modelEstabelecimento->id_estabelecimento;
+            $modelEstabelecimento->id_estabelecimento = $_POST['Estabelecimento']['id_estabelecimento'];
+            
+            if($modelEstabelecimento->validate())
+            {
+                if(!empty($_POST['Estabelecimento']['id_estabelecimento']))
+                {
+                    Estabelecimento::model()->updateByPk($pk,$modelEstabelecimento->attributes);
+                    Yii::app()->user->setFlash('success', "Estabelecimento $modelEstabelecimento->nm_estabelecimento alterado com sucesso!");
+                } else {
+                    $modelEstabelecimento->save();
+                    Yii::app()->user->setFlash('success', "Estabelecimento $modelEstabelecimento->nm_estabelecimento cadastrado com sucesso!");
+                }   
+            }
+            
+            $modelEstabelecimento = new Estabelecimento();
+        }
+        
+        //filtro do grid
+        if(isset($_GET['Estabelecimento']))
+        {
+            $modelEstabelecimento->unsetAttributes();
+            $modelEstabelecimento->id_estabelecimento = $_GET['Estabelecimento']['id_estabelecimento'];
+            $modelEstabelecimento->nm_estabelecimento = $_GET['Estabelecimento']['nm_estabelecimento'];
+        }
+        
+		return $this->renderPartial('estabelecimento',
+                            array('modelEstabelecimento' => $modelEstabelecimento),
+                            true
+                        );
+	}
+    
+    /**
+	 * Página de Cadastro de Categorias de lançamento
+	 */
+	protected function actionCategoriaLancamento()
+	{
+        $modelCategoriaLancamento = new Categorialancamento();
+        
+        if(isset($_POST['ajax']) && $_POST['ajax']==='cadastroCategoriaLancamento')
+		{
+            echo CActiveForm::validate(array($modelCategoriaLancamento));
+			Yii::app()->end();
+		}
+        
+        if(isset($_POST['Categorialancamento']))
+		{
+            $modelCategoriaLancamento->attributes = $_POST['Categorialancamento'];
+            
+            $pk = $modelCategoriaLancamento->id_categoriaLancamento;
+            $modelCategoriaLancamento->id_categoriaLancamento = $_POST['Categorialancamento']['id_categoriaLancamento'];
+                        
+            if($modelCategoriaLancamento->validate())
+            {
+                if(!empty($_POST['Categorialancamento']['id_categoriaLancamento']))
+                {
+                    Categorialancamento::model()->updateByPk($modelCategoriaLancamento->id_categoriaLancamento,$modelCategoriaLancamento->attributes);
+                    Yii::app()->user->setFlash('success', "Categoria $modelCategoriaLancamento->nm_categoriaLancamento alterado com sucesso!");
+                } else {
+                    $modelCategoriaLancamento->save();
+                    Yii::app()->user->setFlash('success', "Categoria $modelCategoriaLancamento->nm_categoriaLancamento cadastrado com sucesso!");
+                }   
+            }
+            
+            $modelCategoriaLancamento = new Categorialancamento();
+        }
+        
+        //filtro do grid
+        if(isset($_GET['Categorialancamento']))
+        {
+            $modelCategoriaLancamento->unsetAttributes();
+            $modelCategoriaLancamento->id_categoriaLancamento = $_GET['Categorialancamento']['id_categoriaLancamento'];
+            $modelCategoriaLancamento->nm_categoriaLancamento = $_GET['Categorialancamento']['nm_categoriaLancamento'];
+            $modelCategoriaLancamento->tp_categoriaLancamento = $_GET['Categorialancamento']['tp_categoriaLancamento'];
+            $modelCategoriaLancamento->nm_categoriaLancamentoPai = $_GET['Categorialancamento']['nm_categoriaLancamentoPai'];
+        }
+        
+		return $this->renderPartial('categorialancamento',
+                            array('modelCategoriaLancamento' => $modelCategoriaLancamento),
+                            true
+                        );
+	}
+    
     public function actionGetFornecedor()
     {
         if (!Yii::app()->request->isAjaxRequest) {
             throw new CHttpException('403', 'Forbidden access.');
         }
         
-        $model = new Fornecedor();
-        $fornecedor = $model->getFornecedorCompleto($_POST['idPessoa']);
+        $fornecedor = Fornecedor::model()->getFornecedorCompleto($_POST['idPessoa']);
         
-        $json = null;
+        $json = new stdClass();
         
         foreach ($fornecedor as $key=>$value) {
             $json->$key = $value;
@@ -462,10 +569,9 @@ class CadastroController extends Controller
             throw new CHttpException('403', 'Forbidden access.');
         }
         
-        $model = new Colaborador();
-        $colaborador = $model->getColaboradorCompleto($_POST['idPessoa']);
+        $colaborador = Colaborador::model()->getColaboradorCompleto($_POST['idPessoa']);
         
-        $json = null;
+        $json = new stdClass();
         
         foreach ($colaborador as $key=>$value) {
             $json->$key = $value;
@@ -491,16 +597,53 @@ class CadastroController extends Controller
             throw new CHttpException('403', 'Forbidden access.');
         }
         
-        $model = new Usuario();
-        $colaborador = $model->findByPk($_POST['idPessoa']);
+        $usuario = Usuario::model()->findByPk($_POST['idPessoa']);
         
-        $json = null;
+        $json = new stdClass();
         
-        foreach ($colaborador as $key=>$value) {
+        foreach ($usuario as $key=>$value) {
             $json->$key = $value;
         }
         
         echo CJSON::encode(array('usuario'=>$json));
+
+        Yii::app()->end();
+    }
+    
+    public function actionGetEstabelecimento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+        
+        $estabelecimento = Estabelecimento::model()->findByPk($_POST['idEstabelecimento']);
+        
+        $json = new stdClass();
+        
+        foreach ($estabelecimento as $key=>$value) {
+            $json->$key = $value;
+        }
+        
+        echo CJSON::encode(array('Estabelecimento'=>$json));
+
+        Yii::app()->end();
+    }
+    
+    public function actionGetCategoriaLancamento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+        
+        $categoria = Categorialancamento::model()->findByPk($_POST['idCategoriaLancamento']);
+        
+        $json = new stdClass();
+        
+        foreach ($categoria as $key=>$value) {
+            $json->$key = $value;
+        }
+        
+        echo CJSON::encode(array('CategoriaLancamento'=>$json));
 
         Yii::app()->end();
     }
@@ -541,6 +684,44 @@ class CadastroController extends Controller
             Yii::app()->user->setFlash('success', "$modelUsuario->nm_login removido(a) com sucesso!");
         } else {
             Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover $modelUsuario->nm_login!");
+        }
+        Yii::app()->end();
+    }
+    
+    public function actionDelEstabelecimento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+
+        if (isset($_POST['idEstabelecimento']))
+        {
+            $id = $_POST['idEstabelecimento'];
+            $modelEstabelecimento = Estabelecimento::model()->findByPk($id);
+            $modelEstabelecimento->delete();
+            
+            Yii::app()->user->setFlash('success', "$modelEstabelecimento->nm_estabelecimento removido(a) com sucesso!");
+        } else {
+            Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover $modelEstabelecimento->nm_estabelecimento!");
+        }
+        Yii::app()->end();
+    }
+    
+    public function actionDelCategoriaLancamento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+
+        if (isset($_POST['idCategoriaLancamento']))
+        {
+            $id = $_POST['idCategoriaLancamento'];
+            $modelCategoriaLancamento = Categorialancamento::model()->findByPk($id);
+            $modelCategoriaLancamento->delete();
+            
+            Yii::app()->user->setFlash('success', "$modelCategoriaLancamento->nm_categoriaLancamento removido(a) com sucesso!");
+        } else {
+            Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover $modelCategoriaLancamento->nm_categoriaLancamento!");
         }
         Yii::app()->end();
     }
