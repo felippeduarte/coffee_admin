@@ -61,6 +61,8 @@ return array(
                                   'getFornecedor|'.
                                   'getCategoriaLancamento|'.
                                   'getFormaPagamento|'.
+                                  'getEstabelecimentoFormaPagamento|'.
+                                  'delEstabelecimentoFormaPagamento|'.
                                   'delFormaPagamento|'.
                                   'delGrupoEstabelecimento|'.
                                   'delEstabelecimento|'.

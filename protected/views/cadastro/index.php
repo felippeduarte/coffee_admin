@@ -17,16 +17,17 @@ $this->breadcrumbs=array(
         'type'=>'list',
         'items' => array(
                 array('label'=>'Pessoas', 'itemOptions'=>array('class'=>'nav-header')),
-                array('label'=>'Fornecedor', 'url'=>Yii::app()->createUrl('cadastro/fornecedor'), 'itemOptions'=>$itemOptions['Fornecedor']),
-                array('label'=>'Colaborador', 'url'=>Yii::app()->createUrl('cadastro/colaborador'), 'itemOptions'=>$itemOptions['Colaborador']),
-                array('label'=>'Cargo Colaborador', 'url'=>Yii::app()->createUrl('cadastro/cargocolaborador'), 'itemOptions'=>$itemOptions['CargoColaborador']),
-                array('label'=>'Usuário', 'url'=>Yii::app()->createUrl('cadastro/usuario'), 'itemOptions'=> $itemOptions['Usuario']),
+                array('label'=>'Fornecedores', 'url'=>Yii::app()->createUrl('cadastro/fornecedor'), 'itemOptions'=>$itemOptions['Fornecedor']),
+                array('label'=>'Colaboradores', 'url'=>Yii::app()->createUrl('cadastro/colaborador'), 'itemOptions'=>$itemOptions['Colaborador']),
+                array('label'=>'Cargos de Colaborador', 'url'=>Yii::app()->createUrl('cadastro/cargocolaborador'), 'itemOptions'=>$itemOptions['CargoColaborador']),
+                array('label'=>'Usuários', 'url'=>Yii::app()->createUrl('cadastro/usuario'), 'itemOptions'=> $itemOptions['Usuario']),
                 array('label'=>'Estabelecimentos', 'itemOptions'=>array('class'=>'nav-header')),
-                array('label'=>'Estabelecimento', 'url'=>Yii::app()->createUrl('cadastro/estabelecimento'), 'itemOptions'=> $itemOptions['Estabelecimento']),
-                array('label'=>'Grupo Estabelecimento', 'url'=>Yii::app()->createUrl('cadastro/grupoestabelecimento'), 'itemOptions'=> $itemOptions['GrupoEstabelecimento']),
+                array('label'=>'Estabelecimentos', 'url'=>Yii::app()->createUrl('cadastro/estabelecimento'), 'itemOptions'=> $itemOptions['Estabelecimento']),
+                array('label'=>'Grupos de Estabelecimentos', 'url'=>Yii::app()->createUrl('cadastro/grupoestabelecimento'), 'itemOptions'=> $itemOptions['GrupoEstabelecimento']),
                 array('label'=>'Categorias e taxas', 'itemOptions'=>array('class'=>'nav-header')),
-                array('label'=>'Categoria', 'url'=>Yii::app()->createUrl('cadastro/categorialancamento'), 'itemOptions'=> $itemOptions['CategoriaLancamento']),
-                array('label'=>'Forma de Pagamento', 'url'=>Yii::app()->createUrl('cadastro/formapagamento'), 'itemOptions'=> $itemOptions['FormaPagamento']),
+                array('label'=>'Categorias', 'url'=>Yii::app()->createUrl('cadastro/categorialancamento'), 'itemOptions'=> $itemOptions['CategoriaLancamento']),
+                array('label'=>'Formas de Pagamento', 'url'=>Yii::app()->createUrl('cadastro/formapagamento'), 'itemOptions'=> $itemOptions['FormaPagamento']),
+                array('label'=>'Tarifas', 'url'=>Yii::app()->createUrl('cadastro/estabelecimentoformapagamento'), 'itemOptions'=> $itemOptions['EstabelecimentoFormaPagamento']),
         )
     ));
     ?>

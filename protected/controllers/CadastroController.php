@@ -49,6 +49,7 @@ class CadastroController extends Controller
                 'GrupoEstabelecimento' => array(),
                 'CategoriaLancamento' => array(),
                 'FormaPagamento' => array(),
+                'EstabelecimentoFormaPagamento' => array(),
             );
             $optionsAtivo = array('class'=>'active');
 
@@ -98,6 +99,11 @@ class CadastroController extends Controller
                     $titleBox = 'Forma Pagamento';
                     $itemOptions['FormaPagamento'] = $optionsAtivo;
                     $viewForm = $this->actionFormaPagamento();
+                    break;
+                case 'estabelecimentoformapagamento':
+                    $titleBox = 'Tarifa';
+                    $itemOptions['EstabelecimentoFormaPagamento'] = $optionsAtivo;
+                    $viewForm = $this->actionEstabelecimentoFormaPagamento();
                     break;
                 default:
                     break;
@@ -608,8 +614,6 @@ class CadastroController extends Controller
             
             $modelFormaPagamento->attributes = $_POST['Formapagamento'];
             
-            $modelFormaPagamento->id_formaPagamento = $_POST['Formapagamento']['id_formaPagamento'];
-            
             if($modelFormaPagamento->validate())
             {
                 if(!empty($_POST['Formapagamento']['id_formaPagamento']))
@@ -635,6 +639,74 @@ class CadastroController extends Controller
         
 		return $this->renderPartial('formaPagamento',
                             array('modelFormaPagamento' => $modelFormaPagamento),
+                            true
+                        );
+	}
+    
+    /**
+	 * Página de Cadastro de Estabelecimento Forma Pagamento
+	 */
+	protected function actionEstabelecimentoFormaPagamento()
+	{
+        $modelEstabelecimentoFormaPagamento = new EstabelecimentoFormapagamento();
+        
+        if(isset($_POST['ajax']) && $_POST['ajax']==='cadastroEstabelecimentoFormaPagamento')
+		{
+            echo CActiveForm::validate(array($modelEstabelecimentoFormaPagamento));
+			Yii::app()->end();
+		}
+        
+        if(isset($_POST['EstabelecimentoFormapagamento']))
+		{
+            $modelEstabelecimentoFormaPagamento->id_formaPagamento = $_POST['EstabelecimentoFormapagamento']['id_formaPagamento'];
+            $modelEstabelecimentoFormaPagamento->id_estabelecimento = $_POST['EstabelecimentoFormapagamento']['id_estabelecimento'];
+            
+            $modelEstabelecimentoFormaPagamento->attributes = $_POST['EstabelecimentoFormapagamento'];
+            
+            if($modelEstabelecimentoFormaPagamento->validate())
+            {
+                $pks = array(
+                    'id_formaPagamento' => $modelEstabelecimentoFormaPagamento->id_formaPagamento,
+                    'id_estabelecimento'=> $modelEstabelecimentoFormaPagamento->id_estabelecimento
+                    );
+                $estabelecimentoFormaPagamento = EstabelecimentoFormapagamento::model()->findByPk($pks);
+                
+                $estabelecimento = Estabelecimento::model()->findByPk($modelEstabelecimentoFormaPagamento->id_estabelecimento);
+                $formaPagamento = Formapagamento::model()->findByPk($modelEstabelecimentoFormaPagamento->id_formaPagamento);
+                
+                //update
+                if((!empty($_POST['Estabelecimento']['id_estabelecimento']))&&(!empty($_POST['Formapagamento']['id_formaPagamento'])))
+                {
+                    $estabelecimentoFormaPagamento->attributes = $modelEstabelecimentoFormaPagamento->attributes;
+                    $estabelecimentoFormaPagamento->save();
+                    Yii::app()->user->setFlash('success', "Forma de pagamento ".$formaPagamento->nm_formaPagamento." para o estabelecimento ".$estabelecimento->nm_estabelecimento." alterado com sucesso!");
+                } //insert
+                else {
+                    $modelEstabelecimentoFormaPagamento->save();
+                    Yii::app()->user->setFlash('success', "Forma de pagamento ".$formaPagamento->nm_formaPagamento." para o estabelecimento ".$estabelecimento->nm_estabelecimento." cadastrado com sucesso!");
+                }
+            }
+            
+            $modelEstabelecimentoFormaPagamento = new EstabelecimentoFormapagamento();
+        }
+        
+        //filtro do grid
+        if(isset($_GET['EstabelecimentoFormapagamento']))
+        {
+            $modelEstabelecimentoFormaPagamento->unsetAttributes();
+            $modelEstabelecimentoFormaPagamento->id_formaPagamento = $_GET['EstabelecimentoFormapagamento']['id_formaPagamento'];
+            $modelEstabelecimentoFormaPagamento->nm_formaPagamento = Formapagamento::model()->findByPk($_GET['EstabelecimentoFormapagamento']['id_formaPagamento']);
+            $modelEstabelecimentoFormaPagamento->nm_formaPagamento = $modelEstabelecimentoFormaPagamento->nm_formaPagamento['nm_formaPagamento'];
+            $modelEstabelecimentoFormaPagamento->id_estabelecimento = $_GET['EstabelecimentoFormapagamento']['id_estabelecimento'];
+            $modelEstabelecimentoFormaPagamento->nm_estabelecimento = Estabelecimento::model()->findByPk($_GET['EstabelecimentoFormapagamento']['id_estabelecimento']);
+            $modelEstabelecimentoFormaPagamento->nm_estabelecimento = $modelEstabelecimentoFormaPagamento->nm_estabelecimento['nm_estabelecimento'];
+            $modelEstabelecimentoFormaPagamento->nu_taxaPercentual = $_GET['EstabelecimentoFormapagamento']['nu_taxaPercentual'];
+        }
+        
+		return $this->renderPartial('estabelecimentoformapagamento',
+                            array('modelEstabelecimentoFormaPagamento' => $modelEstabelecimentoFormaPagamento,
+                                  'modelEstabelecimento' => new Estabelecimento(),
+                                  'modelFormaPagamento' => new FormaPagamento()),
                             true
                         );
 	}
@@ -831,7 +903,7 @@ class CadastroController extends Controller
         echo CJSON::encode(array('GrupoEstabelecimento'=>$json));
 
         Yii::app()->end();
-    }    
+    }
     
     public function actionGetFormaPagamento()
     {
@@ -839,18 +911,42 @@ class CadastroController extends Controller
             throw new CHttpException('403', 'Forbidden access.');
         }
         
-        $grupoEstabelecimento = FormaPagamento::model()->findByPk($_POST['idFormaPagamento']);
+        $formaPagamento = FormaPagamento::model()->findByPk($_POST['idFormaPagamento']);
         
         $json = new stdClass();
         
-        foreach ($grupoEstabelecimento as $key=>$value) {
+        foreach ($formaPagamento as $key=>$value) {
             $json->$key = $value;
         }
         
         echo CJSON::encode(array('FormaPagamento'=>$json));
 
         Yii::app()->end();
-    }    
+    }
+    
+    public function actionGetEstabelecimentoFormaPagamento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+        
+        $pks = array(
+            'id_formaPagamento' => $_POST['idFormaPagamento'],
+            'id_estabelecimento'=> $_POST['idEstabelecimento']
+            );
+        
+        $estabelecimentoFormaPagamento = EstabelecimentoFormapagamento::model()->findByPk($pks);
+        
+        $json = new stdClass();
+        
+        foreach ($estabelecimentoFormaPagamento as $key=>$value) {
+            $json->$key = $value;
+        }
+        
+        echo CJSON::encode(array('EstabelecimentoFormaPagamento'=>$json));
+
+        Yii::app()->end();
+    }
     
     public function actionGetCategoriaLancamento()
     {
@@ -964,6 +1060,29 @@ class CadastroController extends Controller
             Yii::app()->user->setFlash('success', "$modelGrupoEstabelecimento->nm_grupoEstabelecimento removido(a) com sucesso!");
         } else {
             Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover $modelGrupoEstabelecimento->nm_grupoEstabelecimento!");
+        }
+        Yii::app()->end();
+    }
+    
+    public function actionDelEstabelecimentoFormaPagamento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+
+        if (isset($_POST['idFormaPagamento']) && (isset($_POST['idEstabelecimento'])))
+        {
+            $pks = array(
+                'id_formaPagamento' => $_POST['idFormaPagamento'],
+                'id_estabelecimento'=> $_POST['idEstabelecimento']
+            );
+            
+            $modelEstabelecimentoFormaPagamento = EstabelecimentoFormapagamento::model()->findByPk($pks);
+            $modelEstabelecimentoFormaPagamento->delete();
+            
+            Yii::app()->user->setFlash('success', "Forma de pagamento $modelEstabelecimentoFormaPagamento->nm_formaPagamento para o estabelecimento $modelEstabelecimentoFormaPagamento->nm_estabelecimento foi removido com sucesso!");
+        } else {
+            Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover a forma de pagamento $modelEstabelecimentoFormaPagamento->nm_formaPagamento para o estabelecimento $modelEstabelecimentoFormaPagamento->nm_estabelecimento!");
         }
         Yii::app()->end();
     }

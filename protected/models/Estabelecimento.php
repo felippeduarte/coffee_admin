@@ -98,6 +98,17 @@ class Estabelecimento extends CActiveRecord
 		));
 	}
     
+    public function getComboEstabelecimento()
+    {
+        $criteria=new CDbCriteria;
+        
+        $criteria->select = array(
+            'id_estabelecimento','nm_estabelecimento'
+        );
+        
+        return $this->findAll($criteria);
+    }
+    
     public function getEstabelecimentoGrid()
 	{
 		// Warning: Please modify the following code to remove attributes that

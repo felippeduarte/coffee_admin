@@ -10,6 +10,9 @@
  */
 class EstabelecimentoFormapagamento extends CActiveRecord
 {
+    public $nm_estabelecimento;
+    public $nm_formaPagamento;
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -53,6 +56,8 @@ class EstabelecimentoFormapagamento extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'idEstabelecimento' => array(self::BELONGS_TO, 'Estabelecimento', 'id_estabelecimento'),
+            'idFormaPagamento' => array(self::BELONGS_TO, 'Formapagamento', 'id_formaPagamento'),
 		);
 	}
 
@@ -62,12 +67,22 @@ class EstabelecimentoFormapagamento extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id_estabelecimento' => 'Id Estabelecimento',
-			'id_formaPagamento' => 'Id Forma Pagamento',
-			'nu_taxaPercentual' => 'Nu Taxa Percentual',
+			'id_estabelecimento' => 'Nome Estabelecimento',
+			'id_formaPagamento' => 'Nome Forma de Pagamento',
+			'nu_taxaPercentual' => 'Taxa Percentual',
 		);
 	}
 
+    protected function beforeSave()
+    {
+        if(parent::beforeSave())
+        {
+            $this->nu_taxaPercentual = str_replace(",", ".", $this->nu_taxaPercentual);
+            return true;
+        }
+        return false;
+    }
+    
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
@@ -83,6 +98,40 @@ class EstabelecimentoFormapagamento extends CActiveRecord
 		$criteria->compare('id_formaPagamento',$this->id_formaPagamento);
 		$criteria->compare('nu_taxaPercentual',$this->nu_taxaPercentual,true);
 
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+    
+    public function getEstabelecimentoFormaPagamentoGrid()
+	{
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
+
+		$criteria = new CDbCriteria;
+        
+        $criteria->together = true;
+        
+        $criteria->with = array(
+            'idFormaPagamento' => array('select'=>'nm_formaPagamento'),
+            'idEstabelecimento'=> array('select'=>'nm_estabelecimento'),
+        );
+        
+        $criteria->select = array(
+            'id_estabelecimento', 'id_formaPagamento', 'nu_taxaPercentual'
+        );
+        
+        $criteria->condition = 'idFormaPagamento.fl_inativo = :fl_inativo';
+        $criteria->params = array(
+            ':fl_inativo' => false,
+        );
+        
+        $criteria->compare('t.id_estabelecimento', $this->id_estabelecimento);
+        $criteria->compare('t.id_formaPagamento', $this->id_formaPagamento);
+        $criteria->compare('idEstabelecimento.nm_estabelecimento', $this->nm_estabelecimento, true);
+        $criteria->compare('idFormaPagamento.nm_formaPagamento', $this->nm_formaPagamento, true);
+        $criteria->compare('t.nu_taxaPercentual', $this->nu_taxaPercentual, true);
+                
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
