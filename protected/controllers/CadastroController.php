@@ -695,11 +695,9 @@ class CadastroController extends Controller
         {
             $modelEstabelecimentoFormaPagamento->unsetAttributes();
             $modelEstabelecimentoFormaPagamento->id_formaPagamento = $_GET['EstabelecimentoFormapagamento']['id_formaPagamento'];
-            $modelEstabelecimentoFormaPagamento->nm_formaPagamento = Formapagamento::model()->findByPk($_GET['EstabelecimentoFormapagamento']['id_formaPagamento']);
-            $modelEstabelecimentoFormaPagamento->nm_formaPagamento = $modelEstabelecimentoFormaPagamento->nm_formaPagamento['nm_formaPagamento'];
+            $modelEstabelecimentoFormaPagamento->nm_formaPagamento = $_GET['EstabelecimentoFormapagamento']['nm_formaPagamento'];
             $modelEstabelecimentoFormaPagamento->id_estabelecimento = $_GET['EstabelecimentoFormapagamento']['id_estabelecimento'];
-            $modelEstabelecimentoFormaPagamento->nm_estabelecimento = Estabelecimento::model()->findByPk($_GET['EstabelecimentoFormapagamento']['id_estabelecimento']);
-            $modelEstabelecimentoFormaPagamento->nm_estabelecimento = $modelEstabelecimentoFormaPagamento->nm_estabelecimento['nm_estabelecimento'];
+            $modelEstabelecimentoFormaPagamento->nm_estabelecimento = $_GET['EstabelecimentoFormapagamento']['nm_estabelecimento'];
             $modelEstabelecimentoFormaPagamento->nu_taxaPercentual = $_GET['EstabelecimentoFormapagamento']['nu_taxaPercentual'];
         }
         
