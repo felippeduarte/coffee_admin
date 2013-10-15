@@ -50,6 +50,7 @@ class Pessoafisica extends CActiveRecord
 			array('id_pessoa', 'numerical', 'integerOnly'=>true),
 			array('nu_cpf', 'length', 'max'=>11),
             array('nu_cpf', 'unique', 'className'=>'Pessoafisica'),
+            array('nu_cpf', 'validarCPF'),
 			array('nm_apelido', 'length', 'max'=>200),
 			array('nu_rg', 'length', 'max'=>20),
 			array('tp_pessoaFisica', 'length', 'max'=>1),
@@ -136,5 +137,14 @@ class Pessoafisica extends CActiveRecord
         $this->nu_cpf = Yii::app()->bulebar->adicionaMascaraCPF($this->nu_cpf);
         
         return parent::afterSave();
+    }
+    
+    public function validarCPF($attribute)
+    {
+        $retorno = Yii::app()->bulebar->validarCPF($this->nu_cpf);
+        if(!$retorno)
+        {
+            $this->addError($attribute, 'CPF inválido');
+        }
     }
 }

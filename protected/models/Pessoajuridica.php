@@ -44,6 +44,7 @@ class Pessoajuridica extends CActiveRecord
 			array('id_pessoa', 'numerical', 'integerOnly'=>true),
 			array('nu_cnpj', 'length', 'max'=>14),
             array('nu_cnpj', 'unique', 'className'=>'Pessoajuridica'),
+            array('nu_cnpj', 'validarCNPJ'),
 			array('nm_nomeFantasia', 'length', 'max'=>200),
 			array('nu_inscricaoEstadual', 'length', 'max'=>45),
 			// The following rule is used by search().
@@ -104,5 +105,14 @@ class Pessoajuridica extends CActiveRecord
         $this->nu_cnpj = preg_replace("/[^0-9]/","",$this->nu_cnpj);
 
         return parent::beforeValidate();
+    }
+    
+    public function validarCNPJ($attribute)
+    {
+        $retorno = Yii::app()->bulebar->validarCNPJ($this->nu_cnpj);
+        if(!$retorno)
+        {
+            $this->addError($attribute, 'CNPJ inválido');
+        }
     }
 }

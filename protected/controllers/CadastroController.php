@@ -172,10 +172,12 @@ class CadastroController extends Controller
 		{   
             if($_POST['Pessoa']['tp_pessoa']==Pessoa::TP_PESSOA_FISICA)
             {
+                $modelPessoaFisica->attributes = $_POST['Pessoafisica'];
                 echo CActiveForm::validate(array($modelPessoa,$modelPessoaFisica));
             }
             else if($_POST['Pessoa']['tp_pessoa']==Pessoa::TP_PESSOA_JURIDICA)
             {
+                $modelPessoaJuridica->attributes = $_POST['Pessoajuridica'];
                 echo CActiveForm::validate(array($modelPessoa,$modelPessoaJuridica));
             }
             else {
@@ -219,22 +221,24 @@ class CadastroController extends Controller
                     {
                         $modelFornecedor->id_pessoa = $modelPessoa->id_pessoa;
                     }
-
-                    $modelPessoaEspecialista->save();
-
-                    $modelFornecedor->save();
-
-                    $transacao->commit();
                     
-                    $id ?
-                        Yii::app()->user->setFlash('success', "Fornecedor $modelPessoa->nm_pessoa alterado com sucesso!"):
-                        Yii::app()->user->setFlash('success', "Fornecedor $modelPessoa->nm_pessoa cadastrado com sucesso!");                    
-                    
-                    $modelPessoa = new Pessoa();
-                    $modelPessoaFisica = new Pessoafisica('cadastro');
-                    $modelPessoaJuridica = new Pessoajuridica();
-                    $modelFornecedor = new Fornecedor();
-                
+                    if($modelPessoaEspecialista->validate())
+                    {
+                        $modelPessoaEspecialista->save();
+
+                        $modelFornecedor->save();
+
+                        $transacao->commit();
+
+                        $id ?
+                            Yii::app()->user->setFlash('success', "Fornecedor $modelPessoa->nm_pessoa alterado com sucesso!"):
+                            Yii::app()->user->setFlash('success', "Fornecedor $modelPessoa->nm_pessoa cadastrado com sucesso!");                    
+
+                        $modelPessoa = new Pessoa();
+                        $modelPessoaFisica = new Pessoafisica('cadastro');
+                        $modelPessoaJuridica = new Pessoajuridica();
+                        $modelFornecedor = new Fornecedor();
+                    }
                 }
                 catch (Exception $e)
                 {
