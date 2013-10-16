@@ -15,6 +15,7 @@
 <body>
 
 <?php $this->widget('bootstrap.widgets.TbNavbar',array(
+    'brand' => '<img src ="' . Yii::app()->request->baseUrl . '/images/brand.png" /> Controle Financeiro',
     'items'=>array(
         array(
             'class'=>'bootstrap.widgets.TbMenu',

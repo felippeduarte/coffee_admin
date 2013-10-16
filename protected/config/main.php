@@ -13,7 +13,7 @@ return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
     
     'language' => 'pt_br',
-	'name'=>'My Web Application',
+	'name'=>'Bulebar - Controle Financeiro',
 
 	// preloading 'log' component
 	'preload'=>array('log', 'bootstrap'),
