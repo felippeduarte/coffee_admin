@@ -17,9 +17,18 @@ class LancamentoController extends Controller
 	}
     
     public function actionIndex()
-	{
-		$this->render('index',array(
+	{$this->render('index');
+        if(isset($_POST))
+        {
+            $dataInicio = isset($_POST['dataInicio']) ? $_POST['dataInicio'] : null;
+            $dataFim = isset($_POST['dataFim']) ? $_POST['dataFim'] : null;
+            $estabelecimento = isset($_POST['estabelecimento']) ? $_POST['estabelecimento'] : null;
+            
+            $this->render('grid',array(
             'modelLancamento' => new Lancamento()));
+        }
+        
+        
 	}
     
     public function actionEdit()
