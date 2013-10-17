@@ -131,7 +131,7 @@ class Lancamento extends CActiveRecord
 		));
 	}
     
-    public function getLancamentoGrid()
+    public function getLancamentoGrid($dataInicio, $dataFim, $estabelecimento)
 	{
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
@@ -151,6 +151,25 @@ class Lancamento extends CActiveRecord
             'id_lancamento','dt_lancamento','vl_lancamento'
         );
         
+        $condicao = null;
+        
+        if(!empty($dataInicio))
+        {
+            $condicao[] = 'dt_lancamento >= "'.Yii::app()->bulebar->trocaDataViewParaModel($dataInicio).'"';
+        }
+        if(!empty($dataFim))
+        {
+            $condicao[] = 'dt_lancamento <= "'.Yii::app()->bulebar->trocaDataViewParaModel($dataFim).'"';
+        }
+        if(!empty($estabelecimento))
+        {
+            $condicao[] = 't.id_estabelecimento = '.(int)$estabelecimento;
+        }
+        
+        if(!empty($condicao))
+        {
+            $criteria->condition = join(' AND ', $condicao);
+        }
         
         $criteria->compare('t.id_lancamento', $this->id_lancamento);
         $criteria->compare('t.dt_lancamento', $this->dt_lancamento, true);

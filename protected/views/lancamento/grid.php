@@ -1,5 +1,5 @@
 <?php 
-$dataProvider = $modelLancamento->getLancamentoGrid();
+
 $dataProvider->pagination = array('pagesize'=>10);
 $dataProvider->sort = array(
             'attributes'=>array(
@@ -74,6 +74,7 @@ $gridColumns = array(
     array(
         'header' => 'Valor',
         'name'  => 'vl_lancamento',
+        'value' => '$data->idCategoriaLancamento->tp_categoriaLancamento == "R" ? Yii::app()->bulebar->setColor($data->vl_lancamento,"verde") : Yii::app()->bulebar->setColor($data->vl_lancamento,"vermelho")',
         'htmlOptions'=>array('style'=>'width: 30px')
         ),
     array(

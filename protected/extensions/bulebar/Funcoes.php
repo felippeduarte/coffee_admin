@@ -142,5 +142,22 @@ class Funcoes extends CApplicationComponent
         }
         return true; 
     }
+    
+    public function setColor($str, $cor)
+    {
+        switch ($cor)
+        {
+            case "vermelho":
+                $str = '<span class="text-warning">'.$str.'</span>';
+                break;
+            case "verde":
+                $str = "<span class='text-success'>$str</span>";
+                break;
+            default:
+                break;
+        }
+        
+        return $str;
+    }
 }
 ?>
