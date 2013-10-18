@@ -10,7 +10,7 @@ $form = $this->beginWidget(
     'bootstrap.widgets.TbActiveForm',
     array(
         'id' => 'form',
-        'htmlOptions' => array('class' => 'form-inline well'), // for inset effect
+        'htmlOptions' => array('class' => 'form-inline well'),
     )
 );
 ?>
@@ -98,8 +98,18 @@ $this->widget('bootstrap.widgets.TbBox', array(
                                 'htmlOptions' => array(
                                     'data-toggle' => 'modal',
                                     'data-id' => 'R',
-                                    'class'=>'btn btn-success btn-lancamento',
-                                )
+                                    'class'=>'btn-success btn-lancamento',
+                                    'ajax' => array(
+                                        'type'=>'POST', 
+                                        'url'=>CController::createUrl('carregaCategorias'),
+                                        'data'=>array('tp_categoriaLancamento'=>'R'),
+                                        'success'=>"js:function(html){ 
+                                            jQuery('#modal-cadastro').modal({'show':true});
+                                            jQuery('#Lancamento_id_categoriaLancamento').html(html);
+                                            $('.modal-header h3').text('Lançar Receita');
+                                        }",
+                                    ),
+                                ), 
                             ),
                             array(
                                 'label'=>'- Lançar Despesa',
@@ -107,7 +117,17 @@ $this->widget('bootstrap.widgets.TbBox', array(
                                 'htmlOptions' => array(
                                     'data-toggle' => 'modal',
                                     'data-id' => 'D',
-                                    'class'=>'btn btn-danger btn-lancamento',
+                                    'class'=>'btn-danger btn-lancamento',
+                                    'ajax' => array(
+                                        'type'=>'POST', 
+                                        'url'=>CController::createUrl('carregaCategorias'),
+                                        'data'=>array('tp_categoriaLancamento'=>'D'),
+                                        'success'=>"js:function(html){ 
+                                            jQuery('#modal-cadastro').modal({'show':true});
+                                            jQuery('#Lancamento_id_categoriaLancamento').html(html);
+                                            $('.modal-header h3').text('Lançar Despesa');
+                                        }",
+                                    ),
                                 )
                             ),
                         )
@@ -120,7 +140,7 @@ $form = $this->beginWidget(
     'bootstrap.widgets.TbActiveForm',
     array(
         'id' => 'form_lancamento',
-        'htmlOptions' => array('class' => 'form-inline well'), // for inset effect
+        'type' => 'horizontal'
     )
 );
 ?>
@@ -137,11 +157,29 @@ $form = $this->beginWidget(
         <fieldset>
             <?php echo $form->errorSummary(array($modelLancamento),'Sumário de Erros'); ?>
 
-            <?php echo $form->maskedTextFieldRow($modelLancamento,'vl_lancamento','9/99',
+            <?php echo $form->maskedTextFieldRow($modelLancamento,'vl_lancamento','%9,99',
                         array('prepend'=>'R$',
                               'class' => 'input-small'
                         )
                     ); ?>
+            
+            <?php echo $form->dropDownListRow($modelLancamento,
+                            'id_categoriaLancamento',
+                            CHtml::listData(CategoriaLancamento::model()->getComboCategoriaLancamento(),'id_categoriaLancamento','nm_categoriaLancamento'),
+                            array('prompt' => '--Escolha a categoria --',
+                                'labelOptions' => array('label' => false),
+                            )); ?>
+            <div class="control-group">
+            <?php echo $form->label($modelLancamento, 'nm_turno',array('class'=>'control-label required')); ?>
+                <div class="controls">
+            <?php echo $form->hiddenField($modelLancamento, 'nm_turno'); ?>
+            <?php $form->widget('bootstrap.widgets.TbButtonGroup', array(
+                        'type' => 'info',
+                        'toggle' => 'radio',
+                        'buttons' => Lancamento::model()->getRadioButtonsTurno(),
+                    )); ?>
+                </div>
+            </div>
         </fieldset>
     </div>
     <div class="modal-footer">
@@ -153,12 +191,3 @@ $this->endWidget();
 $this->endWidget();
 unset($form);
 ?>
-
-
-<script type='text/javascript'>
-    $(document).on("click", ".btn-lancamento", function () {
-     var tipoLancamento = $(this).data('id');
-     var titulo = tipoLancamento == 'R' ? 'Receita' : 'Despesa';
-     $(".modal-header h3").text("Lançamento "+titulo);
-});
-</script>

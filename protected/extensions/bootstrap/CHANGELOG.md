@@ -8,6 +8,34 @@ Thank you all
 
 Antonio Ramirez.
 
+## YiiBooster version 2.0.0
+- **(enh)** Bootstrap DateRangePicker updated to 1.2, moment.js updated to 2.2.1 (Hrumpa)
+- **(fix)** Fixed incorrect spec for `moment.js` library package. #673 #672 (fleuryc)
+- **(enh)** Replaced notifier library with Notify.js (see http://notify.js) (hijarian).
+- **(enh)** Upgraded BootBox.js library to 3.3.0 version (hijarian)
+- **(enh)** No assets are loaded in AJAX calls now. (hijarian)
+- **(enh)** Responsive CSS are default now. #556 (hijarian)
+- **(enh)** Pass*Field by Antelle (v 1.1.7) widget added #667 (Hrumpa)
+- **(cln)** Removed long-broken `TbExtendedTooltip` from codebase #511 (hijarian)
+- **(fix)** Checkboxes, selects and radiobuttons in form rows do not generate invalid HTML markup anymore #664 #626 (ZhandosKz)
+- **(enh)** Now you can properly extend/modify the rendering of individual alerts in `TbAlert` #619 (hijarian)
+- **(enh)** Updated Redactor to version 9 #583 (hijarian)
+- **(fix)** Now you can create `TbSelect2` widget without any data and placeholder is being handled correctly for empty dropdowns. #247 (hijarian)
+- **(enh)** Now there's no "minifyCss" option. Use the new "minify" option, which does the same thing but means what it really does: whether to minify ALL assets, both CSS and Javascript. (hijarian)
+- **(enh)** Updated `TbWizard` assets to newest version #645 (hijarian)
+- **(fix)** Now we really can use `CActiveDataProvider.keyAttribute` attribute in `TbRelationalColumn` #659 (coupej)
+- **(fix)** `TbActiveForm.radioButtonListRow` validation fixed by adding with id expected by jquery.yiiactiveform.js #652 #653 (timothynott)
+- **(enh)** Added new widget `TbJsonToggleColumn` #660 (tamvodopad)
+- **(fix)** Now `TbPickerColumn` works again. (hijarian)
+- **(fix)** Rather radically fixed the issue with jQuery UI tooltips overriding Twitter Bootstrap tooltips. (hijarian)
+- **(fix)** TbExtendedGridView sortable rows updated to work with CSRF token #333 (zvonicek)
+- **(fix)** `TbJsonGridView` when enablePagination set to false JavaScript does not throw error "Error: Empty or undefined template passed to $.jqotec" #635 (ZhandosKz)
+- **(enh)** `TbJsonGridView` summary data updated after ajax request #635 (ZhandosKz)
+- **(enh)** Bootstrap DateTimePicker by S.Malot widget added rev #91 (Hrumpa)
+- **(fix)** `TbEditableColumn` updated to support namespaced models #636 (xapon)
+- **(enh)** Bootstrap DatePicker updated to 1.1.3 including CDN #631 (Hrumpa)
+- **(enh)** Font Awesome updated to 3.2.1 including CDN (miramir)
+- **(fix)** Added ID to click action in TbRelationalColumn to avoid conflicts on pages with mulitple TbExtendedGridViews #670 (timothynott)
 
 ## YiiBooster version 1.1.0
 - **(enh)** Added Italian translation for `TbHtml5Editor` #544 (realtebo)
@@ -16,10 +44,10 @@ Antonio Ramirez.
 - **(enh)** Updated version of Boostrap Datepicker library #585 (soee)
 - **(enh)** Following methods are deprecated now in main `Bootstrap` class: `register`, `registerAllCss`, `registerAllScripts`, `registerCoreScripts`, `registerTooltipAndPopover`, `registerCoreCss` and `registerResponsiveCss`. If you have been using them, stop as soon as possible, because most possibly you will end with broken styles in your application. (hijarian)
 - **(fix)** Removed LESS files from the codebase, as they are unused (hijarian)
-- **(fix)** Now the bootstrap CSS files are being included according to the combination of `enableCdn`, `minifyCss`, `responsiveCss` and `fontAwesomeCss` parameters. #528 #510 (hijarian)
+- **(fix)** Now the bootstrap CSS files are being included according to the combination of `enableCdn`, `minify`, `responsiveCss` and `fontAwesomeCss` parameters. #528 #510 (hijarian)
 - **(enh)** Added two parameters to Bootstrap component, `ajaxCssLoad` and `ajaxJsLoad`, to control loading CSS and JS assets in AJAX calls #514 (ianare)
 - **(fix)** TbBox action buttons now display correcftly with icons (fleuryc)
-- **(fix)** Check that $_SERVER['HTTP_USER_AGENT'] is set when loading MSIE font awesome (ianare)
+- **(fix)** Check that `$_SERVER['HTTP_USER_AGENT']` is set when loading MSIE font awesome (ianare)
 - **(fix)** Breadcrumbs not visible with default css (naduvko)
 - **(enh)** Inline datepicker (naduvko)
 - **(fix)** Localization of datepicker not working (naduvko)
@@ -119,3 +147,4 @@ Antonio Ramirez.
 - **(fix)** 2nd header from responsive table overlaps the 1st responsive table header #246 (hijarian)
 - **(fix)** Divider symbols in breadcrumbs changed to HTML entities (wkii)
 - **(fix)** Divider in active items in breadcrumbs was outside of the `li` tag (wkii)
+

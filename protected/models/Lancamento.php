@@ -91,13 +91,13 @@ class Lancamento extends CActiveRecord
 		return array(
 			'id_lancamento' => 'Id Lancamento',
 			'dt_lancamento' => 'Dt Lancamento',
-			'vl_lancamento' => 'Vl Lancamento',
+			'vl_lancamento' => 'Valor',
 			'id_estabelecimento' => 'Id Estabelecimento',
 			'id_categoriaLancamento' => 'Id Categoria Lancamento',
 			'id_pessoaLancamento' => 'Id Pessoa Lancamento',
 			'id_formaPagamento' => 'Id Forma Pagamento',
-			'nm_turno' => 'Nm Turno',
-			'de_observacao' => 'De Observacao',
+			'nm_turno' => 'Turno',
+			'de_observacao' => 'Observacao',
 			'id_pessoaUsuario' => 'Id Pessoa Usuario',
 			'dt_ultimaAlteracao' => 'Dt Ultima Alteracao',
 		);
@@ -187,4 +187,14 @@ class Lancamento extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    public function getRadioButtonsTurno()
+    {
+        return array(
+            array('label' => 'Matutino'),// 'htmlOptions' => array('onclick' => 'alert("aaa")')),
+            array('label' => 'Vespertino'),
+            array('label' => 'Noturno'),
+            array('label' => 'Madrugada')
+        );
+    }
 }

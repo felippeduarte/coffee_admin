@@ -52,4 +52,19 @@ class LancamentoController extends Controller
         var_dump($_GET);
         //die();
     }
+    
+    public function actionCarregaCategorias()
+    {
+        $data = Categorialancamento::model()->findAll('tp_categoriaLancamento = :tp_categoriaLancamento', 
+        array(':tp_categoriaLancamento'=>$_POST['tp_categoriaLancamento'][0]));
+
+        $data = CHtml::listData($data,'id_categoriaLancamento','nm_categoriaLancamento');
+
+        echo "<option value=''>-- Escolha a Categoria --</option>";
+        
+        foreach($data as $id_categoriaLancamento=>$nm_categoriaLancamento)
+        {
+          echo CHtml::tag('option', array('id_categoriaLancamento'=>$id_categoriaLancamento),CHtml::encode($nm_categoriaLancamento),true);
+        }
+    }
 }
