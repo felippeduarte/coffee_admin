@@ -21,24 +21,26 @@ class LancamentoController extends Controller
         $modelLancamento = new Lancamento();
         $dataInicio = date("01/m/Y");
         $dataFim = date("t/m/Y");
+        $estabelecimento = null;
+        $categoria = null;
         
-        if(isset($_POST))
+        if (!empty($_POST))
         {
             $dataInicio = isset($_POST['dataInicio']) ? $_POST['dataInicio'] : null;
             $dataFim = isset($_POST['dataFim']) ? $_POST['dataFim'] : null;
             $estabelecimento = isset($_POST['estabelecimento']) ? $_POST['estabelecimento'] : null;
-            
-            $dataProvider = $modelLancamento->getLancamentoGrid($dataInicio, $dataFim, $estabelecimento);
-            
-            $grid = $this->renderPartial('grid',array(
-                'modelLancamento' => $modelLancamento,
-                'dataProvider' => $dataProvider),
-            true);
+            $categoria = isset($_POST['categoriaLancamento']) ? $_POST['categoriaLancamento'] : null;
         }
+
+        $dataProvider = $modelLancamento->getLancamentoGrid($dataInicio, $dataFim, $estabelecimento, $categoria);
+        
         $this->render('index', array(
-            'grid' => $grid,
+            'dataProvider' => $dataProvider,
             'dataInicio' => $dataInicio,
-            'dataFim' => $dataFim
+            'dataFim' => $dataFim,
+            'estabelecimento' => $estabelecimento,
+            'categoria' => $categoria,
+            'modelLancamento' => $modelLancamento,
         ));
         
 	}

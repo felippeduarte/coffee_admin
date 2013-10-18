@@ -131,11 +131,16 @@ class Categorialancamento extends CActiveRecord
 		));
 	}
     
-    public function getComboCategoriaLancamento()
+    public function getComboCategoriaLancamento($tipoLancamento = null)
     {
         $criteria=new CDbCriteria;
 
         $criteria->select = array('id_categoriaLancamento','nm_categoriaLancamento');
+        
+        if(!empty($tipoLancamento))
+        {
+            $criteria->condition = 'tp_lancamento = '.$tipoLancamento[0];
+        }
         
         return $this->findAll($criteria);
     }

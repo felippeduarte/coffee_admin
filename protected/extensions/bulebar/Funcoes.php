@@ -143,21 +143,14 @@ class Funcoes extends CApplicationComponent
         return true; 
     }
     
-    public function setColor($str, $cor)
+    public function trocaDecimalModel2View($num)
     {
-        switch ($cor)
-        {
-            case "vermelho":
-                $str = '<span class="text-warning">'.$str.'</span>';
-                break;
-            case "verde":
-                $str = "<span class='text-success'>$str</span>";
-                break;
-            default:
-                break;
-        }
-        
-        return $str;
+        return str_replace(".", ",", $num);
+    }
+    
+    public function trocaDecimalView2Model($num)
+    {
+        return str_replace(",", ".", $num);
     }
 }
 ?>

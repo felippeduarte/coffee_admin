@@ -1,8 +1,6 @@
 <?php
 $this->pageTitle=Yii::app()->name . ' - Lançamentos';
-$this->breadcrumbs=array(
-	'Lançamentos',
-);
+$this->breadcrumbs=array('Lançamentos',);
 ?>
 
 <h1>Lançamentos</h1>
@@ -18,16 +16,19 @@ $form = $this->beginWidget(
 ?>
 <i class="icon-calendar"></i>
 <?php
-$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+$form->widget('zii.widgets.jui.CJuiDatePicker',array(
     'name'=>'dataInicio',
     'id'=>'dataInicio',
     'language'=>'pt-BR',
     'value'=> $dataInicio,
-    // additional javascript options for the date picker plugin
     'options'=>array(
         'showAnim'=>'fold',
+        'dateFormat'=>'dd/mm/yy',
+        'changeMonth'=>'true', 
+        'changeYear'=>'true'
     ),
     'htmlOptions'=>array(
+        'readonly'=> true,
         'class'=>'input-small search-query',
     ),
 ));
@@ -37,16 +38,18 @@ $this->widget('zii.widgets.jui.CJuiDatePicker',array(
 
 <i class="icon-calendar"></i>
 <?php
-$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+$form->widget('zii.widgets.jui.CJuiDatePicker',array(
     'name'=>'dataFim',
     'id'=>'dataFim',
     'language'=>'pt-BR',
     'value'=> $dataFim,
-    // additional javascript options for the date picker plugin
     'options'=>array(
         'showAnim'=>'fold',
+        'changeMonth'=>'true', 
+        'changeYear'=>'true'
     ),
     'htmlOptions'=>array(
+        'readonly'=> true,
         'class'=>'input-small search-query',
     ),
 ));
@@ -63,6 +66,16 @@ echo CHtml::dropDownlist(
 ?>
 
 <?php
+echo CHtml::dropDownlist(
+        'categoria',
+        null,
+        CHtml::listData(Categorialancamento::model()->getComboCategoriaLancamento(), 'id_categoriaLancamento', 'nm_categoriaLancamento'),
+        array(
+            'prompt' => '-- Categoria --'
+        ));
+?>
+
+<?php
 $this->widget(
     'bootstrap.widgets.TbButton',
     array('buttonType' => 'submit', 'label' => 'Pesquisar')
@@ -74,7 +87,7 @@ unset($form);
 $this->widget('bootstrap.widgets.TbBox', array(
                 'title' => 'Lançamentos',
                 'headerIcon' => 'icon-file',
-                'content' => $grid,
+                'content' => $this->renderPartial('grid',array('dataProvider' => $dataProvider),true),
                 'headerButtons' => array(
                 	array(
                         'class' => 'bootstrap.widgets.TbButtonGroup',
@@ -84,7 +97,8 @@ $this->widget('bootstrap.widgets.TbBox', array(
                                 'url'=>'#modal-cadastro',
                                 'htmlOptions' => array(
                                     'data-toggle' => 'modal',
-                                    'class'=>'btn btn-success',
+                                    'data-id' => 'R',
+                                    'class'=>'btn btn-success btn-lancamento',
                                 )
                             ),
                             array(
@@ -92,7 +106,8 @@ $this->widget('bootstrap.widgets.TbBox', array(
                                 'url'=>'#modal-cadastro',
                                 'htmlOptions' => array(
                                     'data-toggle' => 'modal',
-                                    'class'=>'btn btn-danger',
+                                    'data-id' => 'D',
+                                    'class'=>'btn btn-danger btn-lancamento',
                                 )
                             ),
                         )
@@ -100,3 +115,50 @@ $this->widget('bootstrap.widgets.TbBox', array(
                 )
             ));
 ?>
+<?php
+$form = $this->beginWidget(
+    'bootstrap.widgets.TbActiveForm',
+    array(
+        'id' => 'form_lancamento',
+        'htmlOptions' => array('class' => 'form-inline well'), // for inset effect
+    )
+);
+?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array(
+                                            'id' => 'modal-cadastro'
+                                             )
+          ); ?>
+
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">&times;</a>
+        <h3></h3>
+    </div>
+    <div class="modal-body">
+        <fieldset>
+            <?php echo $form->errorSummary(array($modelLancamento),'Sumário de Erros'); ?>
+
+            <?php echo $form->maskedTextFieldRow($modelLancamento,'vl_lancamento','9/99',
+                        array('prepend'=>'R$',
+                              'class' => 'input-small'
+                        )
+                    ); ?>
+        </fieldset>
+    </div>
+    <div class="modal-footer">
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'primary', 'label'=>'Confirmar')); ?>
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'reset', 'label'=>'Limpar')); ?>
+    </div>
+<?php 
+$this->endWidget();
+$this->endWidget();
+unset($form);
+?>
+
+
+<script type='text/javascript'>
+    $(document).on("click", ".btn-lancamento", function () {
+     var tipoLancamento = $(this).data('id');
+     var titulo = tipoLancamento == 'R' ? 'Receita' : 'Despesa';
+     $(".modal-header h3").text("Lançamento "+titulo);
+});
+</script>

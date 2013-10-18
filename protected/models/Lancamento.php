@@ -131,7 +131,7 @@ class Lancamento extends CActiveRecord
 		));
 	}
     
-    public function getLancamentoGrid($dataInicio, $dataFim, $estabelecimento)
+    public function getLancamentoGrid($dataInicio, $dataFim, $estabelecimento, $categoria)
 	{
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
@@ -165,6 +165,11 @@ class Lancamento extends CActiveRecord
         {
             $condicao[] = 't.id_estabelecimento = '.(int)$estabelecimento;
         }
+        if(!empty($categoria))
+        {
+            $condicao[] = 't.id_categoriaLancamento = '.(int)$categoria;
+        }
+        
         
         if(!empty($condicao))
         {

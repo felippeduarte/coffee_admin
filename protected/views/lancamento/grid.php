@@ -74,7 +74,8 @@ $gridColumns = array(
     array(
         'header' => 'Valor',
         'name'  => 'vl_lancamento',
-        'value' => '$data->idCategoriaLancamento->tp_categoriaLancamento == "R" ? Yii::app()->bulebar->setColor($data->vl_lancamento,"verde") : Yii::app()->bulebar->setColor($data->vl_lancamento,"vermelho")',
+        'value' => 'Yii::app()->bulebar->trocaDecimalModel2View($data->vl_lancamento)',
+        'cssClassExpression' => '$data->idCategoriaLancamento->tp_categoriaLancamento == "R" ? "text-success" : "text-error"',
         'htmlOptions'=>array('style'=>'width: 30px')
         ),
     array(
@@ -102,7 +103,6 @@ $gridColumns = array(
 
 $this->widget('bootstrap.widgets.TbExtendedGridView', array(
     'id'=>'gridLancamentos',
-	'filter'=>$modelLancamento,
 	'fixedHeader' => true,
 	'headerOffset' => 40, // 40px is the height of the main navigation at bootstrap
 	'type'=>'striped bordered',
