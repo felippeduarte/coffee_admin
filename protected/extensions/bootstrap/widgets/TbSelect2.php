@@ -152,6 +152,9 @@ class TbSelect2 extends CInputWidget
 
 	private function prependDataWithEmptyItem()
 	{
-		$this->data[''] = '';
+        $temp = $this->data;
+        $this->data = array();
+        $this->data[''] = '';
+        $this->data = array_merge($this->data, $temp);
 	}
 }

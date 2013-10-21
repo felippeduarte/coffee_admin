@@ -19,6 +19,8 @@ class Pessoa extends CActiveRecord
     const TP_PESSOA_FISICA = 'PF';
     const TP_PESSOA_JURIDICA = 'PJ';
     
+    public $nm_comboFavorecido;
+    
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -152,5 +154,31 @@ class Pessoa extends CActiveRecord
             // convert to view format
             $this->dt_nascimento = Yii::app()->bulebar->trocaDataViewParaModel($this->dt_nascimento);
         }
+    }
+    
+    public function getComboFavorecido()
+    {
+        $criteria = new CDbCriteria;
+
+        $criteria->together = true;
+        
+        $criteria->with = array(
+            'pessoafisica',
+            'pessoajuridica'
+        );
+        
+        $criteria->select = array(
+            'id_pessoa',
+            'CONCAT(COALESCE(pessoafisica.nu_cpf,pessoajuridica.nu_cnpj), " - ", t.nm_pessoa) as nm_comboFavorecido'
+        );
+        
+        //elimina inativos e administrador
+        $criteria->condition = 't.fl_inativo = :fl_inativo AND t.id_pessoa != :administrador';
+        $criteria->params = array(
+            ':fl_inativo' => false,
+            ':administrador' => 1
+        );
+        
+        return $this->findAll($criteria);
     }
 }

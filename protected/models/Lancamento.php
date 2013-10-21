@@ -90,16 +90,16 @@ class Lancamento extends CActiveRecord
 	{
 		return array(
 			'id_lancamento' => 'Id Lancamento',
-			'dt_lancamento' => 'Dt Lancamento',
+			'dt_lancamento' => 'Data Lancamento',
 			'vl_lancamento' => 'Valor',
-			'id_estabelecimento' => 'Id Estabelecimento',
-			'id_categoriaLancamento' => 'Id Categoria Lancamento',
-			'id_pessoaLancamento' => 'Id Pessoa Lancamento',
-			'id_formaPagamento' => 'Id Forma Pagamento',
+			'id_estabelecimento' => 'Estabelecimento',
+			'id_categoriaLancamento' => 'Categoria Lancamento',
+			'id_pessoaLancamento' => 'Favorecido',
+			'id_formaPagamento' => 'Forma Pagamento',
 			'nm_turno' => 'Turno',
 			'de_observacao' => 'Observacao',
-			'id_pessoaUsuario' => 'Id Pessoa Usuario',
-			'dt_ultimaAlteracao' => 'Dt Ultima Alteracao',
+			'id_pessoaUsuario' => 'Usuário',
+			'dt_ultimaAlteracao' => 'Data Última Alteração',
 		);
 	}
 
@@ -191,10 +191,10 @@ class Lancamento extends CActiveRecord
     public function getRadioButtonsTurno()
     {
         return array(
-            array('label' => 'Matutino'),// 'htmlOptions' => array('onclick' => 'alert("aaa")')),
-            array('label' => 'Vespertino'),
-            array('label' => 'Noturno'),
-            array('label' => 'Madrugada')
+            array('label' => 'Matutino', 'htmlOptions'=> array('value'=>'M')),
+            array('label' => 'Vespertino', 'htmlOptions'=> array('value'=>'V')),
+            array('label' => 'Noturno', 'htmlOptions'=> array('value'=>'N')),
+            array('label' => 'Madrugada', 'htmlOptions'=> array('value'=>'Ma'))
         );
     }
 }
