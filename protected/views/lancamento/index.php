@@ -11,6 +11,9 @@ $('#Lancamento_vl_lancamento').mask('000.000.000.000,00', {reverse: true});
 
 $this->pageTitle=Yii::app()->name . ' - Lançamentos';
 $this->breadcrumbs=array('Lançamentos',);
+
+$listaEstabelecimentos = CHtml::listData(Estabelecimento::model()->getComboEstabelecimento(), 'id_estabelecimento', 'nm_estabelecimento');
+$listaCategorias = CHtml::listData(Categorialancamento::model()->getComboCategoriaLancamento(), 'id_categoriaLancamento', 'nm_categoriaLancamento');
 ?>
 
 <h1>Lançamentos</h1>
@@ -69,19 +72,21 @@ $form->widget('zii.widgets.jui.CJuiDatePicker',array(
 echo CHtml::dropDownlist(
         'estabelecimento',
         null,
-        CHtml::listData(Estabelecimento::model()->getComboEstabelecimento(), 'id_estabelecimento', 'nm_estabelecimento'),
+        $listaEstabelecimentos,
         array(
-            'prompt' => '-- Estabelecimento --'
+            'prompt' => '-- Estabelecimento --',
+            'options'=> array($estabelecimento=>array('selected'=>true))
         ));
 ?>
 
 <?php
 echo CHtml::dropDownlist(
-        'categoria',
+        'categoriaLancamento',
         null,
-        CHtml::listData(Categorialancamento::model()->getComboCategoriaLancamento(), 'id_categoriaLancamento', 'nm_categoriaLancamento'),
+        $listaCategorias,
         array(
-            'prompt' => '-- Categoria --'
+            'prompt' => '-- Categoria --',
+            'options'=> array($categoria=>array('selected'=>true))
         ));
 ?>
 
@@ -93,7 +98,20 @@ $this->widget(
  
 $this->endWidget();
 unset($form);
+?>
 
+<?php
+$this->widget('bootstrap.widgets.TbAlert', array(
+    'block'=>true, // display a larger alert block?
+    'fade'=>true, // use transitions?
+    'closeText'=>'×', // close link text - if set to false, no close link is displayed
+    'alerts'=>array( // configurations per alert type
+	    'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'), // success, info, warning, error or danger
+    ),
+));
+?>
+
+<?php
 $this->widget('bootstrap.widgets.TbBox', array(
                 'title' => 'Lançamentos',
                 'headerIcon' => 'icon-file',
@@ -145,12 +163,17 @@ $this->widget('bootstrap.widgets.TbBox', array(
                 )
             ));
 ?>
+
 <?php
 $form = $this->beginWidget(
     'bootstrap.widgets.TbActiveForm',
     array(
-        'id' => 'form_lancamento',
-        'type' => 'horizontal'
+        'id' => 'lancamento',
+        'type' => 'horizontal',
+        'enableAjaxValidation'=>true,
+        'clientOptions'=>array(
+            'validateOnSubmit'=>true,
+        ),
     )
 );
 ?>
@@ -167,13 +190,25 @@ $form = $this->beginWidget(
         <fieldset>
             <?php echo $form->errorSummary(array($modelLancamento),'Sumário de Erros'); ?>
 
+            <?php echo $form->maskedTextFieldRow($modelLancamento,'dt_lancamento','99/99/9999',
+                        array('prepend'=>'<i class="icon-calendar"></i>',
+                              'class' => 'input-small',
+                              'value' => date('d/m/Y'),
+                        )
+                    ); ?>
             <?php echo $form->textFieldRow($modelLancamento,'vl_lancamento',
                         array('prepend'=>'R$',
                               'class' => 'input-medium',
                         )
                     ); ?>
+            <?php echo $form->select2Row($modelLancamento,'id_estabelecimento',array(
+                    'data' => $listaEstabelecimentos,
+                    'asDropDownList' => true,
+                    'options' => array('allowClear' => true,
+                                'placeholder' => '-- Escolha o estabelecimento --',
+                                'width'=>'40%'))); ?>
             <?php echo $form->select2Row($modelLancamento,'id_categoriaLancamento',array(
-                    'data' => CHtml::listData(CategoriaLancamento::model()->getComboCategoriaLancamento(),'id_categoriaLancamento','nm_categoriaLancamento'),
+                    'data' => null,
                     'asDropDownList' => true,
                     'options' => array('allowClear' => true,
                                 'placeholder' => '-- Escolha a categoria --',
@@ -189,12 +224,7 @@ $form = $this->beginWidget(
                     )); ?>
                 </div>
             </div>
-            <?php echo $form->select2Row($modelLancamento,'id_estabelecimento',array(
-                    'data' => CHtml::listData(Estabelecimento::model()->getComboEstabelecimento(),'id_estabelecimento','nm_estabelecimento'),
-                    'asDropDownList' => true,
-                    'options' => array('allowClear' => true,
-                                'placeholder' => '-- Escolha o estabelecimento --',
-                                'width'=>'40%'))); ?>
+            
             <?php echo $form->select2Row($modelLancamento,'id_pessoaLancamento',array(
                     'data' => CHtml::listData(Pessoa::model()->getComboFavorecido(),'id_pessoa','nm_comboFavorecido'),
                     'asDropDownList' => true,
@@ -207,6 +237,7 @@ $form = $this->beginWidget(
                     'options' => array('allowClear' => true,
                                 'placeholder' => '-- Escolha a forma de pagamento --',
                                 'width'=>'40%'))); ?>
+            <?php echo $form->textAreaRow($modelLancamento, 'de_observacao', array('class'=>'span4', 'rows'=>2)); ?>
         </fieldset>
     </div>
     <div class="modal-footer">

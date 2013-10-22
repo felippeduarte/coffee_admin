@@ -7,6 +7,8 @@
  */
 class UserIdentity extends CUserIdentity
 {
+    private $_id;
+    
 	/**
 	 * Authenticates a user.
 	 * The example implementation makes sure if the username and password
@@ -17,19 +19,26 @@ class UserIdentity extends CUserIdentity
 	 */
 	public function authenticate()
 	{
-                $user = new Usuario();
-                $user->nm_login = $this->username;
-                $user->de_senha = $this->password;
-		
-                $login = $user->login();
-                
-                if(is_null($login))
-                {
-                    $this->errorCode=self::ERROR_USERNAME_INVALID;
-                } else {
-                    $this->errorCode=self::ERROR_NONE;
-                }
-                
-		return !$this->errorCode;
+        $user = Usuario::model()->findByAttributes(array('nm_login' => $this->username));
+        
+        if($user===null)
+        {
+            $this->errorCode=self::ERROR_USERNAME_INVALID;
+        }
+        else if($user->de_senha !== Yii::app()->bulebar->criptografaSenha($this->password))
+        {
+            $this->errorCode=self::ERROR_PASSWORD_INVALID;
+        }
+        else
+        {
+            $this->_id = $user->id_pessoa;
+            $this->errorCode = self::ERROR_NONE;
+        }
+        return !$this->errorCode;
 	}
+    
+    public function getId()
+    {
+        return $this->_id;
+    }
 }

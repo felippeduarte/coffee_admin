@@ -56,8 +56,9 @@ class Lancamento extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_formaPagamento, id_pessoaUsuario, dt_ultimaAlteracao', 'required'),
-			array('id_estabelecimento, id_categoriaLancamento, id_pessoaLancamento, id_formaPagamento, id_pessoaUsuario', 'numerical', 'integerOnly'=>true),
+			array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_formaPagamento', 'required', 'on'=>'ajax'),
+            array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_formaPagamento, id_pessoaUsuario, dt_ultimaAlteracao', 'required', 'on'=>'insert'),
+            array('id_estabelecimento, id_categoriaLancamento, id_pessoaLancamento, id_formaPagamento, id_pessoaUsuario', 'numerical', 'integerOnly'=>true),
 			array('vl_lancamento', 'length', 'max'=>12),
 			array('nm_turno', 'length', 'max'=>1),
 			array('de_observacao', 'length', 'max'=>4000),
@@ -97,7 +98,7 @@ class Lancamento extends CActiveRecord
 			'id_pessoaLancamento' => 'Favorecido',
 			'id_formaPagamento' => 'Forma Pagamento',
 			'nm_turno' => 'Turno',
-			'de_observacao' => 'Observacao',
+			'de_observacao' => 'Observação',
 			'id_pessoaUsuario' => 'Usuário',
 			'dt_ultimaAlteracao' => 'Data Última Alteração',
 		);
@@ -130,6 +131,73 @@ class Lancamento extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    protected function afterFind()
+    {
+        $this->dt_lancamento = date("d/m/Y", strtotime($this->dt_lancamento));
+        $this->dt_ultimaAlteracao = date("d/m/Y", strtotime($this->dt_ultimaAlteracao));
+
+        return parent::afterFind();
+    }
+    
+    protected function beforeValidate()
+    {
+        $this->view2model();
+        return parent::beforeValidate();
+    }
+    
+    protected function afterValidate()
+    {
+        $this->model2view();        
+        return parent::afterValidate();
+    }
+    
+    protected function beforeSave()
+    {
+        if(empty($this->nm_turno)) $this->nm_turno = null;
+        $this->view2model();
+        return parent::beforeSave();
+    }
+    
+    protected function afterSave()
+    {
+        $this->model2view();
+        return parent::afterSave();
+    }
+
+    private function model2view()
+    {
+        if(!empty($this->dt_lancamento))
+        {
+            $this->dt_lancamento = Yii::app()->bulebar->trocaDataModelParaView($this->dt_lancamento);
+        }
+        if(!empty($this->dt_ultimaAlteracao))
+        {
+            $this->dt_ultimaAlteracao = Yii::app()->bulebar->trocaTimestampModelParaView($this->dt_ultimaAlteracao);
+        }
+        
+        if(!empty($this->vl_lancamento))
+        {
+            $this->vl_lancamento = Yii::app()->bulebar->trocaDecimalModel2View($this->vl_lancamento);
+        }
+    }
+    
+    private function view2model()
+    {
+        if(!empty($this->dt_lancamento))
+        {
+            $this->dt_lancamento = Yii::app()->bulebar->trocaDataViewParaModel($this->dt_lancamento);
+        }
+        if(!empty($this->dt_ultimaAlteracao))
+        {
+            $this->dt_ultimaAlteracao = Yii::app()->bulebar->trocaTimestampViewParaModel($this->dt_ultimaAlteracao);
+        }
+        
+        if(!empty($this->vl_lancamento))
+        {
+            $this->vl_lancamento = Yii::app()->bulebar->trocaDecimalView2Model($this->vl_lancamento);
+        }
+    }
     
     public function getLancamentoGrid($dataInicio, $dataFim, $estabelecimento, $categoria)
 	{

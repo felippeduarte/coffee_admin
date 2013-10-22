@@ -24,6 +24,28 @@ class Funcoes extends CApplicationComponent
         return $timestamp;
     }
     
+    public function trocaTimestampViewParaModel($data)
+    {
+        $timestamp = CDateTimeParser::parse($data,'dd/MM/yyyy hh:mm:ss');
+        
+        if($timestamp)
+        {
+            return date('Y-m-d h:i:s', $timestamp);
+        }
+        return $timestamp;
+    }
+    
+    public function trocaTimestampModelParaView($data)
+    {
+        $timestamp = CDateTimeParser::parse($data,'yyyy-MM-dd hh:mm:ss');
+        
+        if($timestamp)
+        {
+            return date('d/m/Y h:i:s', $timestamp);
+        }
+        return $timestamp;
+    }
+    
     public function validaData($data,$formato='dd/MM/yyyy')
     {
         return CDateTimeParser::parse($data,$formato) ? true:false;
