@@ -1,3 +1,32 @@
+<script  type='text/javascript'>
+$('#gridLancamentos a.delete').live('click',function() {
+
+    if(confirm('Deseja remover o lançamento do dia '+$(this).closest('tr').find('td:eq(1)').text()+
+        ', no valor de R$ '+$(this).closest('tr').find('td:eq(6)').text()+
+        ' para o favorecido '+$(this).closest('tr').find('td:eq(5)').text()+'?'))
+    {
+       var idLancamento = $(this).closest('tr').find('td:eq(0)').text();
+        
+        //ajax para popular modal
+        $.ajax({
+            url: "lancamento/delLancamento",
+            type: "post",
+            data: { "idLancamento" : idLancamento },
+            dataType:'json',
+            success: function (data) {
+                alert('Removido com sucesso');
+            },
+            error:function(){
+                alert("Ocorreu um erro, tente novamente!");
+            }
+        });
+    } else {
+        return false;
+    }
+    return false;
+});
+</script>
+
 <?php 
 
 $dataProvider->pagination = array('pagesize'=>10);
@@ -74,7 +103,7 @@ $gridColumns = array(
     array(
         'header' => 'Valor',
         'name'  => 'vl_lancamento',
-        'value' => 'Yii::app()->bulebar->trocaDecimalModel2View($data->vl_lancamento)',
+        'value' => 'Yii::app()->bulebar->trocaDecimalModelParaView($data->vl_lancamento)',
         'cssClassExpression' => '$data->idCategoriaLancamento->tp_categoriaLancamento == "R" ? "text-success" : "text-error"',
         'htmlOptions'=>array('style'=>'width: 30px')
         ),

@@ -66,7 +66,7 @@ class LancamentoController extends Controller
             'dataFim' => $dataFim,
             'estabelecimento' => $estabelecimento,
             'categoria' => $categoria,
-            'modelLancamento' => $modelLancamento,
+            'modelLancamento' => new Lancamento(),
         ));
         
 	}
@@ -77,6 +77,28 @@ class LancamentoController extends Controller
         var_dump("<hr>");
         var_dump($_GET);
         //die();
+    }
+    
+    public function actionDelLancamento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+
+        if (isset($_POST['idLancamento']))
+        {
+            $id = $_POST['idLancamento'];
+            $modelLancamento = Lancamento::model()->findByPk($id);
+            $modelLancamento->id_pessoaUsuario = Yii::app()->user->getId();
+            $modelLancamento->dt_ultimaAlteracao = date('d/m/Y h:i:s');
+            $modelLancamento->fl_inativo = true;
+            $modelLancamento->save();
+            
+            Yii::app()->user->setFlash('success', "Lançamento removido(a) com sucesso!");
+        } else {
+            Yii::app()->user->setFlash('error', "Ocorreu um erro ao remover o lançamento!");
+        }
+        Yii::app()->end();
     }
     
     public function actionCarregaCategorias()

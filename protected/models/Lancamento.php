@@ -178,7 +178,7 @@ class Lancamento extends CActiveRecord
         
         if(!empty($this->vl_lancamento))
         {
-            $this->vl_lancamento = Yii::app()->bulebar->trocaDecimalModel2View($this->vl_lancamento);
+            $this->vl_lancamento = Yii::app()->bulebar->trocaDecimalModelParaView($this->vl_lancamento);
         }
     }
     
@@ -195,7 +195,7 @@ class Lancamento extends CActiveRecord
         
         if(!empty($this->vl_lancamento))
         {
-            $this->vl_lancamento = Yii::app()->bulebar->trocaDecimalView2Model($this->vl_lancamento);
+            $this->vl_lancamento = Yii::app()->bulebar->trocaDecimalViewParaModel($this->vl_lancamento);
         }
     }
     
@@ -219,7 +219,7 @@ class Lancamento extends CActiveRecord
             'id_lancamento','dt_lancamento','vl_lancamento'
         );
         
-        $condicao = null;
+        $condicao = array('t.fl_inativo = 0');
         
         if(!empty($dataInicio))
         {
@@ -238,18 +238,7 @@ class Lancamento extends CActiveRecord
             $condicao[] = 't.id_categoriaLancamento = '.(int)$categoria;
         }
         
-        
-        if(!empty($condicao))
-        {
-            $criteria->condition = join(' AND ', $condicao);
-        }
-        
-        $criteria->compare('t.id_lancamento', $this->id_lancamento);
-        $criteria->compare('t.dt_lancamento', $this->dt_lancamento, true);
-        $criteria->compare('idEstabelecimento.nm_estabelecimento', $this->nm_estabelecimento, true);
-        $criteria->compare('idCategoriaLancamento.nm_categoriaLancamento', $this->nm_categoriaLancamento, true);
-        $criteria->compare('idPessoaLancamento.nm_pessoa', $this->nm_pessoa, true);
-        $criteria->compare('t.vl_lancamento', $this->dt_lancamento, true);
+        $criteria->condition = join(' AND ', $condicao);
         
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

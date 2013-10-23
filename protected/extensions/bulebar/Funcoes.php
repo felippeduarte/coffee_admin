@@ -165,14 +165,20 @@ class Funcoes extends CApplicationComponent
         return true; 
     }
     
-    public function trocaDecimalModel2View($num)
+    public function trocaDecimalModelParaView($num)
     {
-        return str_replace(".", ",", $num);
+        return Yii::app()->numberFormatter->format('###,###,###,##0.00',$num);
     }
     
-    public function trocaDecimalView2Model($num)
+    public function trocaDecimalViewParaModel($num)
     {
-        return str_replace(",", ".", $num);
+        if(strrpos($num,','))
+        {
+            $num = str_replace('.', '', $num);
+            $num = str_replace(',', '.', $num);
+        }
+        
+        return $num;
     }
 }
 ?>

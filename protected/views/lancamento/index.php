@@ -173,6 +173,7 @@ $form = $this->beginWidget(
         'enableAjaxValidation'=>true,
         'clientOptions'=>array(
             'validateOnSubmit'=>true,
+            'validateOnChange'=>false,
         ),
     )
 );
@@ -237,7 +238,7 @@ $form = $this->beginWidget(
                     'options' => array('allowClear' => true,
                                 'placeholder' => '-- Escolha a forma de pagamento --',
                                 'width'=>'40%'))); ?>
-            <?php echo $form->textAreaRow($modelLancamento, 'de_observacao', array('class'=>'span4', 'rows'=>2)); ?>
+            <?php echo $form->textAreaRow($modelLancamento, 'de_observacao', array('class'=>'span4', 'rows'=>1)); ?>
         </fieldset>
     </div>
     <div class="modal-footer">
