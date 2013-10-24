@@ -14,7 +14,7 @@ class Funcoes extends CApplicationComponent
     }
     
     public function trocaDataModelParaView($data)
-    {
+    {   
         $timestamp = CDateTimeParser::parse($data,'yyyy-MM-dd');
         
         if($timestamp)

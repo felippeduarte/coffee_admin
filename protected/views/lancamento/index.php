@@ -132,9 +132,7 @@ $this->widget('bootstrap.widgets.TbBox', array(
                                         'url'=>CController::createUrl('carregaCategorias'),
                                         'data'=>array('tp_categoriaLancamento'=>'R'),
                                         'success'=>"js:function(html){ 
-                                            jQuery('#modal-cadastro').modal({'show':true});
-                                            jQuery('#Lancamento_id_categoriaLancamento').html(html);
-                                            $('.modal-header h3').text('Lançar Receita');
+                                            updateModal(html,'R',true,true);
                                         }",
                                     ),
                                 ), 
@@ -151,9 +149,7 @@ $this->widget('bootstrap.widgets.TbBox', array(
                                         'url'=>CController::createUrl('carregaCategorias'),
                                         'data'=>array('tp_categoriaLancamento'=>'D'),
                                         'success'=>"js:function(html){ 
-                                            jQuery('#modal-cadastro').modal({'show':true});
-                                            jQuery('#Lancamento_id_categoriaLancamento').html(html);
-                                            $('.modal-header h3').text('Lançar Despesa');
+                                            updateModal(html,'D',true,true);
                                         }",
                                     ),
                                 )
@@ -191,6 +187,7 @@ $form = $this->beginWidget(
         <fieldset>
             <?php echo $form->errorSummary(array($modelLancamento),'Sumário de Erros'); ?>
 
+            <?php echo $form->hiddenField($modelLancamento, 'id_lancamento'); ?>
             <?php echo $form->maskedTextFieldRow($modelLancamento,'dt_lancamento','99/99/9999',
                         array('prepend'=>'<i class="icon-calendar"></i>',
                               'class' => 'input-small',
@@ -222,6 +219,7 @@ $form = $this->beginWidget(
                         'type' => 'info',
                         'toggle' => 'radio',
                         'buttons' => Lancamento::model()->getRadioButtonsTurno(),
+                        'htmlOptions' => array('name'=> 'Lancamento_turno',),
                     )); ?>
                 </div>
             </div>

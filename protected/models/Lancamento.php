@@ -134,9 +134,7 @@ class Lancamento extends CActiveRecord
     
     protected function afterFind()
     {
-        $this->dt_lancamento = date("d/m/Y", strtotime($this->dt_lancamento));
-        $this->dt_ultimaAlteracao = date("d/m/Y", strtotime($this->dt_ultimaAlteracao));
-
+        $this->model2view();
         return parent::afterFind();
     }
     
@@ -157,6 +155,13 @@ class Lancamento extends CActiveRecord
         if(empty($this->nm_turno)) $this->nm_turno = null;
         $this->view2model();
         return parent::beforeSave();
+    }
+    
+    protected function beforeUpdate()
+    {
+        if(empty($this->nm_turno)) $this->nm_turno = null;
+        $this->view2model();
+        return parent::beforeUpdate();
     }
     
     protected function afterSave()

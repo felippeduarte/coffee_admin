@@ -150,4 +150,26 @@ class Categorialancamento extends CActiveRecord
         $id = Yii::app()->db->createCommand('SHOW TABLE STATUS LIKE "categorialancamento"')->queryAll();
         return $id[0]['Auto_increment'];
     }
+    
+    /**
+     * Monta lista de "<option>" para usar em combobox com select2
+     * @param string $tipo tp_lancamento (D ou R)
+     * @return string html option
+     */
+    public function getHtmlDropdownOptionsCategoriasPorTipo($tipo)
+    {
+        $data = Categorialancamento::model()->findAll('tp_categoriaLancamento = :tp_categoriaLancamento', 
+        array(':tp_categoriaLancamento'=>$tipo));
+
+        $data = CHtml::listData($data,'id_categoriaLancamento','nm_categoriaLancamento');
+
+        $opt = "<option value=''>-- Escolha a Categoria --</option>";
+        
+        foreach($data as $id_categoriaLancamento=>$nm_categoriaLancamento)
+        {
+            $opt .= CHtml::tag('option', array('value'=>$id_categoriaLancamento),CHtml::encode($nm_categoriaLancamento),true);
+        }
+        
+        return $opt;
+    }
 }

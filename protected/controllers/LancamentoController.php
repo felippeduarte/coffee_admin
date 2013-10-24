@@ -34,9 +34,9 @@ class LancamentoController extends Controller
         
         if(isset($_POST['Lancamento']))
         {
-            if(isset($_POST['Lancamento']['id_lancamento']))
+            if(!empty($_POST['Lancamento']['id_lancamento']))
             {
-                $modelLancamento->id_lancamento = $_POST['Lancamento']['id_lancamento'];
+                $modelLancamento = Lancamento::model()->findByPk($_POST['Lancamento']['id_lancamento']);
             }
             $modelLancamento->attributes = $_POST['Lancamento'];
             $modelLancamento->id_pessoaUsuario = Yii::app()->user->getId();
@@ -46,15 +46,11 @@ class LancamentoController extends Controller
             
             if($modelLancamento->validate())
             {
-                //atualização
-                if(!empty($modelLancamento->id_lancamento))
-                {
-                    LancamentoController::model()->updateByPk($modelLancamento->id_lancamento,$modelLancamento->attributes);
-                    Yii::app()->user->setFlash('success', "Lançamento alterado com sucesso!");
-                } else {
-                    $modelLancamento->save();
+                $modelLancamento->save();
+                
+                !empty($_POST['Lancamento']['id_lancamento']) ?
+                    Yii::app()->user->setFlash('success', "Lançamento alterado com sucesso!") :
                     Yii::app()->user->setFlash('success', "Lançamento cadastrado com sucesso!");
-                }
             }
         }
         
@@ -77,6 +73,30 @@ class LancamentoController extends Controller
         var_dump("<hr>");
         var_dump($_GET);
         //die();
+    }
+    
+    public function actionGetLancamento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+        
+        $lancamento = Lancamento::model()->findByPk($_POST['idLancamento']);
+        $tipoCategoria = Categorialancamento::model()->findByPk($lancamento->id_categoriaLancamento);        
+        $comboCategoria = Categorialancamento::model()->getHtmlDropdownOptionsCategoriasPorTipo($tipoCategoria->tp_categoriaLancamento);
+        
+        $json = new stdClass();
+        
+        foreach ($lancamento as $key=>$value) {
+            $json->$key = $value;
+        }
+        
+        echo CJSON::encode(array(
+            'categoriaLancamento'=>$comboCategoria,
+            'lancamento'=>$json,
+            'tipoCategoriaLancamento'=>$tipoCategoria->tp_categoriaLancamento));
+
+        Yii::app()->end();
     }
     
     public function actionDelLancamento()
@@ -103,16 +123,6 @@ class LancamentoController extends Controller
     
     public function actionCarregaCategorias()
     {
-        $data = Categorialancamento::model()->findAll('tp_categoriaLancamento = :tp_categoriaLancamento', 
-        array(':tp_categoriaLancamento'=>$_POST['tp_categoriaLancamento'][0]));
-
-        $data = CHtml::listData($data,'id_categoriaLancamento','nm_categoriaLancamento');
-
-        echo "<option value=''>-- Escolha a Categoria --</option>";
-        
-        foreach($data as $id_categoriaLancamento=>$nm_categoriaLancamento)
-        {
-            echo CHtml::tag('option', array('value'=>$id_categoriaLancamento),CHtml::encode($nm_categoriaLancamento),true);
-        }
+        echo Categorialancamento::model()->getHtmlDropdownOptionsCategoriasPorTipo($_POST['tp_categoriaLancamento'][0]);
     }
 }

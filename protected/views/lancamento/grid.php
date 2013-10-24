@@ -1,4 +1,99 @@
 <script  type='text/javascript'>
+
+$(document).ready(function()
+{
+    $("#lancamento").bind("reset", function() {
+        _resetForm(false);
+    });    
+});
+
+function updateModal(categoria,tipo,reset,novo)
+{
+    jQuery('#Lancamento_id_categoriaLancamento').html(categoria);
+    _setModalHeader(tipo, novo);
+    
+    novo? _resetForm(true) : _resetForm(false);
+    
+    jQuery('#modal-cadastro').modal({'show':true});
+}
+
+function _resetForm(complete)
+{
+    if(complete)
+    {
+        $('#Lancamento_id_lancamento').val('');
+    }
+    $('#Lancamento_id_estabelecimento').select2().select2('val','').select2({width:'resolve'});
+    $('#Lancamento_id_categoriaLancamento').select2().select2('val','').select2({width:'resolve'});
+    $('#Lancamento_id_pessoaLancamento').select2().select2('val','').select2({width:'resolve'});
+    $('#Lancamento_id_formaPagamento').select2().select2('val','').select2({width:'resolve'});
+    
+    $('#lancamento')[0].reset();
+}
+function _setModalHeader(tipo, novo)
+{
+    novo ?
+        $('.modal-header h3').text('Lançar '):
+        $('.modal-header h3').text('Editar ');
+    
+    (tipo == 'R') ?
+        $('.modal-header h3').append('Receita'):
+        $('.modal-header h3').append('Despesa');
+}
+    
+$('#gridLancamentos a.update').live('click',function() {
+    var idLancamento = $(this).closest('tr').find('td:eq(0)').text();
+
+    //ajax para popular modal
+    $.ajax({
+        url: "lancamento/getLancamento",
+        type: "post",
+        data: { "idLancamento" : idLancamento },
+        dataType:'json',
+        success: function (data) { 
+            //popula
+            var l = data.lancamento;
+            var c = data.categoriaLancamento;
+            var t = data.tipoCategoriaLancamento;
+            
+            _setModalHeader(t,false);
+            
+            $("#Lancamento_id_lancamento").val(l.id_lancamento);
+            $("#Lancamento_dt_lancamento").val(l.dt_lancamento);
+            $("#Lancamento_vl_lancamento").val(l.vl_lancamento);
+            
+            $('#Lancamento_id_estabelecimento').select2().select2('val',l.id_estabelecimento).select2({width:'resolve'});
+            $("#Lancamento_id_estabelecimento option[value="+l.id_estabelecimento+"]").attr('selected', 'selected');
+            
+            $('#Lancamento_id_categoriaLancamento').html(c);
+            $('#Lancamento_id_categoriaLancamento').select2().select2('val',l.id_categoriaLancamento).select2({width:'resolve'});
+            $("#Lancamento_id_categoriaLancamento option[value="+l.id_categoriaLancamento+"]").prop('selected', true);
+            
+            $("#Lancamento_nm_turno").val(l.nm_turno);
+            $('div [name="Lancamento_turno"] a').removeClass("active");
+            $('div [name="Lancamento_turno"] [value="'+l.nm_turno+'"]').addClass("active");
+
+            $('#Lancamento_id_pessoaLancamento').select2().select2('val',l.id_pessoaLancamento).select2({width:'resolve'});
+            $("#Lancamento_id_pessoaLancamento option[value="+l.id_pessoaLancamento+"]").prop('selected', true);
+            
+            $('#Lancamento_id_formaPagamento').select2().select2('val',l.id_formaPagamento).select2({width:'resolve'});
+            $("#Lancamento_id_formaPagamento option[value="+l.id_formaPagamento+"]").prop('selected', true);
+
+            $("#Lancamento_de_observacao").val(l.de_observacao);
+
+            $('#modal-cadastro').modal('toggle');
+
+        },
+        error:function(){
+            alert("Ocorreu um erro, tente novamente!");
+        }
+    });
+        
+    return false;
+
+});    
+    
+    
 $('#gridLancamentos a.delete').live('click',function() {
 
     if(confirm('Deseja remover o lançamento do dia '+$(this).closest('tr').find('td:eq(1)').text()+
@@ -48,6 +143,10 @@ $dataProvider->sort = array(
                     'asc'=>'idCategoriaLancamento.nm_categoriaLancamento',
                     'desc'=>'idCategoriaLancamento.nm_categoriaLancamento DESC',
                 ),
+                'tp_categoriaLancamento'=>array(
+                    'asc'=>'idCategoriaLancamento.tp_categoriaLancamento',
+                    'desc'=>'idCategoriaLancamento.tp_categoriaLancamento DESC',
+                ),
                 'nm_pessoa'=>array(
                     'asc'=>'idPessoaLancamento.nm_pessoa',
                     'desc'=>'idPessoaLancamento.nm_pessoa DESC',
@@ -90,8 +189,9 @@ $gridColumns = array(
         'htmlOptions'=>array('style'=>'width: 100px')
         ),
     array(
-        'header' => '',
-        'name'  => 'idCategoriaLancamento.tp_categoriaLancamento',
+        'header' => '!',
+        'name'  => 'tp_categoriaLancamento',
+        'value'  => '$data->idCategoriaLancamento->tp_categoriaLancamento',
         'htmlOptions'=>array('style'=>'width: 5px')
         ),
     array(
@@ -103,7 +203,7 @@ $gridColumns = array(
     array(
         'header' => 'Valor',
         'name'  => 'vl_lancamento',
-        'value' => 'Yii::app()->bulebar->trocaDecimalModelParaView($data->vl_lancamento)',
+        'value' => '$data->vl_lancamento',
         'cssClassExpression' => '$data->idCategoriaLancamento->tp_categoriaLancamento == "R" ? "text-success" : "text-error"',
         'htmlOptions'=>array('style'=>'width: 30px')
         ),
