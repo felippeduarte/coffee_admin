@@ -5,6 +5,20 @@ $(document).ready(function()
     $("#lancamento").bind("reset", function() {
         _resetForm(false);
     });    
+    
+    $("#Lancamento_id_categoriaLancamento").change(function() {
+        $.ajax({
+            url: "lancamento/carregaFavorecidos",
+            type: "post",
+            data: { "id_categoriaLancamento" : $(this).val() },
+            dataType:'text',
+            success: function (html) {
+                $('#Lancamento_id_pessoaLancamento').html(html);
+                $('#Lancamento_id_pessoaLancamento').select2().select2({placeholder:'-- Escolha um favorecido --',width:'resolve'});
+            }
+        });
+    });
+    
 });
 
 function updateModal(categoria,tipo,reset,novo)
@@ -23,13 +37,15 @@ function _resetForm(complete)
     {
         $('#Lancamento_id_lancamento').val('');
     }
-    $('#Lancamento_id_estabelecimento').select2().select2('val','').select2({width:'resolve'});
-    $('#Lancamento_id_categoriaLancamento').select2().select2('val','').select2({width:'resolve'});
-    $('#Lancamento_id_pessoaLancamento').select2().select2('val','').select2({width:'resolve'});
-    $('#Lancamento_id_formaPagamento').select2().select2('val','').select2({width:'resolve'});
+    
+    $('#Lancamento_id_estabelecimento').select2().select2({val:'',placeholder:'-- Escolha o estabelecimento --',width:'resolve'});
+    $('#Lancamento_id_categoriaLancamento').select2({placeholder:'-- Escolha a categoria --',width:'resolve'});
+    $('#Lancamento_id_pessoaLancamento').select2().select2({placeholder:'-- Escolha uma categoria --',width:'resolve'});
+    $('#Lancamento_id_formaPagamento').select2().select2({placeholder:'-- Escolha a forma de pagamento --',width:'resolve'});
     
     $('#lancamento')[0].reset();
 }
+
 function _setModalHeader(tipo, novo)
 {
     novo ?
@@ -92,8 +108,7 @@ $('#gridLancamentos a.update').live('click',function() {
     return false;
 
 });    
-    
-    
+
 $('#gridLancamentos a.delete').live('click',function() {
 
     if(confirm('Deseja remover o lançamento do dia '+$(this).closest('tr').find('td:eq(1)').text()+

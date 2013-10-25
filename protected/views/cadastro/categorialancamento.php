@@ -23,6 +23,11 @@ $('#gridCategoriaLancamento a.update').live('click',function() {
                 $(":radio[value=R]").prop("checked", true);
             }
             
+            $(":checkbox").prop("checked", false);
+            $.each(c.tp_categoriaLancamentoPessoa, function(index,value) {
+                $(":checkbox[value="+value+"]").prop("checked", true);
+            });
+            
             $('#modal-cadastro').modal('toggle');
 
         },
@@ -75,6 +80,10 @@ $dataProvider->sort = array(
                     'asc'=>'idCategoriaLancamentoPai.nm_categoriaLancamento',
                     'desc'=>'idCategoriaLancamentoPai.nm_categoriaLancamento DESC',
                 ),
+                'tp_categoriaLancamentoPessoa'=>array(
+                    'asc'=>'tp_categoriaLancamentoPessoa',
+                    'desc'=>'tp_categoriaLancamentoPessoa DESC',
+                ),
                 '*',
             ));
 
@@ -92,12 +101,17 @@ $gridColumns = array(
     array(
         'header' => 'Tipo Categoria Lançamento',
         'name'  => 'tp_categoriaLancamento',
-        'value' => 'Yii::app()->bulebar->getTipoCategoria($data->tp_categoriaLancamento)',
+        'value' => 'Categorialancamento::model()->getTipoCategoriaLancamento($data->tp_categoriaLancamento)',
         ),
     array(
         'header' => 'Categoria Lançamento Pai',
         'name'  => 'nm_categoriaLancamentoPai',
         'value' => '(!empty($data->idCategoriaLancamentoPai->nm_categoriaLancamento))?$data->idCategoriaLancamentoPai->nm_categoriaLancamento:null',
+        ),
+    array(
+        'header' => 'Tipo Favorecido',
+        'name'  => 'tp_categoriaLancamentoPessoa',
+        'value' => 'Categorialancamento::model()->getTipoCategoriaLancamentoPessoa($data->tp_categoriaLancamentoPessoa)',
         ),
     array(
 		'htmlOptions' => array('nowrap'=>'nowrap'),
@@ -151,6 +165,7 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'enableAjaxValidation'=>true,
         'clientOptions'=>array(
             'validateOnSubmit'=>true,
+            'validateOnChange'=>false,
         ),
 )); ?>
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
@@ -174,11 +189,20 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
                                 'R' => 'Receita',
                                 )
                     ); ?>
-            <?php echo $form->dropDownListRow($modelCategoriaLancamento,
-                    'id_categoriaLancamentoPai',
-                    CHtml::listData(CategoriaLancamento::model()->getComboCategoriaLancamento(),'id_categoriaLancamento','nm_categoriaLancamento'),
-                    array('prompt' => '--Escolha a categoria pai--')); ?>
 
+            <?php echo $form->select2Row($modelCategoriaLancamento,'id_categoriaLancamentoPai',array(
+                'data' => CHtml::listData(CategoriaLancamento::model()->getComboCategoriaLancamento(), 'id_categoriaLancamento', 'nm_categoriaLancamento'),
+                'asDropDownList' => true,
+                'options' => array('allowClear' => true,
+                            'placeholder' => '-- Escolha a categoria pai --',
+                            'width'=>'40%'))); ?>
+            
+            <?php echo $form->checkBoxListRow($modelCategoriaLancamento,'tp_categoriaLancamentoPessoa',
+                    array(
+                        'C' => 'Colaborador',
+                        'F' => 'Fornecedor',
+                    )); ?>
+            
         </fieldset>
     </div>
     <div class="modal-footer">

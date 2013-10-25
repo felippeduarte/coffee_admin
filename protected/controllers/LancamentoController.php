@@ -125,4 +125,16 @@ class LancamentoController extends Controller
     {
         echo Categorialancamento::model()->getHtmlDropdownOptionsCategoriasPorTipo($_POST['tp_categoriaLancamento'][0]);
     }
+    
+    public function actionCarregaFavorecidos()
+    {
+        $categoria = Categorialancamento::model()->findByPk($_POST['id_categoriaLancamento']);
+        
+        if(($categoria->tp_categoriaLancamentoPessoa === 'C')|
+            ($categoria->tp_categoriaLancamentoPessoa === 'F')|
+            $categoria->tp_categoriaLancamentoPessoa === array('C','F'))
+        {
+            echo Pessoa::model()->getHtmlDropdownOptionsCategoriasPorTipo($categoria->tp_categoriaLancamentoPessoa);
+        }
+    }
 }

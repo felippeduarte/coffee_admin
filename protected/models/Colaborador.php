@@ -21,6 +21,7 @@ class Colaborador extends CActiveRecord
     public $nu_cpf;
     public $id_cargoColaborador;
     public $nm_cargoColaborador;
+    public $nm_estabelecimento;
     
 	/**
 	 * Returns the static model of the specified AR class.
@@ -48,12 +49,12 @@ class Colaborador extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_pessoa, id_cargoColaborador', 'required','on'=>array('insert','update')),
+			array('id_pessoa, id_cargoColaborador, id_estabelecimento', 'required','on'=>array('insert','update')),
             array('id_pessoa', 'required', 'on'=>'usuario'),
-			array('id_pessoa, nu_colaborador, id_cargoColaborador', 'numerical', 'integerOnly'=>true),
+			array('id_pessoa, nu_colaborador, id_cargoColaborador, id_estabelecimento', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id_pessoa, nu_colaborador, id_cargoColaborador', 'safe', 'on'=>'search'),
+			array('id_pessoa, nu_colaborador, id_cargoColaborador, id_estabelecimento', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -69,6 +70,7 @@ class Colaborador extends CActiveRecord
 			'idPessoa' => array(self::BELONGS_TO, 'Pessoa', 'id_pessoa'),
 			'usuario' => array(self::HAS_ONE, 'Usuario', 'id_pessoa'),
             'pessoaFisica' => array(self::HAS_ONE, 'Pessoafisica', 'id_pessoa'),
+            'idEstabelecimento' => array(self::BELONGS_TO, 'Estabelecimento', 'id_estabelecimento'),
 		);
 	}
 
@@ -81,6 +83,7 @@ class Colaborador extends CActiveRecord
 			'id_pessoa' => 'Colaborador',
 			'nu_colaborador' => 'Matrícula',
 			'id_cargoColaborador' => 'Cargo',
+            'id_estabelecimento' => 'Lotação',
 		);
 	}
 
@@ -98,6 +101,7 @@ class Colaborador extends CActiveRecord
 		$criteria->compare('id_pessoa',$this->id_pessoa);
 		$criteria->compare('nu_colaborador',$this->nu_colaborador);
 		$criteria->compare('id_cargoColaborador',$this->id_cargoColaborador);
+        $criteria->compare('id_estabelecimento',$this->id_estabelecimento);        
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -130,7 +134,8 @@ class Colaborador extends CActiveRecord
         $criteria->with = array(
             'idPessoa' => array('select'=>'nm_pessoa'),
             'pessoaFisica' => array('select'=>'nu_cpf'),
-            'idCargoColaborador' => array('select'=>'nm_cargoColaborador')
+            'idCargoColaborador' => array('select'=>'nm_cargoColaborador'),
+            'idEstabelecimento' => array('select'=>'nm_estabelecimento'),
         );
         
         $criteria->select = array(
@@ -147,6 +152,7 @@ class Colaborador extends CActiveRecord
         $criteria->compare('pessoaFisica.nu_cpf', $this->nu_cpf, true);
         $criteria->compare('t.nu_colaborador', $this->nu_colaborador, true);
         $criteria->compare('idCargoColaborador.nm_cargoColaborador', $this->nm_cargoColaborador, true);
+        $criteria->compare('idEstabelecimento.nm_estabelecimento', $this->nm_estabelecimento, true);
         
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -166,7 +172,7 @@ class Colaborador extends CActiveRecord
         );
         
         $criteria->select = array(
-            'id_pessoa','id_cargoColaborador','nu_colaborador'
+            'id_pessoa','id_cargoColaborador','nu_colaborador','id_estabelecimento'
         );
 
         $criteria->condition = 'idPessoa.id_pessoa = :id_pessoa';

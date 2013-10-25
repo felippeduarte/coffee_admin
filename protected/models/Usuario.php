@@ -15,6 +15,7 @@
 class Usuario extends CActiveRecord
 {
     public $de_senha_confirmacao;
+    public $nm_pessoa;
     
 	/**
 	 * Returns the static model of the specified AR class.

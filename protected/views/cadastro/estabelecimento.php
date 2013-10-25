@@ -14,8 +14,9 @@ $('#gridEstabelecimento a.update').live('click',function() {
             
             $("[name='Estabelecimento[id_estabelecimento]']")[1].value = e.id_estabelecimento;
             $("[name='Estabelecimento[nm_estabelecimento]']")[1].value = e.nm_estabelecimento;
-            $("#Estabelecimento_id_grupoEstabelecimento option[value="+e.id_grupoEstabelecimento+"]").prop('selected', true);
             
+            $('#Estabelecimento_id_grupoEstabelecimento').select2().select2('val',e.id_grupoEstabelecimento).select2({width:'resolve'});
+            $("#Estabelecimento_id_grupoEstabelecimento option[value="+e.id_grupoEstabelecimento+"]").attr('selected', 'selected');            
             
             $('#modal-cadastro').modal('toggle');
 
@@ -69,6 +70,10 @@ $dataProvider->sort = array(
                     'asc'=>'idEstabelecimentoPai.nm_estabelecimento',
                     'desc'=>'idEstabelecimentoPai.nm_estabelecimento DESC',
                 ),
+                'nm_grupoEstabelecimento'=>array(
+                    'asc'=>'idGrupoEstabelecimento.nm_grupoEstabelecimento',
+                    'desc'=>'idGrupoEstabelecimento.nm_grupoEstabelecimento DESC',
+                ),
                 '*',
             ));
 
@@ -82,6 +87,11 @@ $gridColumns = array(
         'header' => 'Nome Estabelecimento',
         'name'  => 'nm_estabelecimento',
         'value' => '$data->nm_estabelecimento',
+        ),
+    array(
+        'header' => 'Grupo Estabelecimento',
+        'name'  => 'nm_grupoEstabelecimento',
+        'value' => 'empty($data->idGrupoEstabelecimento->nm_grupoEstabelecimento) ? "" : $data->idGrupoEstabelecimento->nm_grupoEstabelecimento',
         ),
     array(
 		'htmlOptions' => array('nowrap'=>'nowrap'),
@@ -135,6 +145,7 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'enableAjaxValidation'=>true,
         'clientOptions'=>array(
             'validateOnSubmit'=>true,
+            'validateOnChange'=>false,
         ),
 )); ?>
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
@@ -152,11 +163,13 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 
             <?php echo $form->hiddenField($modelEstabelecimento, 'id_estabelecimento'); ?>
             <?php echo $form->textFieldRow($modelEstabelecimento, 'nm_estabelecimento', array('class'=>'input-xxlarge')); ?>
-            <?php echo $form->dropDownListRow($modelEstabelecimento,
-                    'id_grupoEstabelecimento',
-                    CHtml::listData(Grupoestabelecimento::model()->getComboGrupoEstabelecimento(),'id_grupoEstabelecimento','nm_grupoEstabelecimento'),
-                    array('prompt' => '--Escolha o Grupo--')); ?>
 
+            <?php echo $form->select2Row($modelEstabelecimento,'id_grupoEstabelecimento',array(
+                'data' => CHtml::listData(Grupoestabelecimento::model()->getComboGrupoEstabelecimento(), 'id_grupoEstabelecimento', 'nm_grupoEstabelecimento'),
+                'asDropDownList' => true,
+                'options' => array('allowClear' => true,
+                            'placeholder' => '-- Escolha o Grupo --',
+                            'width'=>'40%'))); ?>
         </fieldset>
     </div>
     <div class="modal-footer">

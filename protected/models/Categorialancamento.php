@@ -44,13 +44,14 @@ class Categorialancamento extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('nm_categoriaLancamento, tp_categoriaLancamento', 'required'),
+			array('nm_categoriaLancamento, tp_categoriaLancamento, tp_categoriaLancamentoPessoa', 'required'),
 			array('id_categoriaLancamentoPai', 'numerical', 'integerOnly'=>true),
 			array('nm_categoriaLancamento', 'length', 'max'=>45),
 			array('tp_categoriaLancamento', 'length', 'max'=>1),
+            array('tp_categoriaLancamentoPessoa','in','range'=>$this->enumTipoCategoriaLancamentoPessoa(true),'allowEmpty'=>false),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id_categoriaLancamento, nm_categoriaLancamento, tp_categoriaLancamento, id_categoriaLancamentoPai', 'safe', 'on'=>'search'),
+			array('id_categoriaLancamento, nm_categoriaLancamento, tp_categoriaLancamento, id_categoriaLancamentoPai, tp_categoriaLancamentoPessoa', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -78,9 +79,15 @@ class Categorialancamento extends CActiveRecord
 			'nm_categoriaLancamento' => 'Nome Categoria Lancamento',
 			'tp_categoriaLancamento' => 'Tipo Categoria Lancamento',
 			'id_categoriaLancamentoPai' => 'Categoria Lancamento Pai',
+            'tp_categoriaLancamentoPessoa' => 'Tipo Favorecido',
 		);
 	}
 
+    private function enumTipoCategoriaLancamentoPessoa($completo=false)
+    {
+        return  $completo ? array('C','F','X') : array('C','F');
+    }
+    
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
@@ -98,11 +105,35 @@ class Categorialancamento extends CActiveRecord
         $criteria->compare('idCategoriaLancamentoPai.nm_categoriaLancamento',$this->nm_categoriaLancamentoPai,true);
 		$criteria->compare('tp_categoriaLancamento',$this->tp_categoriaLancamento,true);
 		$criteria->compare('id_categoriaLancamentoPai',$this->id_categoriaLancamentoPai);
+        $criteria->compare('tp_categoriaLancamentoPessoa',$this->tp_categoriaLancamentoPessoa,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
+    
+    protected function beforeValidate()
+    {
+        //se for array transforma
+        if($this->tp_categoriaLancamentoPessoa == $this->enumTipoCategoriaLancamentoPessoa())
+        {
+            $this->tp_categoriaLancamentoPessoa = 'X';
+        } else {
+            $this->tp_categoriaLancamentoPessoa = $this->tp_categoriaLancamentoPessoa[0];
+        }
+        return parent::beforeValidate();
+    }
+    
+    protected function afterFind()
+    {
+        //se for array transforma
+        if($this->tp_categoriaLancamentoPessoa == 'X')
+        {
+            $this->tp_categoriaLancamentoPessoa = $this->enumTipoCategoriaLancamentoPessoa();
+        }
+        
+        return parent::afterFind();
+    }
     
     public function getCategoriaLancamentoGrid()
 	{
@@ -118,13 +149,14 @@ class Categorialancamento extends CActiveRecord
         );
         
         $criteria->select = array(
-            'id_categoriaLancamento','nm_categoriaLancamento','tp_categoriaLancamento'
+            'id_categoriaLancamento','nm_categoriaLancamento','tp_categoriaLancamento','tp_categoriaLancamentoPessoa'
         );
         
         $criteria->compare('t.id_categoriaLancamento', $this->id_categoriaLancamento);
         $criteria->compare('t.nm_categoriaLancamento', $this->nm_categoriaLancamento, true);
         $criteria->compare('t.tp_categoriaLancamento', $this->tp_categoriaLancamento, true);
         $criteria->compare('idCategoriaLancamentoPai.nm_categoriaLancamento', $this->nm_categoriaLancamentoPai, true);
+        $criteria->compare('tp_categoriaLancamentoPessoa', $this->tp_categoriaLancamentoPessoa,true);
         
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -163,7 +195,7 @@ class Categorialancamento extends CActiveRecord
 
         $data = CHtml::listData($data,'id_categoriaLancamento','nm_categoriaLancamento');
 
-        $opt = "<option value=''>-- Escolha a Categoria --</option>";
+        $opt = "<option value></option>";
         
         foreach($data as $id_categoriaLancamento=>$nm_categoriaLancamento)
         {
@@ -171,5 +203,27 @@ class Categorialancamento extends CActiveRecord
         }
         
         return $opt;
+    }
+    
+    public function getTipoCategoriaLancamento($abreviacao)
+    {
+        if ($abreviacao == 'D') return "Despesa";
+        else if ($abreviacao == 'R') return "Receita";
+    }
+    
+    public function getTipoCategoriaLancamentoPessoa($abreviacao)
+    {
+        if ($abreviacao == 'C') 
+        {
+            return "Colaborador";
+        }
+        else if ($abreviacao == 'F') 
+        {
+            return "Fornecedor";
+        }
+        else if (($abreviacao == 'X')||($abreviacao == $this->enumTipoCategoriaLancamentoPessoa()))
+        {
+            return "Colaborador/Fornecedor";
+        }
     }
 }

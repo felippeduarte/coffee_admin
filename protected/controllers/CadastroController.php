@@ -730,9 +730,13 @@ class CadastroController extends Controller
 		{
             $modelCategoriaLancamento->attributes = $_POST['Categorialancamento'];
             
+            if(empty($_POST['Categorialancamento']['id_categoriaLancamentoPai']))
+            {
+                $modelCategoriaLancamento->id_categoriaLancamento = null;
+            }
             $pk = $modelCategoriaLancamento->id_categoriaLancamento;
             $modelCategoriaLancamento->id_categoriaLancamento = $_POST['Categorialancamento']['id_categoriaLancamento'];
-                        
+
             if($modelCategoriaLancamento->validate())
             {
                 if(!empty($_POST['Categorialancamento']['id_categoriaLancamento']))

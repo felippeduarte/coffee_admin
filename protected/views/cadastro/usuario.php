@@ -14,7 +14,10 @@ $('#gridUsuario a.update').live('click',function() {
             
             $("[name='Usuario[id_pessoa]']")[1].value = u.id_pessoa;
             $("[name='Usuario[nm_login]']")[1].value = u.nm_login;
-            $("#Colaborador_id_pessoa option[value="+u.id_pessoa+"]").prop('selected', true);
+            
+            $('#Colaborador_id_pessoa').select2().select2('val',u.id_pessoa).select2({width:'resolve'});
+            $("#Colaborador_id_pessoa option[value="+u.id_pessoa+"]").attr('selected', 'selected');
+            
             $('#modal-cadastro').modal('toggle');
 
         },
@@ -63,6 +66,10 @@ $dataProvider->sort = array(
                     'asc'=>'nm_login',
                     'desc'=>'nm_login DESC',
                 ),
+                'nm_pessoa'=>array(
+                    'asc'=>'idPessoa.nm_pessoa',
+                    'desc'=>'idPessoa.nm_pessoa DESC',
+                ),
                 '*',
             ));
 
@@ -76,6 +83,11 @@ $gridColumns = array(
         'header' => 'Login',
         'name'  => 'nm_login',
         'value' => '$data->nm_login',
+        ),
+    array(
+        'header' => 'Colaborador',
+        'name'  => 'nm_pessoa',
+        'value' => '$data->idPessoa->nm_pessoa',
         ),
     array(
 		'htmlOptions' => array('nowrap'=>'nowrap'),
@@ -129,6 +141,7 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'enableAjaxValidation'=>true,
         'clientOptions'=>array(
             'validateOnSubmit'=>true,
+            'validateOnChange'=>false,
         ),
 )); ?>
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
@@ -145,15 +158,17 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
             <?php echo $form->errorSummary(array($modelUsuario),'Sumário de Erros'); ?>
 
             <?php echo $form->hiddenField($modelUsuario, 'id_pessoa'); ?>
-            <?php echo $form->textFieldRow($modelUsuario, 'nm_login', array('class'=>'input-xxlarge')); ?>
-            <?php echo $form->passwordFieldRow($modelUsuario, 'de_senha', array('class'=>'input-xxlarge')); ?>
+            <?php echo $form->textFieldRow($modelUsuario, 'nm_login', array('class'=>'input-xxlarge', 'autocomplete'=>'off')); ?>
+            <?php echo $form->passwordFieldRow($modelUsuario, 'de_senha', array('class'=>'input-xxlarge', 'autocomplete'=>'off')); ?>
             <?php //echo CHtml::passwordField('de_senha2'); ?>
-            <?php echo $form->passwordFieldRow($modelUsuario, 'de_senha_confirmacao', array('class'=>'input-xxlarge')); ?>
+            <?php echo $form->passwordFieldRow($modelUsuario, 'de_senha_confirmacao', array('class'=>'input-xxlarge', 'autocomplete'=>'off')); ?>
             
-            <?php echo $form->dropDownListRow($modelColaborador,
-                    'id_pessoa',
-                    CHtml::listData(Colaborador::model()->getComboColaborador(),'id_pessoa','idPessoa.nm_pessoa'),
-                    array('prompt' => '--Escolha o colaborador--')); ?>
+            <?php echo $form->select2Row($modelColaborador,'id_pessoa',array(
+                'data' => CHtml::listData(Colaborador::model()->getComboColaborador(), 'id_pessoa', 'idPessoa.nm_pessoa'),
+                'asDropDownList' => true,
+                'options' => array('allowClear' => true,
+                            'placeholder' => '-- Escolha o colaborador --',
+                            'width'=>'40%'))); ?>
 
         </fieldset>
     </div>

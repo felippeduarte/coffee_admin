@@ -139,6 +139,14 @@ class Pessoafisica extends CActiveRecord
         return parent::afterSave();
     }
     
+    protected function afterFind()
+    {
+        // convert to storage format
+        $this->nu_cpf = Yii::app()->bulebar->adicionaMascaraCPF($this->nu_cpf);
+
+        return parent::afterFind();
+    }
+    
     public function validarCPF($attribute)
     {
         $retorno = Yii::app()->bulebar->validarCPF($this->nu_cpf);

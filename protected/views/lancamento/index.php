@@ -203,14 +203,13 @@ $form = $this->beginWidget(
                     'data' => $listaEstabelecimentos,
                     'asDropDownList' => true,
                     'options' => array('allowClear' => true,
-                                'placeholder' => '-- Escolha o estabelecimento --',
-                                'width'=>'40%'))); ?>
+                                'placeholder' => '-- Escolha o estabelecimento --'))); ?>
             <?php echo $form->select2Row($modelLancamento,'id_categoriaLancamento',array(
                     'data' => null,
                     'asDropDownList' => true,
                     'options' => array('allowClear' => true,
                                 'placeholder' => '-- Escolha a categoria --',
-                                'width'=>'40%'))); ?>
+                        ))); ?>
             <div class="control-group">
             <?php echo $form->label($modelLancamento, 'nm_turno',array('class'=>'control-label required')); ?>
                 <div class="controls">
@@ -225,17 +224,15 @@ $form = $this->beginWidget(
             </div>
             
             <?php echo $form->select2Row($modelLancamento,'id_pessoaLancamento',array(
-                    'data' => CHtml::listData(Pessoa::model()->getComboFavorecido(),'id_pessoa','nm_comboFavorecido'),
+                    'data' => null,
                     'asDropDownList' => true,
                     'options' => array('allowClear' => true,
-                                'placeholder' => '-- Escolha o favorecido --',
-                                'width'=>'40%'))); ?>
+                                'placeholder' => '-- Escolha uma categoria --'))); ?>
             <?php echo $form->select2Row($modelLancamento,'id_formaPagamento',array(
                     'data' => CHtml::listData(Formapagamento::model()->getComboFormaPagamento(),'id_formaPagamento','nm_formaPagamento'),
                     'asDropDownList' => true,
                     'options' => array('allowClear' => true,
-                                'placeholder' => '-- Escolha a forma de pagamento --',
-                                'width'=>'40%'))); ?>
+                                'placeholder' => '-- Escolha a forma de pagamento --'))); ?>
             <?php echo $form->textAreaRow($modelLancamento, 'de_observacao', array('class'=>'span4', 'rows'=>1)); ?>
         </fieldset>
     </div>

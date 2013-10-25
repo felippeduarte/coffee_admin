@@ -97,7 +97,7 @@ class Estabelecimento extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-    
+
     public function getComboEstabelecimento()
     {
         $criteria=new CDbCriteria;

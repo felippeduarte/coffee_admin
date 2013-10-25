@@ -92,12 +92,6 @@ class Funcoes extends CApplicationComponent
         return md5($senha);
     }
     
-    public function getTipoCategoria($abreviacao)
-    {
-        if ($abreviacao == 'D') return "Despesa";
-        else if ($abreviacao == 'R') return "Receita";
-    }
-    
     /**
     * Verifica se é um número de CPF válido.
     *
@@ -105,7 +99,7 @@ class Funcoes extends CApplicationComponent
     * @return boolean
     */
     public function validarCPF($cpf)
-    {
+    {        
         // remove os caracteres não-numéricos
         $cpf = preg_replace('/\D/', '', $cpf);
 

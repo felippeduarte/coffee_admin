@@ -69,6 +69,8 @@ class Pessoa extends CActiveRecord
 			'lancamentos' => array(self::HAS_MANY, 'Lancamento', 'id_pessoaLancamento'),
 			'pessoafisica' => array(self::HAS_ONE, 'Pessoafisica', 'id_pessoa'),
 			'pessoajuridica' => array(self::HAS_ONE, 'Pessoajuridica', 'id_pessoa'),
+            'fornecedor' => array(self::HAS_ONE, 'Fornecedor', 'id_pessoa'),
+            'colaborador' => array(self::HAS_ONE, 'Colaborador', 'id_pessoa'),
 		);
 	}
 
@@ -181,4 +183,81 @@ class Pessoa extends CActiveRecord
         
         return $this->findAll($criteria);
     }
+    
+    /**
+     * Monta lista de "<option>" para usar em combobox com select2
+     * @param string $tipo tp_categoriaLancamnetoPessoa ('C', 'F' ou array('C','F'))
+     * @return string html option
+     */
+    public function getHtmlDropdownOptionsCategoriasPorTipo($tipoFavorecido)
+    {
+        $criteria = new CDbCriteria;
+        
+        $criteria->with = array(
+            'pessoafisica',
+            'pessoajuridica'
+        );
+        
+        if($tipoFavorecido)
+        {
+            if($tipoFavorecido == 'C')
+            {
+                $criteria->with = $criteria->with +
+                        array(
+                            'colaborador'=>array(
+                            'select'=>false,
+                            'joinType'=>'INNER JOIN',
+                        ));
+            }
+            else if($tipoFavorecido == 'F')
+            {
+                $criteria->with = $criteria->with +
+                        array(
+                            'fornecedor'=>array(
+                            'select'=>false,
+                            'joinType'=>'INNER JOIN',
+                        ));
+            }
+            else if($tipoFavorecido == array('C','F'))
+            {
+                $criteria->with = $criteria->with +
+                        array(
+                            'colaborador'=>array(
+                            'select'=>false,
+                            'joinType'=>'LEFT JOIN',
+                        )) +
+                        array(
+                            'fornecedor'=>array(
+                            'select'=>false,
+                            'joinType'=>'LEFT JOIN',
+                        ));
+            }
+        }
+        
+        $criteria->select = array(
+            'id_pessoa',
+            'CONCAT(COALESCE(pessoafisica.nu_cpf,pessoajuridica.nu_cnpj), " - ", t.nm_pessoa) as nm_comboFavorecido'
+        );
+    
+        //elimina inativos e administrador
+        $criteria->condition = 't.fl_inativo = :fl_inativo AND t.id_pessoa != :administrador';
+        $criteria->params = array(
+            ':fl_inativo' => false,
+            ':administrador' => 1
+        );
+        
+        $data = $this->findAll($criteria);
+
+        $data = CHtml::listData($data,'id_pessoa','nm_comboFavorecido');
+
+        $opt = "<option value></option>";
+        
+        foreach($data as $id_pessoa=>$nm_comboFavorecido)
+        {
+            $opt .= CHtml::tag('option', array('value'=>$id_pessoa),CHtml::encode($nm_comboFavorecido),true);
+        }
+        
+        return $opt;
+    }   
+       
 }

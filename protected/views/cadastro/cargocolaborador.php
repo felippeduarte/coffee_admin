@@ -130,6 +130,7 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'enableAjaxValidation'=>true,
         'clientOptions'=>array(
             'validateOnSubmit'=>true,
+            'validateOnChange'=>false,
         ),
 )); ?>
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array(

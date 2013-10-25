@@ -21,7 +21,12 @@ $('#gridColaborador a.update').live('click',function() {
             
             $("[name='Colaborador[nu_colaborador]']")[1].value = c.nu_colaborador;
             
-            $("#Colaborador_id_cargoColaborador option[value="+c.id_cargoColaborador+"]").prop('selected', true);
+            $('#Colaborador_id_cargoColaborador').select2().select2('val',c.id_cargoColaborador).select2({width:'resolve'});
+            $("#Colaborador_id_cargoColaborador option[value="+c.id_cargoColaborador+"]").attr('selected', 'selected');
+            
+            $('#Colaborador_id_estabelecimento').select2().select2('val',c.id_estabelecimento).select2({width:'resolve'});
+            $("#Colaborador_id_estabelecimento option[value="+c.id_estabelecimento+"]").attr('selected', 'selected');
+            
             $('#modal-cadastro').modal('toggle');
 
         },
@@ -78,6 +83,10 @@ $dataProvider->sort = array(
                     'asc'=>'nm_cargoColaborador',
                     'desc'=>'nm_cargoColaborador DESC',
                 ),
+                'nm_estabelecimento'=>array(
+                    'asc'=>'nm_estabelecimento',
+                    'desc'=>'nm_estabelecimento DESC',
+                ),
                 '*',
             ));
 
@@ -90,7 +99,7 @@ $gridColumns = array(
     array(
         'header' => 'CPF',
         'name'  => 'nu_cpf',
-        'value' => 'Yii::app()->bulebar->adicionaMascaraIdentificador($data->pessoaFisica->nu_cpf)',
+        'value' => '$data->pessoaFisica->nu_cpf',
         'htmlOptions'=>array('style'=>'width: 140px')
         ),
     array(
@@ -107,6 +116,11 @@ $gridColumns = array(
         'header' => 'Cargo',
         'name'  => 'nm_cargoColaborador',
         'value' => '$data->idCargoColaborador->nm_cargoColaborador',
+        ),
+    array(
+        'header' => 'Estabelecimento',
+        'name'  => 'nm_estabelecimento',
+        'value' => '$data->idEstabelecimento->nm_estabelecimento',
         ),
     array(
 		'htmlOptions' => array('nowrap'=>'nowrap'),
@@ -160,6 +174,7 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'enableAjaxValidation'=>true,
         'clientOptions'=>array(
             'validateOnSubmit'=>true,
+            'validateOnChange'=>false,
         ),
 )); ?>
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
@@ -186,10 +201,21 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
             <?php echo Yii::app()->getController()->actionPessoaFisica($form,$modelPessoaFisica); ?>
             
             <?php echo $form->textFieldRow($modelColaborador, 'nu_colaborador', array('class'=>'input-xxlarge')); ?>
-            <?php echo $form->dropDownListRow($modelColaborador,
-                    'id_cargoColaborador',
-                    CHtml::listData(Cargocolaborador::model()->findAll(),'id_cargoColaborador','nm_cargoColaborador'),
-                    array('prompt' => '--Escolha o cargo--')); ?>
+            
+            <?php echo $form->select2Row($modelColaborador,'id_cargoColaborador',array(
+                    'data' => CHtml::listData(Cargocolaborador::model()->getComboCargoColaborador(), 'id_cargoColaborador', 'nm_cargoColaborador'),
+                    'asDropDownList' => true,
+                    'options' => array('allowClear' => true,
+                                'placeholder' => '-- Escolha o cargo --',
+                                'width'=>'40%'))); ?>
+            
+            
+            <?php echo $form->select2Row($modelColaborador,'id_estabelecimento',array(
+                    'data' => CHtml::listData(Estabelecimento::model()->getComboEstabelecimento(), 'id_estabelecimento', 'nm_estabelecimento'),
+                    'asDropDownList' => true,
+                    'options' => array('allowClear' => true,
+                                'placeholder' => '-- Escolha o estabelecimento --',
+                                'width'=>'40%'))); ?>
 
         </fieldset>
     </div>
