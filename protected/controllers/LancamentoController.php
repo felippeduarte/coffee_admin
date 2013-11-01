@@ -33,7 +33,7 @@ class LancamentoController extends Controller
 		}
         
         if(isset($_POST['Lancamento']))
-        {
+        {   
             if(!empty($_POST['Lancamento']['id_lancamento']))
             {
                 $modelLancamento = Lancamento::model()->findByPk($_POST['Lancamento']['id_lancamento']);
@@ -41,9 +41,10 @@ class LancamentoController extends Controller
             $modelLancamento->attributes = $_POST['Lancamento'];
             $modelLancamento->id_pessoaUsuario = Yii::app()->user->getId();
             $modelLancamento->dt_ultimaAlteracao = date('d/m/Y h:i:s');
+            $modelLancamento->tp_categoriaLancamento = $_POST['Lancamento']['tp_categoriaLancamento'];
             
             $modelLancamento->setScenario('insert');
-            
+         
             if($modelLancamento->validate())
             {
                 $modelLancamento->save();
@@ -130,9 +131,7 @@ class LancamentoController extends Controller
     {
         $categoria = Categorialancamento::model()->findByPk($_POST['id_categoriaLancamento']);
         
-        if(($categoria->tp_categoriaLancamentoPessoa === 'C')|
-            ($categoria->tp_categoriaLancamentoPessoa === 'F')|
-            $categoria->tp_categoriaLancamentoPessoa === array('C','F'))
+        if(in_array($categoria->tp_categoriaLancamentoPessoa, array('C','F',array('C','F'))))
         {
             echo Pessoa::model()->getHtmlDropdownOptionsCategoriasPorTipo($categoria->tp_categoriaLancamentoPessoa);
         }

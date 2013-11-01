@@ -23,12 +23,13 @@ $(document).ready(function()
 
 function updateModal(categoria,tipo,reset,novo)
 {
-    jQuery('#Lancamento_id_categoriaLancamento').html(categoria);
+    $('#Lancamento_id_categoriaLancamento').html(categoria);
     _setModalHeader(tipo, novo);
     
     novo? _resetForm(true) : _resetForm(false);
     
-    jQuery('#modal-cadastro').modal({'show':true});
+    $('#Lancamento_tp_categoriaLancamento').val(tipo);
+    $('#modal-cadastro').modal({'show':true});
 }
 
 function _resetForm(complete)
@@ -174,11 +175,16 @@ $dataProvider->sort = array(
             ));
 
 $gridColumns = array(
-      array(
+    array(
         'header' => '#',
         'name'  => 'id_lancamento',
         'htmlOptions'=>array('style'=>'width: 5px')
         ),
+    array(
+        'header' => '<i class="icon-retweet"></i>',
+        'name'   => 'id_lancamentoVinculado',
+        'htmlOptions'=>array('style'=>'width: 5px')
+    ),
     array(
         'header' => 'Data',
         'name'  => 'dt_lancamento',
@@ -219,7 +225,7 @@ $gridColumns = array(
         'header' => 'Valor',
         'name'  => 'vl_lancamento',
         'value' => '$data->vl_lancamento',
-        'cssClassExpression' => '$data->idCategoriaLancamento->tp_categoriaLancamento == "R" ? "text-success" : "text-error"',
+        'cssClassExpression' => '$data->vl_lancamento >=0 ? "text-success" : "text-error"',
         'htmlOptions'=>array('style'=>'width: 30px')
         ),
     array(

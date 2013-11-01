@@ -15,6 +15,8 @@
  * @property string $de_observacao
  * @property integer $id_pessoaUsuario
  * @property string $dt_ultimaAlteracao
+ * @property string $fl_inativo
+ * @property string $id_lancamentoVinculado
  *
  * The followings are the available model relations:
  * @property Estabelecimento $idEstabelecimento
@@ -154,6 +156,7 @@ class Lancamento extends CActiveRecord
     {
         if(empty($this->nm_turno)) $this->nm_turno = null;
         $this->view2model();
+        $this->negativaValores();
         return parent::beforeSave();
     }
     
@@ -167,9 +170,67 @@ class Lancamento extends CActiveRecord
     protected function afterSave()
     {
         $this->model2view();
+        $this->lancamentoVinculado();
         return parent::afterSave();
     }
 
+    protected function afterUpdate()
+    {
+        $this->model2view();
+        $this->lancamentoVinculado();
+        return parent::afterUpdate();
+    }
+    
+    private function negativaValores()
+    {
+        if($this->tp_categoriaLancamento == 'D')
+        {
+            $this->vl_lancamento = -1 * $this->vl_lancamento;
+        }
+    }   
+    
+    private function lancamentoVinculado()
+    {
+        if(empty($this->id_lancamentoVinculado))
+        {
+            //apenas para receitas
+            if($this->tp_categoriaLancamento == 'R')
+            {
+                $estabelecimentoFormaPagamento = EstabelecimentoFormapagamento::model()->findByPk(array(
+                'id_estabelecimento' => $this->id_estabelecimento, 
+                'id_formaPagamento' => $this->id_formaPagamento));
+
+                if(!empty($estabelecimentoFormaPagamento))
+                {
+                    $lancamento = new Lancamento();
+                    $lancamento->id_lancamentoVinculado = $this->id_lancamento;
+                    $lancamento->attributes = $this->attributes;
+                    $lancamento->vl_lancamento = -1 * round(($this->vl_lancamento * $estabelecimentoFormaPagamento->nu_taxaPercentual/100),2);
+                    $lancamento->save();
+                    
+                    //atualiza id vinculado do lançamento principal
+                    $this->id_lancamentoVinculado = $lancamento->id_lancamento;
+                    $this->save();
+                }
+            }
+        }
+        else
+        {
+            //verificar remoção
+            if($this->fl_inativo == 1)
+            {
+                $lancamento = Lancamento::model()->findByAttributes(array('id_lancamentoVinculado'=>$this->id_lancamento));
+                $lancamento->fl_inativo = 1;
+                $lancamento->updateByPk();
+            }
+            //verificar edição
+            else
+            {
+                
+            }
+        }
+    }
+    
     private function model2view()
     {
         if(!empty($this->dt_lancamento))
@@ -221,7 +282,7 @@ class Lancamento extends CActiveRecord
         );
         
         $criteria->select = array(
-            'id_lancamento','dt_lancamento','vl_lancamento'
+            'id_lancamento','dt_lancamento','vl_lancamento','id_lancamentoVinculado'
         );
         
         $condicao = array('t.fl_inativo = 0');

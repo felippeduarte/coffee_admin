@@ -188,6 +188,7 @@ $form = $this->beginWidget(
             <?php echo $form->errorSummary(array($modelLancamento),'Sumário de Erros'); ?>
 
             <?php echo $form->hiddenField($modelLancamento, 'id_lancamento'); ?>
+            <?php echo $form->hiddenField($modelLancamento, 'tp_categoriaLancamento'); ?>
             <?php echo $form->maskedTextFieldRow($modelLancamento,'dt_lancamento','99/99/9999',
                         array('prepend'=>'<i class="icon-calendar"></i>',
                               'class' => 'input-small',
