@@ -20,6 +20,7 @@ class Pessoa extends CActiveRecord
     const TP_PESSOA_JURIDICA = 'PJ';
     
     public $nm_comboFavorecido;
+    public $identificador;
     
 	/**
 	 * Returns the static model of the specified AR class.
@@ -236,7 +237,8 @@ class Pessoa extends CActiveRecord
         
         $criteria->select = array(
             'id_pessoa',
-            'CONCAT(COALESCE(pessoafisica.nu_cpf,pessoajuridica.nu_cnpj), " - ", t.nm_pessoa) as nm_comboFavorecido'
+            'CONCAT(COALESCE(pessoafisica.nu_cpf,pessoajuridica.nu_cnpj)) as identificador',
+            't.nm_pessoa'
         );
     
         //elimina inativos e administrador
@@ -246,18 +248,18 @@ class Pessoa extends CActiveRecord
             ':administrador' => 1
         );
         
+        $criteria->order = 't.nm_pessoa';
+        
         $data = $this->findAll($criteria);
-
-        $data = CHtml::listData($data,'id_pessoa','nm_comboFavorecido');
 
         $opt = "<option value></option>";
         
-        foreach($data as $id_pessoa=>$nm_comboFavorecido)
+        foreach($data as $pessoa)
         {
-            $opt .= CHtml::tag('option', array('value'=>$id_pessoa),CHtml::encode($nm_comboFavorecido),true);
+            $opt .= CHtml::tag('option',
+                    array('value'=>$pessoa->id_pessoa),
+                          CHtml::encode($pessoa->nm_pessoa." (".Yii::app()->bulebar->adicionaMascaraIdentificador($pessoa->identificador).")"),true);
         }
-        
         return $opt;
-    }   
-       
+    }
 }
