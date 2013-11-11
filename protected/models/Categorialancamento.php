@@ -209,6 +209,7 @@ class Categorialancamento extends CActiveRecord
     {
         if ($abreviacao == 'D') return "Despesa";
         else if ($abreviacao == 'R') return "Receita";
+        else if ($abreviacao == 'F') return "Folha de Pagamento";
     }
     
     public function getTipoCategoriaLancamentoPessoa($abreviacao)

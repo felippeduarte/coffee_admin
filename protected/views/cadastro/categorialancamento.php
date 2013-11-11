@@ -22,6 +22,9 @@ $('#gridCategoriaLancamento a.update').live('click',function() {
             else if(c.tp_categoriaLancamento == 'R') {
                 $(":radio[value=R]").prop("checked", true);
             }
+            else if(c.tp_categoriaLancamento == 'F') {
+                $(":radio[value=R]").prop("checked", true);
+            }
             
             $(":checkbox").prop("checked", false);
             $.each(c.tp_categoriaLancamentoPessoa, function(index,value) {
@@ -187,6 +190,7 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
                             array(
                                 'D' => 'Despesa',
                                 'R' => 'Receita',
+                                'F' => 'Folha de Pagamento'
                                 )
                     ); ?>
 

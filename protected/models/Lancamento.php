@@ -311,6 +311,48 @@ class Lancamento extends CActiveRecord
 		));
 	}
     
+    public function getFolhaDePagamentoGrid($dataInicio, $dataFim, $estabelecimento)
+	{
+		$criteria = new CDbCriteria;
+
+        $criteria->together = true;
+        
+        $criteria->with = array(
+            'idPessoaLancamento' => array('select'=>'nm_pessoa'),
+            'idEstabelecimento' => array('select'=>'nm_estabelecimento'),
+            'idCategoriaLancamento' => array('select'=>'nm_categoriaLancamento'),
+            'idPessoaLancamento' => array('select'=>'nm_pessoa'),
+        );
+        
+        $criteria->select = array(
+            'id_lancamento','dt_lancamento','vl_lancamento','id_lancamentoVinculado'
+        );
+        
+        $condicao = array(
+            't.fl_inativo = 0',
+            'idCategoriaLancamento.tp_categoriaLancamento = "F"'
+        );
+        
+        if(!empty($dataInicio))
+        {
+            $condicao[] = 'dt_lancamento >= "'.Yii::app()->bulebar->trocaDataViewParaModel($dataInicio).'"';
+        }
+        if(!empty($dataFim))
+        {
+            $condicao[] = 'dt_lancamento <= "'.Yii::app()->bulebar->trocaDataViewParaModel($dataFim).'"';
+        }
+        if(!empty($estabelecimento))
+        {
+            $condicao[] = 't.id_estabelecimento = '.(int)$estabelecimento;
+        }
+        
+        $criteria->condition = join(' AND ', $condicao);
+        
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+    
     public function getRadioButtonsTurno()
     {
         return array(

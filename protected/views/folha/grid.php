@@ -19,16 +19,15 @@ $(document).ready(function()
             $('#Lancamento_nm_turno').val($(this).attr('value'));
         }
     });
-    
     $("#lancamento").bind("reset", function() {
         _resetForm(false);
     });    
     
-    $("#Lancamento_id_categoriaLancamento").change(function() {
+    $("#Lancamento_id_estabelecimento").change(function() {
         $.ajax({
-            url: "lancamento/carregaFavorecidos",
+            url: "folha/carregaFavorecidos",
             type: "post",
-            data: { "id_categoriaLancamento" : $(this).val() },
+            data: { "id_estabelecimento" : $(this).val() },
             dataType:'text',
             success: function (html) {
                 $('#Lancamento_id_pessoaLancamento').html(html);
@@ -70,10 +69,6 @@ function _setModalHeader(tipo, novo)
     novo ?
         $('.modal-header h3').text('Lançar '):
         $('.modal-header h3').text('Editar ');
-    
-    (tipo == 'R') ?
-        $('.modal-header h3').append('Receita'):
-        $('.modal-header h3').append('Despesa');
 }
     
 $('#gridLancamentos a.update').live('click',function() {

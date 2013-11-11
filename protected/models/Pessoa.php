@@ -262,4 +262,50 @@ class Pessoa extends CActiveRecord
         }
         return $opt;
     }
+    
+    /**
+     * Monta lista de "<option>" para usar em combobox com select2
+     * @param string $idEstabelecimento id_estabelcimento
+     * @return string html option
+     */
+    public function getHtmlDropdownOptionsPorEstabelecimento($idEstabelecimento)
+    {
+        $criteria = new CDbCriteria;
+        
+        $criteria->with = array(
+            'pessoafisica',
+            'pessoajuridica',
+            'colaborador',
+        );
+        
+        $criteria->select = array(
+            'id_pessoa',
+            'CONCAT(COALESCE(pessoafisica.nu_cpf,pessoajuridica.nu_cnpj)) as identificador',
+            't.nm_pessoa'
+        );
+    
+        //elimina inativos e administrador
+        $criteria->condition = 't.fl_inativo = :fl_inativo AND 
+                                t.id_pessoa != :administrador AND
+                                colaborador.id_estabelecimento = :id_estabelecimento';
+        $criteria->params = array(
+            ':fl_inativo' => false,
+            ':administrador' => 1,
+            ':id_estabelecimento' => $idEstabelecimento
+        );
+        
+        $criteria->order = 't.nm_pessoa';
+        
+        $data = $this->findAll($criteria);
+
+        $opt = "<option value></option>";
+        
+        foreach($data as $pessoa)
+        {
+            $opt .= CHtml::tag('option',
+                    array('value'=>$pessoa->id_pessoa),
+                          CHtml::encode($pessoa->nm_pessoa." (".Yii::app()->bulebar->adicionaMascaraIdentificador($pessoa->identificador).")"),true);
+        }
+        return $opt;
+    }
 }

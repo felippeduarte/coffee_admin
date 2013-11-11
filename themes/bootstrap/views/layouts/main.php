@@ -21,6 +21,7 @@
             'items'=>array(
                 array('label'=>'Cadastros', 'url'=>array('/cadastro'), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Lançamentos', 'url'=>array('/lancamento'), 'visible'=>!Yii::app()->user->isGuest),
+                array('label'=>'Folha de Pagamento', 'url'=>array('/folha'), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
             ),
         ),

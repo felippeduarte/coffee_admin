@@ -9,14 +9,13 @@ $('#Lancamento_vl_lancamento').mask('000.000.000.000,00', {reverse: true});
 
 ",CClientScript::POS_END );
 
-$this->pageTitle=Yii::app()->name . ' - Lançamentos';
-$this->breadcrumbs=array('Lançamentos',);
+$this->pageTitle=Yii::app()->name . ' - Folha de Pagamento';
+$this->breadcrumbs=array('Folha de Pagamento',);
 
 $listaEstabelecimentos = CHtml::listData(Estabelecimento::model()->getComboEstabelecimento(), 'id_estabelecimento', 'nm_estabelecimento');
-$listaCategorias = CHtml::listData(Categorialancamento::model()->getComboCategoriaLancamento(), 'id_categoriaLancamento', 'nm_categoriaLancamento');
 ?>
 
-<h1>Lançamentos</h1>
+<h1>Folha de Pagamento</h1>
 
 <?php
 $form = $this->beginWidget(
@@ -80,17 +79,6 @@ echo CHtml::dropDownlist(
 ?>
 
 <?php
-echo CHtml::dropDownlist(
-        'categoriaLancamento',
-        null,
-        $listaCategorias,
-        array(
-            'prompt' => '-- Categoria --',
-            'options'=> array($categoria=>array('selected'=>true))
-        ));
-?>
-
-<?php
 $this->widget(
     'bootstrap.widgets.TbButton',
     array('buttonType' => 'submit', 'label' => 'Pesquisar')
@@ -113,47 +101,15 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 
 <?php
 $this->widget('bootstrap.widgets.TbBox', array(
-                'title' => 'Lançamentos',
+                'title' => 'Folha de Pagamento',
                 'headerIcon' => 'icon-file',
                 'content' => $this->renderPartial('grid',array('dataProvider' => $dataProvider),true),
                 'headerButtons' => array(
-                	array(
+                    array(
                         'class' => 'bootstrap.widgets.TbButtonGroup',
                         'buttons'=>array(
-                            array(
-                                'label'=>'+ Lançar Receita',
-                                'url'=>'#modal-cadastro',
-                                'htmlOptions' => array(
-                                    'data-toggle' => 'modal',
-                                    'data-id' => 'R',
-                                    'class'=>'btn-success btn-lancamento',
-                                    'ajax' => array(
-                                        'type'=>'POST', 
-                                        'url'=>CController::createUrl('carregaCategorias'),
-                                        'data'=>array('tp_categoriaLancamento'=>'R'),
-                                        'success'=>"js:function(html){ 
-                                            updateModal(html,'R',true,true);
-                                        }",
-                                    ),
-                                ), 
-                            ),
-                            array(
-                                'label'=>'- Lançar Despesa',
-                                'url'=>'#modal-cadastro',
-                                'htmlOptions' => array(
-                                    'data-toggle' => 'modal',
-                                    'data-id' => 'D',
-                                    'class'=>'btn-danger btn-lancamento',
-                                    'ajax' => array(
-                                        'type'=>'POST', 
-                                        'url'=>CController::createUrl('carregaCategorias'),
-                                        'data'=>array('tp_categoriaLancamento'=>'D'),
-                                        'success'=>"js:function(html){ 
-                                            updateModal(html,'D',true,true);
-                                        }",
-                                    ),
-                                )
-                            ),
+                            array('label'=>'Lançar Pagamento', 'url'=>'#modal-cadastro', 'htmlOptions' => array(
+                                'data-toggle' => 'modal','class'=>'btn-danger btn-lancamento',)),
                         )
                     )
                 )
@@ -181,7 +137,7 @@ $form = $this->beginWidget(
 
     <div class="modal-header">
         <a class="close" data-dismiss="modal">&times;</a>
-        <h3></h3>
+        <h3>Pagamento</h3>
     </div>
     <div class="modal-body">
         <fieldset>
@@ -195,22 +151,12 @@ $form = $this->beginWidget(
                               'value' => date('d/m/Y'),
                         )
                     ); ?>
-            <?php echo $form->textFieldRow($modelLancamento,'vl_lancamento',
-                        array('prepend'=>'R$',
-                              'class' => 'input-medium',
-                        )
-                    ); ?>
             <?php echo $form->select2Row($modelLancamento,'id_estabelecimento',array(
                     'data' => $listaEstabelecimentos,
                     'asDropDownList' => true,
                     'options' => array('allowClear' => true,
                                 'placeholder' => '-- Escolha o estabelecimento --'))); ?>
-            <?php echo $form->select2Row($modelLancamento,'id_categoriaLancamento',array(
-                    'data' => null,
-                    'asDropDownList' => true,
-                    'options' => array('allowClear' => true,
-                                'placeholder' => '-- Escolha a categoria --',
-                        ))); ?>
+            
             <div class="control-group">
             <?php echo $form->label($modelLancamento, 'nm_turno',array('class'=>'control-label required')); ?>
                 <div class="controls">
@@ -227,12 +173,28 @@ $form = $this->beginWidget(
                     'data' => null,
                     'asDropDownList' => true,
                     'options' => array('allowClear' => true,
-                                'placeholder' => '-- Escolha uma categoria --'))); ?>
+                                'placeholder' => '-- Escolha um estabelecimento --'))); ?>
             <?php echo $form->select2Row($modelLancamento,'id_formaPagamento',array(
                     'data' => CHtml::listData(Formapagamento::model()->getComboFormaPagamento(),'id_formaPagamento','nm_formaPagamento'),
                     'asDropDownList' => true,
                     'options' => array('allowClear' => true,
                                 'placeholder' => '-- Escolha a forma de pagamento --'))); ?>
+            
+            <div class="span4">
+                <?php echo $form->textFieldRow($modelLancamento,'vl_lancamento',
+                        array('prepend'=>'R$',
+                              'class' => 'input-medium',
+                        )
+                    ); ?>
+            </div>
+            <div class="span8">
+                <?php echo $form->select2Row($modelLancamento,'id_categoriaLancamento',array(
+                    'data' => null,
+                    'asDropDownList' => true,
+                    'options' => array('allowClear' => true,
+                                'placeholder' => '-- Escolha a categoria --',
+                        ))); ?>
+            
             <?php echo $form->textAreaRow($modelLancamento, 'de_observacao', array('class'=>'span4', 'rows'=>1)); ?>
         </fieldset>
     </div>
