@@ -53,6 +53,10 @@ return array(
 			'urlFormat'=>'path',
                         'showScriptName'=>false,
 			'rules'=>array(
+                'relatorio/<action:(lancamentoEstabelecimento|'.
+                                  'lancamentoFornecedor|'.
+                                  'folhaPagamentoMensal)>'=>'relatorio/<action>',
+                'relatorio/<action:\w+>'=>'relatorio/index',
                 'cadastro/<action:(getGrupoEstabelecimento|'.
                                   'getEstabelecimento|'.
                                   'getUsuario|'.

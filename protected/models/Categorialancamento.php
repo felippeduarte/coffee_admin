@@ -8,6 +8,7 @@
  * @property string $nm_categoriaLancamento
  * @property string $tp_categoriaLancamento
  * @property integer $id_categoriaLancamentoPai
+ * @property bool $fl_ehFolhaPagamento
  *
  * The followings are the available model relations:
  * @property Categorialancamento $idCategoriaLancamentoPai
@@ -48,10 +49,11 @@ class Categorialancamento extends CActiveRecord
 			array('id_categoriaLancamentoPai', 'numerical', 'integerOnly'=>true),
 			array('nm_categoriaLancamento', 'length', 'max'=>45),
 			array('tp_categoriaLancamento', 'length', 'max'=>1),
+            array('fl_ehFolhaPagamento', 'in', 'range'=>array(0,1)),
             array('tp_categoriaLancamentoPessoa','in','range'=>$this->enumTipoCategoriaLancamentoPessoa(true),'allowEmpty'=>false),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id_categoriaLancamento, nm_categoriaLancamento, tp_categoriaLancamento, id_categoriaLancamentoPai, tp_categoriaLancamentoPessoa', 'safe', 'on'=>'search'),
+			array('id_categoriaLancamento, nm_categoriaLancamento, tp_categoriaLancamento, id_categoriaLancamentoPai, tp_categoriaLancamentoPessoa, fl_ehFolhaPagamento', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -80,6 +82,7 @@ class Categorialancamento extends CActiveRecord
 			'tp_categoriaLancamento' => 'Tipo Categoria Lancamento',
 			'id_categoriaLancamentoPai' => 'Categoria Lancamento Pai',
             'tp_categoriaLancamentoPessoa' => 'Tipo Favorecido',
+            'fl_ehFolhaPagamento' => 'É folha de pagamento?'
 		);
 	}
 
@@ -106,6 +109,7 @@ class Categorialancamento extends CActiveRecord
 		$criteria->compare('tp_categoriaLancamento',$this->tp_categoriaLancamento,true);
 		$criteria->compare('id_categoriaLancamentoPai',$this->id_categoriaLancamentoPai);
         $criteria->compare('tp_categoriaLancamentoPessoa',$this->tp_categoriaLancamentoPessoa,true);
+        $criteria->compare('fl_ehFolhaPagamento',$this->fl_ehFolhaPagamento,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -209,7 +213,6 @@ class Categorialancamento extends CActiveRecord
     {
         if ($abreviacao == 'D') return "Despesa";
         else if ($abreviacao == 'R') return "Receita";
-        else if ($abreviacao == 'F') return "Folha de Pagamento";
     }
     
     public function getTipoCategoriaLancamentoPessoa($abreviacao)
@@ -226,5 +229,39 @@ class Categorialancamento extends CActiveRecord
         {
             return "Colaborador/Fornecedor";
         }
+    }
+    
+    /**
+     * Retorna lista de categorias
+     * @param string $tp_categoriaLancamento R ou D
+     * @param bool $fl_ehFolhaPagamento
+     */
+    public function getCategoriasLancamento($tp_categoriaLancamento = null, $fl_ehFolhaPagamento = null)
+    {
+        $criteria = new CDbCriteria;
+        
+        $criteria->select = array(
+            'id_categoriaLancamento',
+            'nm_categoriaLancamento',
+            'tp_categoriaLancamento',
+            'id_categoriaLancamentoPai',
+            'fl_ehFolhaPagamento'
+        );
+        
+        $condicao = null;
+        
+        if(!empty($tp_categoriaLancamento))
+        {
+            $condicao[] = 'tp_categoriaLancamento = '.$tp_categoriaLancamento;
+        }
+        
+        if(!empty($fl_ehFolhaPagamento))
+        {
+            $condicao[] = 'fl_ehFolhaPagamento = '.$fl_ehFolhaPagamento;
+        }
+        
+        $criteria->condition = join(' AND ', $condicao);
+        
+        return $this->findAll($criteria);
     }
 }

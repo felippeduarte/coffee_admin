@@ -22,14 +22,16 @@ $('#gridCategoriaLancamento a.update').live('click',function() {
             else if(c.tp_categoriaLancamento == 'R') {
                 $(":radio[value=R]").prop("checked", true);
             }
-            else if(c.tp_categoriaLancamento == 'F') {
-                $(":radio[value=R]").prop("checked", true);
-            }
             
             $(":checkbox").prop("checked", false);
             $.each(c.tp_categoriaLancamentoPessoa, function(index,value) {
                 $(":checkbox[value="+value+"]").prop("checked", true);
             });
+            
+            if(c.fl_ehFolhaPagamento == 1)
+            {
+                $("#Categorialancamento_fl_ehFolhaPagamento").prop("checked", true);
+            }
             
             $('#modal-cadastro').modal('toggle');
 
@@ -189,11 +191,11 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
             <?php echo $form->radioButtonListRow($modelCategoriaLancamento, 'tp_categoriaLancamento',
                             array(
                                 'D' => 'Despesa',
-                                'R' => 'Receita',
-                                'F' => 'Folha de Pagamento'
+                                'R' => 'Receita'
                                 )
                     ); ?>
-
+            <?php echo $form->checkBoxRow($modelCategoriaLancamento,'fl_ehFolhaPagamento');?>
+            
             <?php echo $form->select2Row($modelCategoriaLancamento,'id_categoriaLancamentoPai',array(
                 'data' => CHtml::listData(CategoriaLancamento::model()->getComboCategoriaLancamento(), 'id_categoriaLancamento', 'nm_categoriaLancamento'),
                 'asDropDownList' => true,

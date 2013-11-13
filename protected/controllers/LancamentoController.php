@@ -39,8 +39,6 @@ class LancamentoController extends Controller
                 $modelLancamento = Lancamento::model()->findByPk($_POST['Lancamento']['id_lancamento']);
             }
             $modelLancamento->attributes = $_POST['Lancamento'];
-            $modelLancamento->id_pessoaUsuario = Yii::app()->user->getId();
-            $modelLancamento->dt_ultimaAlteracao = date('d/m/Y h:i:s');
             $modelLancamento->tp_categoriaLancamento = $_POST['Lancamento']['tp_categoriaLancamento'];
             
             $modelLancamento->setScenario('insert');

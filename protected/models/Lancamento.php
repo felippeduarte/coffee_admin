@@ -58,15 +58,15 @@ class Lancamento extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_formaPagamento', 'required', 'on'=>'ajax'),
-            array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_formaPagamento, id_pessoaUsuario, dt_ultimaAlteracao', 'required', 'on'=>'insert'),
+			array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_formaPagamento', 'required', 'on'=>'ajax,insert'),
+            array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_pessoaLancamento, id_formaPagamento', 'required', 'on'=>'folhaDePagamento,ajaxFolhaDePagamento'),
             array('id_estabelecimento, id_categoriaLancamento, id_pessoaLancamento, id_formaPagamento, id_pessoaUsuario', 'numerical', 'integerOnly'=>true),
 			array('vl_lancamento', 'length', 'max'=>12),
 			array('nm_turno', 'length', 'max'=>1),
 			array('de_observacao', 'length', 'max'=>4000),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id_lancamento, dt_lancamento, vl_lancamento, id_estabelecimento, id_categoriaLancamento, id_pessoaLancamento, id_formaPagamento, nm_turno, de_observacao, id_pessoaUsuario, dt_ultimaAlteracao', 'safe', 'on'=>'search'),
+			array('id_lancamento, dt_lancamento, vl_lancamento, id_estabelecimento, id_categoriaLancamento, id_pessoaLancamento, id_formaPagamento, nm_turno, de_observacao, id_pessoaUsuario, dt_ultimaAlteracao', 'safe', 'on'=>'search, folhaDePagamento'),
 		);
 	}
 
@@ -91,19 +91,31 @@ class Lancamento extends CActiveRecord
 	 */
 	public function attributeLabels()
 	{
-		return array(
-			'id_lancamento' => 'Id Lancamento',
-			'dt_lancamento' => 'Data Lancamento',
-			'vl_lancamento' => 'Valor',
-			'id_estabelecimento' => 'Estabelecimento',
-			'id_categoriaLancamento' => 'Categoria Lancamento',
-			'id_pessoaLancamento' => 'Favorecido',
-			'id_formaPagamento' => 'Forma Pagamento',
-			'nm_turno' => 'Turno',
-			'de_observacao' => 'Observação',
-			'id_pessoaUsuario' => 'Usuário',
-			'dt_ultimaAlteracao' => 'Data Última Alteração',
-		);
+        $labels = array(
+                    'id_lancamento' => 'Id Lancamento',
+                    'dt_lancamento' => 'Data Lancamento',
+                    'vl_lancamento' => 'Valor',
+                    'id_estabelecimento' => 'Estabelecimento',
+                    'id_categoriaLancamento' => 'Categoria Lancamento',
+                    'id_pessoaLancamento' => 'Favorecido',
+                    'id_formaPagamento' => 'Forma Pagamento',
+                    'nm_turno' => 'Turno',
+                    'de_observacao' => 'Observação',
+                    'id_pessoaUsuario' => 'Usuário',
+                    'dt_ultimaAlteracao' => 'Data Última Alteração',
+                );
+        
+        switch ($this->scenario)
+        {
+            case 'folhaDePagamento':
+                $labels['id_formaPagamento'] = 'Origem Pagamento';
+                $labels['id_categoriaLancamento'] = '';
+                break;
+            default:
+                break;
+        }
+        
+        return $labels;
 	}
 
 	/**
@@ -142,6 +154,11 @@ class Lancamento extends CActiveRecord
     
     protected function beforeValidate()
     {
+        if($this->scenario == 'ajaxFolhaDePagamento')
+        {
+            $this->vl_lancamento = $this->vl_lancamento[0];
+            $this->id_categoriaLancamento = $this->id_categoriaLancamento[0];
+        }
         $this->view2model();
         return parent::beforeValidate();
     }
@@ -155,6 +172,8 @@ class Lancamento extends CActiveRecord
     protected function beforeSave()
     {
         if(empty($this->nm_turno)) $this->nm_turno = null;
+        $this->id_pessoaUsuario = Yii::app()->user->getId();
+        $this->dt_ultimaAlteracao = date('d/m/Y H:i:s');
         $this->view2model();
         $this->negativaValores();
         return parent::beforeSave();
@@ -163,6 +182,8 @@ class Lancamento extends CActiveRecord
     protected function beforeUpdate()
     {
         if(empty($this->nm_turno)) $this->nm_turno = null;
+        $this->id_pessoaUsuario = Yii::app()->user->getId();
+        $this->dt_ultimaAlteracao = date('d/m/Y h:i:s');
         $this->view2model();
         return parent::beforeUpdate();
     }
@@ -170,14 +191,20 @@ class Lancamento extends CActiveRecord
     protected function afterSave()
     {
         $this->model2view();
-        $this->lancamentoVinculado();
+        if($this->scenario != 'folhaDePagamento')
+        {
+            $this->lancamentoVinculado();
+        }
         return parent::afterSave();
     }
 
     protected function afterUpdate()
     {
         $this->model2view();
-        $this->lancamentoVinculado();
+        if($this->scenario != 'folhaDePagamento')
+        {
+            $this->lancamentoVinculado();
+        }
         return parent::afterUpdate();
     }
     
@@ -285,7 +312,7 @@ class Lancamento extends CActiveRecord
             'id_lancamento','dt_lancamento','vl_lancamento','id_lancamentoVinculado'
         );
         
-        $condicao = array('t.fl_inativo = 0');
+        $condicao = array('t.fl_inativo = 0 AND idCategoriaLancamento.fl_ehFolhaPagamento = 0');
         
         if(!empty($dataInicio))
         {
@@ -330,7 +357,7 @@ class Lancamento extends CActiveRecord
         
         $condicao = array(
             't.fl_inativo = 0',
-            'idCategoriaLancamento.tp_categoriaLancamento = "F"'
+            'idCategoriaLancamento.fl_ehFolhaPagamento = 1'
         );
         
         if(!empty($dataInicio))
@@ -352,6 +379,49 @@ class Lancamento extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    public function getLancamentos($dataInicio, $dataFim, $idEstabelecimento=null, $idCategoriaLancamento=null)
+    {
+        $criteria = new CDbCriteria;
+
+        $criteria->together = true;
+        
+        $criteria->with = array(
+            'idPessoaLancamento' => array('select'=>'nm_pessoa'),
+            'idEstabelecimento' => array('select'=>'nm_estabelecimento'),
+            'idCategoriaLancamento' => array('select'=>'nm_categoriaLancamento'),
+            'idPessoaLancamento' => array('select'=>'nm_pessoa'),
+        );
+        
+        $criteria->select = array(
+            'id_lancamento','dt_lancamento','vl_lancamento','id_lancamentoVinculado'
+        );
+        
+        $condicao = array(
+            't.fl_inativo = 0'
+        );
+        
+        if(!empty($dataInicio))
+        {
+            $condicao[] = 'dt_lancamento >= "'.Yii::app()->bulebar->trocaDataViewParaModel($dataInicio).'"';
+        }
+        if(!empty($dataFim))
+        {
+            $condicao[] = 'dt_lancamento <= "'.Yii::app()->bulebar->trocaDataViewParaModel($dataFim).'"';
+        }
+        if(!empty($idEstabelecimento))
+        {
+            $condicao[] = 't.id_estabelecimento = '.(int)$idEstabelecimento;
+        }
+        if(!empty($idCategoriaLancamento))
+        {
+            $condicao[] = 't.id_categoriaLancamento = '.(int)$idCategoriaLancamento;
+        }
+        
+        $criteria->condition = join(' AND ', $condicao);
+        
+		return $this->findAll($criteria);
+    }
     
     public function getRadioButtonsTurno()
     {

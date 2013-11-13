@@ -5,7 +5,7 @@ $('.btn-group a.btn').live('click',function() {
     $('#Lancamento_nm_turno').val($(this).attr('value'));
 });
 
-$('#Lancamento_vl_lancamento').mask('000.000.000.000,00', {reverse: true});
+$('[name=\"Lancamento[vl_lancamento][]\"]').mask('000.000.000.000,00', {reverse: true});
 
 ",CClientScript::POS_END );
 
@@ -95,6 +95,7 @@ $this->widget('bootstrap.widgets.TbAlert', array(
     'closeText'=>'×', // close link text - if set to false, no close link is displayed
     'alerts'=>array( // configurations per alert type
 	    'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'), // success, info, warning, error or danger
+        'error'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'), // success, info, warning, error or danger
     ),
 ));
 ?>
@@ -174,27 +175,45 @@ $form = $this->beginWidget(
                     'asDropDownList' => true,
                     'options' => array('allowClear' => true,
                                 'placeholder' => '-- Escolha um estabelecimento --'))); ?>
+            
             <?php echo $form->select2Row($modelLancamento,'id_formaPagamento',array(
-                    'data' => CHtml::listData(Formapagamento::model()->getComboFormaPagamento(),'id_formaPagamento','nm_formaPagamento'),
-                    'asDropDownList' => true,
-                    'options' => array('allowClear' => true,
-                                'placeholder' => '-- Escolha a forma de pagamento --'))); ?>
+                        'data' => CHtml::listData(Formapagamento::model()->getComboFormaPagamento(),'id_formaPagamento','nm_formaPagamento'),
+                        'asDropDownList' => true,
+                        'options' => array('allowClear' => true,
+                                'placeholder' => '-- Escolha a origem do pagamento --'))); ?>
             
-            <div class="span4">
-                <?php echo $form->textFieldRow($modelLancamento,'vl_lancamento',
-                        array('prepend'=>'R$',
-                              'class' => 'input-medium',
-                        )
-                    ); ?>
+                <div class="row-fluid">
+                    <div class="span12 well">
+                    <div class="span5">
+                        <label for="Lancamento[vl_lancamento]">
+                            Valor <span class="required">*</span>
+                        </label>
+                    </div>
+                    <div class="span5">
+                        <label for="Lancamento[id_categoriaLancamento]">Categoria Lançamento</label>
+                    </div>
+                    <?php
+                    $categorias = Categorialancamento::model()->getCategoriasLancamento(null,true);
+                    foreach($categorias as $categoria)
+                    {
+                    ?>
+                    <div class="span5">
+                        <div class="input-prepend">
+                            <span class="add-on">R$</span>
+                            <input class="input-medium" name="Lancamento[vl_lancamento][]" id="Lancamento_vl_lancamento" type="text" maxlength="18" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="span5">
+                        <input type="hidden" name="Lancamento[tp_categoriaLancamento][]" value="<?php echo $categoria->tp_categoriaLancamento;?>">
+                        <input type="hidden" name="Lancamento[id_categoriaLancamento][]" value="<?php echo $categoria->id_categoriaLancamento;?>">
+                        <input type="text" class="input-medium" value="<?php echo $categoria->nm_categoriaLancamento;?>" disabled>
+                    </div>
+                    <?php
+                    }
+                    ?>
+                </div>
+                <span class="help-inline error" id="Lancamento_vl_lancamento_em_" style="display: none"></span>
             </div>
-            <div class="span8">
-                <?php echo $form->select2Row($modelLancamento,'id_categoriaLancamento',array(
-                    'data' => null,
-                    'asDropDownList' => true,
-                    'options' => array('allowClear' => true,
-                                'placeholder' => '-- Escolha a categoria --',
-                        ))); ?>
-            
             <?php echo $form->textAreaRow($modelLancamento, 'de_observacao', array('class'=>'span4', 'rows'=>1)); ?>
         </fieldset>
     </div>
