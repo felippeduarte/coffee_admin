@@ -199,6 +199,22 @@ class Categorialancamento extends CActiveRecord
 
         $data = CHtml::listData($data,'id_categoriaLancamento','nm_categoriaLancamento');
 
+        return $this->generateHtmlDropDown($data);
+    }
+    
+    public function getComboCategoriaLancamentoFolha()
+    {
+        $criteria=new CDbCriteria;
+
+        $criteria->select = array('id_categoriaLancamento','nm_categoriaLancamento');
+        
+        $criteria->condition = 'fl_ehFolhaPagamento = 1';
+        
+        return $this->findAll($criteria);
+    }
+    
+    private function generateHtmlDropDown($data)
+    {
         $opt = "<option value></option>";
         
         foreach($data as $id_categoriaLancamento=>$nm_categoriaLancamento)

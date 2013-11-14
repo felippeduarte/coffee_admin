@@ -45,39 +45,41 @@ class FolhaController extends Controller
         {
             $transacao = Yii::app()->db->beginTransaction();
             
-            $ok = true;
-            $id = false;
+            echo "<pre>";
+            var_dump($_POST);
+            echo "</pre>";
+            die();
             
-            for($i = 0, $c = count($_POST['Lancamento']['vl_lancamento']); $i < $c; $i++)
+            $modelLancamento = new Lancamento('folhaDePagamento');
+            $modelLancamento->attributes = $_POST['Lancamento'];
+            
+            if($modelLancamento->validate())
             {
-                $modelLancamento = new Lancamento('folhaDePagamento');
-                $modelLancamento->attributes = $_POST['Lancamento'];
-                $modelLancamento->id_categoriaLancamento = $_POST['Lancamento']['id_categoriaLancamento'][$i];
-                $modelLancamento->tp_categoriaLancamento = $_POST['Lancamento']['tp_categoriaLancamento'][$i];
-                $modelLancamento->vl_lancamento = $_POST['Lancamento']['vl_lancamento'][$i];
-
-                if($modelLancamento->validate())
+                $id = $modelLancamento->save();
+            
+                for($i = 0, $c = count($_POST['Lancamento']['vl_lancamento']); $i < $c; $i++)
                 {
-                    $id = $modelLancamento->save();
-                } else {
-                    //caso nenhum lançamento possua valor, gera erro
-                    if(!$id)
+                    $modelFolha = new Folhadepagamento();
+                    $modelFolha->id_lancamento = $id;
+                    $modelFolha->id_categoriaLancamento = $_POST['Lancamento']['id_categoriaLancamento'][$i];
+                    $modelFolha->vl_lancamento = $_POST['Lancamento']['vl_lancamento'][$i];
+
+                    if($modelFolha->validate())
                     {
-                        foreach($modelLancamento->getErrors() as $erro)
-                        {
-                            Yii::app()->user->setFlash('error', $erro[0]);
-                        }
-                        $transacao->rollback();
-                        $ok = false;
-                        break;
+                        $modelFolha->save();
                     }
                 }
-            }
-
-            if($ok)
-            {
+                
                 $transacao->commit();
                 Yii::app()->user->setFlash('success', "Lançamento na folha de pagamento realizado com sucesso!");
+            }
+            else
+            {
+                foreach($modelLancamento->getErrors() as $erro)
+                {
+                    Yii::app()->user->setFlash('error', $erro[0]);
+                }
+                $transacao->rollback();
             }
         }
         

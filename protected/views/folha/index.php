@@ -182,6 +182,18 @@ $form = $this->beginWidget(
                         'options' => array('allowClear' => true,
                                 'placeholder' => '-- Escolha a origem do pagamento --'))); ?>
             
+            <?php echo $form->textFieldRow($modelLancamento,'vl_lancamento',
+                        array('prepend'=>'R$',
+                              'class' => 'input-medium',
+                        )
+                    ); ?>
+            <?php echo $form->select2Row($modelLancamento,'id_categoriaLancamento',array(
+                'data' => CHtml::listData(Categorialancamento::model()->getComboCategoriaLancamentoFolha(),'id_categoriaLancamento','nm_categoriaLancamento'),
+                'asDropDownList' => true,
+                'options' => array('allowClear' => true,
+                            'placeholder' => '-- Escolha a categoria --',
+                    ))); ?>
+
                 <div class="row-fluid">
                     <div class="span12 well">
                     <div class="span5">
@@ -200,12 +212,12 @@ $form = $this->beginWidget(
                     <div class="span5">
                         <div class="input-prepend">
                             <span class="add-on">R$</span>
-                            <input class="input-medium" name="Lancamento[vl_lancamento][]" id="Lancamento_vl_lancamento" type="text" maxlength="18" autocomplete="off">
+                            <input class="input-medium" name="FolhaDePagamento[vl_lancamento][]" id="Lancamento_vl_lancamento" type="text" maxlength="18" autocomplete="off">
                         </div>
                     </div>
                     <div class="span5">
-                        <input type="hidden" name="Lancamento[tp_categoriaLancamento][]" value="<?php echo $categoria->tp_categoriaLancamento;?>">
-                        <input type="hidden" name="Lancamento[id_categoriaLancamento][]" value="<?php echo $categoria->id_categoriaLancamento;?>">
+                        <input type="hidden" name="FolhaDePagamento[tp_categoriaLancamento][]" value="<?php echo $categoria->tp_categoriaLancamento;?>">
+                        <input type="hidden" name="FolhaDePagamento[id_categoriaLancamento][]" value="<?php echo $categoria->id_categoriaLancamento;?>">
                         <input type="text" class="input-xlarge" value="<?php echo $categoria->nm_categoriaLancamento;?>" disabled>
                     </div>
                     <?php
