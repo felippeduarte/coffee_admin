@@ -206,7 +206,7 @@ $form = $this->beginWidget(
                     <div class="span5">
                         <input type="hidden" name="Lancamento[tp_categoriaLancamento][]" value="<?php echo $categoria->tp_categoriaLancamento;?>">
                         <input type="hidden" name="Lancamento[id_categoriaLancamento][]" value="<?php echo $categoria->id_categoriaLancamento;?>">
-                        <input type="text" class="input-medium" value="<?php echo $categoria->nm_categoriaLancamento;?>" disabled>
+                        <input type="text" class="input-xlarge" value="<?php echo $categoria->nm_categoriaLancamento;?>" disabled>
                     </div>
                     <?php
                     }

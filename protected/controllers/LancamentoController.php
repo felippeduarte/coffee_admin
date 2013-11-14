@@ -17,7 +17,7 @@ class LancamentoController extends Controller
 	}
     
     public function actionIndex()
-	{
+	{        
         $modelLancamento = new Lancamento();
         
         $dataInicio = isset($_POST['dataInicio']) ? $_POST['dataInicio'] : date("01/m/Y");

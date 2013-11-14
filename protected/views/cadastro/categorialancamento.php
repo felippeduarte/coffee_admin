@@ -14,7 +14,9 @@ $('#gridCategoriaLancamento a.update').live('click',function() {
             
             $("[name='Categorialancamento[id_categoriaLancamento]']")[1].value = c.id_categoriaLancamento;
             $("[name='Categorialancamento[nm_categoriaLancamento]']")[1].value = c.nm_categoriaLancamento;
-            $("#Categorialancamento_id_categoriaLancamentoPai option[value="+c.id_categoriaLancamentoPai+"]").prop('selected', true);
+            
+            $('#Categorialancamento_id_categoriaLancamentoPai').select2().select2('val',c.id_categoriaLancamentoPai).select2({width:'resolve'});
+            $("#Categorialancamento_id_categoriaLancamentoPai option[value="+c.id_categoriaLancamentoPai+"]").attr('selected', 'selected');
             
             if(c.tp_categoriaLancamento == 'D') {
                 $(":radio[value=D]").prop("checked", true);

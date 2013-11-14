@@ -179,15 +179,6 @@ class Lancamento extends CActiveRecord
         return parent::beforeSave();
     }
     
-    protected function beforeUpdate()
-    {
-        if(empty($this->nm_turno)) $this->nm_turno = null;
-        $this->id_pessoaUsuario = Yii::app()->user->getId();
-        $this->dt_ultimaAlteracao = date('d/m/Y h:i:s');
-        $this->view2model();
-        return parent::beforeUpdate();
-    }
-    
     protected function afterSave()
     {
         $this->model2view();
@@ -196,16 +187,6 @@ class Lancamento extends CActiveRecord
             $this->lancamentoVinculado();
         }
         return parent::afterSave();
-    }
-
-    protected function afterUpdate()
-    {
-        $this->model2view();
-        if($this->scenario != 'folhaDePagamento')
-        {
-            $this->lancamentoVinculado();
-        }
-        return parent::afterUpdate();
     }
     
     private function negativaValores()
@@ -232,28 +213,15 @@ class Lancamento extends CActiveRecord
                     $lancamento = new Lancamento();
                     $lancamento->id_lancamentoVinculado = $this->id_lancamento;
                     $lancamento->attributes = $this->attributes;
-                    $lancamento->vl_lancamento = -1 * round(($this->vl_lancamento * $estabelecimentoFormaPagamento->nu_taxaPercentual/100),2);
+                    $lancamento->vl_lancamento = -1 * round((Yii::app()->bulebar->trocaDecimalViewParaModel($this->vl_lancamento) * $estabelecimentoFormaPagamento->nu_taxaPercentual/100),2);
+                    
                     $lancamento->save();
                     
                     //atualiza id vinculado do lançamento principal
                     $this->id_lancamentoVinculado = $lancamento->id_lancamento;
+                    $this->isNewRecord = false;
                     $this->save();
                 }
-            }
-        }
-        else
-        {
-            //verificar remoção
-            if($this->fl_inativo == 1)
-            {
-                $lancamento = Lancamento::model()->findByAttributes(array('id_lancamentoVinculado'=>$this->id_lancamento));
-                $lancamento->fl_inativo = 1;
-                $lancamento->updateByPk();
-            }
-            //verificar edição
-            else
-            {
-                
             }
         }
     }

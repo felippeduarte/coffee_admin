@@ -7,3 +7,11 @@
     left:40%;
     width:60%;
 }
+
+.table-striped tbody>tr:nth-child(odd)>td, .table-striped tbody>tr:nth-child(odd)>th {
+    background-color: #ebebeb;
+}
+
+.modal-body {
+    max-height: 800px;
+}
