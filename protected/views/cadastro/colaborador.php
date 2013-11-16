@@ -63,6 +63,15 @@ $('#gridColaborador a.delete').live('click',function() {
     }
     return false;
 });
+
+function _resetForm()
+{
+    $("#cadastroColaborador input").val("");
+    $('#cadastroColaborador')[0].reset();
+    $('#Colaborador_id_cargoColaborador').select2('val','').select2({placeholder:'-- Escolha o cargo --',width:'resolve'});
+    $('#Colaborador_id_estabelecimento').select2('val','').select2({placeholder:'-- Escolha o estabelecimento --',width:'resolve'});
+}
+
 </script>
 
 <?php 

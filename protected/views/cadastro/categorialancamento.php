@@ -71,6 +71,13 @@ $('#gridCategoriaLancamento a.delete').live('click',function() {
     }
     return false;
 });
+
+function _resetForm()
+{
+    $("#cadastroCategoriaLancamento input").val("");
+    $('#cadastroCategoriaLancamento')[0].reset();
+    $('#Categorialancamento_id_categoriaLancamentoPai').select2('val','').select2({placeholder:'-- Escolha a categoria pai --',width:'resolve'});
+}
 </script>
 
 <?php 

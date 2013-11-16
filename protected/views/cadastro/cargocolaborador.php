@@ -52,6 +52,13 @@ $('#gridCargoColaborador a.delete').live('click',function() {
     }
     return false;
 });
+
+function _resetForm()
+{
+    $("#cadastroCargoColaborador input").val("");
+    $('#cadastroCargoColaborador')[0].reset();
+}
+
 </script>
 
 <?php 

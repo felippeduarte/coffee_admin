@@ -52,6 +52,12 @@ $('#gridGrupoEstabelecimento a.delete').live('click',function() {
     }
     return false;
 });
+
+function _resetForm()
+{
+    $("#cadastroGrupoEstabelecimento input").val("");
+    $('#cadastroGrupoEstabelecimento')[0].reset();
+}
 </script>
 
 <?php 

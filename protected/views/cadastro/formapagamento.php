@@ -52,6 +52,13 @@ $('#gridFormaPagamento a.delete').live('click',function() {
     }
     return false;
 });
+
+function _resetForm()
+{
+    $("#cadastroFormaPagamento input").val("");
+    $('#cadastroFormaPagamento')[0].reset();
+}
+</script>
 </script>
 
 <?php 

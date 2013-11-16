@@ -68,6 +68,12 @@ $('#gridFornecedor a.delete').live('click',function() {
     }
     return false;
 });
+
+function _resetForm()
+{
+    $("#cadastroFornecedor input").val("");
+    $('#cadastroFornecedor')[0].reset();
+}
 </script>
 
 <?php 

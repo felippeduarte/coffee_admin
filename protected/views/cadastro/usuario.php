@@ -54,6 +54,13 @@ $('#gridUsuario a.delete').live('click',function() {
     }
     return false;
 });
+
+function _resetForm()
+{
+    $("#cadastroUsuario input").val("");
+    $('#cadastroUsuario')[0].reset();
+    $('#Colaborador_id_pessoa').select2('val','').select2({placeholder:'-- Escolha o colaborador --',width:'resolve'});
+}
 </script>
 
 <?php 

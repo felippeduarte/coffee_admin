@@ -5,7 +5,8 @@ $('.btn-group a.btn').live('click',function() {
     $('#Lancamento_nm_turno').val($(this).attr('value'));
 });
 
-$('[name=\"Lancamento[vl_lancamento][]\"]').mask('000.000.000.000,00', {reverse: true});
+$('[name=\"FolhaDePagamento[proventos][vl_lancamento][]\"]').mask('000.000.000.000,00', {reverse: true});
+$('[name=\"FolhaDePagamento[descontos][vl_lancamento][]\"]').mask('000.000.000.000,00', {reverse: true});
 
 ",CClientScript::POS_END );
 
@@ -13,6 +14,7 @@ $this->pageTitle=Yii::app()->name . ' - Folha de Pagamento';
 $this->breadcrumbs=array('Folha de Pagamento',);
 
 $listaEstabelecimentos = CHtml::listData(Estabelecimento::model()->getComboEstabelecimento(), 'id_estabelecimento', 'nm_estabelecimento');
+$listaCategorias = CHtml::listData(Categorialancamento::model()->getComboCategoriaLancamentoFolha(),'id_categoriaLancamento','nm_categoriaLancamento')
 ?>
 
 <h1>Folha de Pagamento</h1>
@@ -131,7 +133,8 @@ $form = $this->beginWidget(
     )
 );
 ?>
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array(
+<div id="modal-folhaPagamento">
+    <?php $this->beginWidget('bootstrap.widgets.TbModal', array(
                                             'id' => 'modal-cadastro'
                                              )
           ); ?>
@@ -182,49 +185,98 @@ $form = $this->beginWidget(
                         'options' => array('allowClear' => true,
                                 'placeholder' => '-- Escolha a origem do pagamento --'))); ?>
             
-            <?php echo $form->textFieldRow($modelLancamento,'vl_lancamento',
-                        array('prepend'=>'R$',
-                              'class' => 'input-medium',
-                        )
-                    ); ?>
-            <?php echo $form->select2Row($modelLancamento,'id_categoriaLancamento',array(
-                'data' => CHtml::listData(Categorialancamento::model()->getComboCategoriaLancamentoFolha(),'id_categoriaLancamento','nm_categoriaLancamento'),
-                'asDropDownList' => true,
-                'options' => array('allowClear' => true,
-                            'placeholder' => '-- Escolha a categoria --',
-                    ))); ?>
-
-                <div class="row-fluid">
-                    <div class="span12 well">
-                    <div class="span5">
+            <div class="row-fluid">
+                <div class="span12 well" id="proventos">
+                    <div class="span12"><h5>Proventos</h5></div>
+                    <div class="span3">
                         <label for="Lancamento[vl_lancamento]">
                             Valor <span class="required">*</span>
                         </label>
                     </div>
-                    <div class="span5">
+                    <div class="span3">
                         <label for="Lancamento[id_categoriaLancamento]">Categoria Lançamento</label>
                     </div>
-                    <?php
-                    $categorias = Categorialancamento::model()->getCategoriasLancamento(null,true);
-                    foreach($categorias as $categoria)
-                    {
-                    ?>
-                    <div class="span5">
-                        <div class="input-prepend">
-                            <span class="add-on">R$</span>
-                            <input class="input-medium" name="FolhaDePagamento[vl_lancamento][]" id="Lancamento_vl_lancamento" type="text" maxlength="18" autocomplete="off">
+                    <div class="span12" name="proventos">
+                        <div class="span3">
+                            <div class="input-prepend">
+                                <span class="add-on">R$</span>
+                                <input class="input-medium" name="FolhaDePagamento[proventos][vl_lancamento][]" type="text" maxlength="18" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="span3">
+                            <select name="FolhaDePagamento[proventos][id_categoriaLancamento][]">
+                                <?php
+                                 echo '<option value=""></option>';
+                                 foreach($listaCategorias as $id_categoriaLancamento=>$nm_categoriaLancamento)
+                                 {
+                                     echo '<option value="'.$id_categoriaLancamento.'">'.$nm_categoriaLancamento.'</option>';
+                                 }
+                                 ?>
+                            </select>
                         </div>
                     </div>
                     <div class="span5">
-                        <input type="hidden" name="FolhaDePagamento[tp_categoriaLancamento][]" value="<?php echo $categoria->tp_categoriaLancamento;?>">
-                        <input type="hidden" name="FolhaDePagamento[id_categoriaLancamento][]" value="<?php echo $categoria->id_categoriaLancamento;?>">
-                        <input type="text" class="input-xlarge" value="<?php echo $categoria->nm_categoriaLancamento;?>" disabled>
+                        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'button', 'type'=>'primary', 'label'=>'+', 'id'=>'addProvento')); ?>
                     </div>
-                    <?php
-                    }
-                    ?>
                 </div>
                 <span class="help-inline error" id="Lancamento_vl_lancamento_em_" style="display: none"></span>
+            </div>
+            <div class="row-fluid">
+                <div class="span12 well" id="descontos">
+                    <div class="span12"><h5>Descontos</h5></div>
+                    <div class="span3">
+                        <label for="Lancamento[vl_lancamento]">
+                            Valor <span class="required">*</span>
+                        </label>
+                    </div>
+                    <div class="span3">
+                        <label for="Lancamento[id_categoriaLancamento]">Categoria Lançamento</label>
+                    </div>
+                    <div class="span12" name="descontos">
+                        <div class="span3">
+                            <div class="input-prepend">
+                                <span class="add-on">R$</span>
+                                <input class="input-medium" name="FolhaDePagamento[descontos][vl_lancamento][]" type="text" maxlength="18" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="span3">
+                            <select name="FolhaDePagamento[descontos][id_categoriaLancamento][]">
+                                <?php
+                                 echo '<option value=""></option>';
+                                 foreach($listaCategorias as $id_categoriaLancamento=>$nm_categoriaLancamento)
+                                 {
+                                     echo '<option value="'.$id_categoriaLancamento.'">'.$nm_categoriaLancamento.'</option>';
+                                 }
+                                 ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="span5">
+                    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'button', 'type'=>'primary', 'label'=>'+', 'id'=>'addDesconto')); ?>
+                    </div>
+                </div>
+                <span class="help-inline error" id="Lancamento_vl_lancamento_em_" style="display: none"></span>
+            </div>
+            <div class="row-fluid">
+                <div class="span12 well">
+                        <div class="span12"><h5>Total</h5></div>
+                    <div class="span5">
+                    <?php echo $form->textFieldRow($modelLancamento,'vl_lancamento',
+                        array('prepend'=>'R$',
+                              'class' => 'input-medium',
+                              'disabled'=> 'disabled',
+                              'id'=>'Lancamento_vl_total'
+                        )
+                    ); ?>
+                    </div>
+                    <div class="span5">
+                    <?php echo $form->select2Row($modelLancamento,'id_categoriaLancamento',array(
+                    'data' => $listaCategorias,
+                    'asDropDownList' => true,
+                    'options' => array('allowClear' => true,
+                                'placeholder' => '-- Escolha a categoria --',
+                        ))); ?>
+                </div>
             </div>
             <?php echo $form->textAreaRow($modelLancamento, 'de_observacao', array('class'=>'span4', 'rows'=>1)); ?>
         </fieldset>
@@ -235,6 +287,9 @@ $form = $this->beginWidget(
     </div>
 <?php 
 $this->endWidget();
+?>
+</div>
+<?php
 $this->endWidget();
 unset($form);
 ?>

@@ -13,8 +13,12 @@ $('#gridEstabelecimentoFormaPagamento a.update').live('click',function() {
             //popula
             var e = data.EstabelecimentoFormaPagamento;
             
-            $("[name='EstabelecimentoFormapagamento[id_formaPagamento]']")[1].value = e.id_formaPagamento;
-            $("[name='EstabelecimentoFormapagamento[id_estabelecimento]']")[1].value = e.id_estabelecimento;
+            $('#EstabelecimentoFormapagamento_id_formaPagamento').select2().select2('val',e.id_formaPagamento).select2({width:'resolve'});
+            $("#EstabelecimentoFormapagamento_id_formaPagamento option[value="+e.id_formaPagamento+"]").attr('selected', 'selected');
+            
+            $('#EstabelecimentoFormapagamento_id_estabelecimento').select2().select2('val',e.id_estabelecimento).select2({width:'resolve'});
+            $("#EstabelecimentoFormapagamento_id_estabelecimento option[value="+e.id_estabelecimento+"]").attr('selected', 'selected');
+            
             $("[name='Formapagamento[id_formaPagamento]']")[0].value = e.id_formaPagamento;
             $("[name='Estabelecimento[id_estabelecimento]']")[0].value = e.id_estabelecimento;
             $("[name='EstabelecimentoFormapagamento[nu_taxaPercentual]']")[1].value = e.nu_taxaPercentual;
@@ -58,6 +62,14 @@ $('#gridEstabelecimentoFormaPagamento a.delete').live('click',function() {
     }
     return false;
 });
+
+function _resetForm()
+{
+    $("#cadastroEstabelecimentoFormaPagamento input").val("");
+    $('#cadastroEstabelecimentoFormaPagamento')[0].reset();
+    $('#EstabelecimentoFormapagamento_id_estabelecimento').select2().select2('val','').select2({placeholder:'-- Escolha o estabelecimento --',width:'resolve'});
+    $('#EstabelecimentoFormapagamento_id_formaPagamento').select2().select2('val','').select2({placeholder:'-- Escolha a forma de pagamento --',width:'resolve'});
+}
 </script>
 
 <?php 
@@ -92,7 +104,7 @@ $dataProvider->sort = array(
 $gridColumns = array(
     array(
         'header' => '#',
-        'name'  => 'id_formaPagamento',
+        'value' => '$data->idFormaPagamento->id_formaPagamento',
         'htmlOptions'=>array('style'=>'width: 60px')
         ),
     array(
@@ -102,7 +114,7 @@ $gridColumns = array(
         ),
     array(
         'header' => '#',
-        'name'  => 'id_estabelecimento',
+        'value' => '$data->idEstabelecimento->id_estabelecimento',
         'htmlOptions'=>array('style'=>'width: 60px')
         ),
     array(
@@ -186,14 +198,18 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 
             <?php echo $form->hiddenField($modelEstabelecimento, 'id_estabelecimento'); ?>
             <?php echo $form->hiddenField($modelFormaPagamento, 'id_formaPagamento'); ?>
-            <?php echo $form->dropDownListRow($modelEstabelecimentoFormaPagamento,
-                    'id_estabelecimento',
-                    CHtml::listData(Estabelecimento::model()->getComboEstabelecimento(),'id_estabelecimento','nm_estabelecimento'),
-                    array('prompt' => '--Escolha o estabelecimento--','class'=>'input-xlarge')); ?>
-            <?php echo $form->dropDownListRow($modelEstabelecimentoFormaPagamento,
-                    'id_formaPagamento',
-                    CHtml::listData(Formapagamento::model()->getComboFormaPagamento(),'id_formaPagamento','nm_formaPagamento'),
-                    array('prompt' => '--Escolha a forma de pagamento--','class'=>'input-xlarge')); ?>
+            
+            <?php echo $form->select2Row($modelEstabelecimentoFormaPagamento,'id_estabelecimento',array(
+                'data' => CHtml::listData(Estabelecimento::model()->getComboEstabelecimento(),'id_estabelecimento','nm_estabelecimento'),
+                'asDropDownList' => true,
+                'options' => array('allowClear' => true,
+                            'placeholder' => '-- Escolha o estabelecimento --',))); ?>
+            
+            <?php echo $form->select2Row($modelEstabelecimentoFormaPagamento,'id_formaPagamento',array(
+                    'data' => CHtml::listData(Formapagamento::model()->getComboFormaPagamento(),'id_formaPagamento','nm_formaPagamento'),
+                    'asDropDownList' => true,
+                    'options' => array('allowClear' => true,
+                                'placeholder' => '-- Escolha a forma de pagamento --'))); ?>
             <?php echo $form->maskedTextFieldRow($modelEstabelecimentoFormaPagamento,'nu_taxaPercentual','99,99',
                         array('append'=>'%','class' => 'input-small','id'=>'nu_taxaPercentual')
                     ); ?>

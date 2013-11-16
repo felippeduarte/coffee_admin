@@ -109,7 +109,6 @@ class Lancamento extends CActiveRecord
         {
             case 'folhaDePagamento':
                 $labels['id_formaPagamento'] = 'Origem Pagamento';
-                $labels['id_categoriaLancamento'] = '';
                 break;
             default:
                 break;

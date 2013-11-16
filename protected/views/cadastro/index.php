@@ -1,3 +1,10 @@
+<script type="text/javascript">
+    $('#adicionar').live('click',function()
+    {
+        _resetForm();
+    });
+</script>
+
 <?php
 /* @var $this SiteController */
 
@@ -46,7 +53,7 @@ $this->breadcrumbs=array(
                         'class' => 'bootstrap.widgets.TbButtonGroup',
                         'buttons'=>array(
                             array('label'=>'Adicionar', 'url'=>'#modal-cadastro', 'htmlOptions' => array(
-                                'data-toggle' => 'modal',)),
+                                'data-toggle' => 'modal', 'id'=>'adicionar')),
                         )
                     )
                 )

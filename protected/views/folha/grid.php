@@ -36,6 +36,27 @@ $(document).ready(function()
         });
     });
     
+    
+    $("form").click(function() {
+        var proventos = 0;
+        var descontos = 0;
+        var valor = 0;
+        $.each($('[name="FolhaDePagamento[proventos][vl_lancamento][]"]'),function()
+        {
+            valor = $(this).val();
+            valor = valor.replace(".","").replace(",",".");
+            proventos = proventos + (valor *100);
+        });
+        
+        $.each($('[name="FolhaDePagamento[descontos][vl_lancamento][]"]'),function()
+        {
+            valor = $(this).val();
+            valor = valor.replace(".","").replace(",",".");
+            descontos = descontos + (valor *100);
+        });
+        valor = parseInt(proventos-descontos)/100;
+        $('#Lancamento_vl_total').val(valor.toString().replace(".",","));
+    });
 });
 
 function updateModal(categoria,tipo,reset,novo)
@@ -148,6 +169,17 @@ $('#gridLancamentos a.delete').live('click',function() {
         return false;
     }
     return false;
+});
+
+$('#addProvento').live('click',function() {
+    var provento = $('#proventos [name="proventos"]').first().clone(true);
+    $('#proventos [name="proventos"]').last().after(provento);
+    provento.find('input').val('').first().mask('000.000.000.000,00', {reverse: true});
+});
+$('#addDesconto').live('click',function() {
+    var desconto = $('#descontos [name="descontos"]').first().clone(true);
+    $('#descontos [name="descontos"]').last().after(desconto);
+    desconto.find('input').val('').first().mask('000.000.000.000,00', {reverse: true});
 });
 </script>
 
