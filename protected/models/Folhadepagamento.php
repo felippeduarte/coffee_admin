@@ -7,6 +7,7 @@
  * @property integer $id_lancamento
  * @property integer $id_categoriaLancamento
  * @property string $vl_lancamento
+ * @property string $tp_categoriaLancamentoFolha
  */
 class Folhadepagamento extends CActiveRecord
 {
@@ -26,9 +27,10 @@ class Folhadepagamento extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_lancamento, id_categoriaLancamento, vl_lancamento', 'required'),
+			array('id_lancamento, id_categoriaLancamento, vl_lancamento, tp_categoriaLancamentoFolha', 'required'),
 			array('id_lancamento, id_categoriaLancamento', 'numerical', 'integerOnly'=>true),
 			array('vl_lancamento', 'length', 'max'=>12),
+            array('tp_categoriaLancamentoFolha', 'length', 'max'=>1),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id_lancamento, id_categoriaLancamento, vl_lancamento', 'safe', 'on'=>'search'),
@@ -79,6 +81,7 @@ class Folhadepagamento extends CActiveRecord
 		$criteria->compare('id_lancamento',$this->id_lancamento);
 		$criteria->compare('id_categoriaLancamento',$this->id_categoriaLancamento);
 		$criteria->compare('vl_lancamento',$this->vl_lancamento,true);
+        $criteria->compare('tp_categoriaLancamentoFolha',$this->tp_categoriaLancamentoFolha,true);        
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -95,4 +98,32 @@ class Folhadepagamento extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+    protected function beforeSave()
+    {
+        $this->view2model();
+        return parent::beforeSave();
+    }
+    
+    protected function afterSave()
+    {
+        $this->model2view();
+        return parent::afterSave();
+    }
+    
+    private function model2view()
+    {
+        if(!empty($this->vl_lancamento))
+        {
+            $this->vl_lancamento = Yii::app()->bulebar->trocaDecimalModelParaView($this->vl_lancamento);
+        }
+    }
+    
+    private function view2model()
+    {
+        if(!empty($this->vl_lancamento))
+        {
+            $this->vl_lancamento = Yii::app()->bulebar->trocaDecimalViewParaModel($this->vl_lancamento);
+        }
+    }
 }

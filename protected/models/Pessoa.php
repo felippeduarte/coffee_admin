@@ -298,7 +298,7 @@ class Pessoa extends CActiveRecord
         
         $data = $this->findAll($criteria);
 
-        $opt = "<option value></option>";
+        $opt = '<option value="" selected="selected"></option>';
         
         foreach($data as $pessoa)
         {

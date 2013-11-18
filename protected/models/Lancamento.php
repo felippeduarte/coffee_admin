@@ -185,6 +185,9 @@ class Lancamento extends CActiveRecord
         {
             $this->lancamentoVinculado();
         }
+        
+        $this->id_lancamento = Yii::app()->db->getLastInsertID();
+        
         return parent::afterSave();
     }
     

@@ -264,7 +264,7 @@ $form = $this->beginWidget(
                     <?php echo $form->textFieldRow($modelLancamento,'vl_lancamento',
                         array('prepend'=>'R$',
                               'class' => 'input-medium',
-                              'disabled'=> 'disabled',
+                              'readonly'=>"readonly",
                               'id'=>'Lancamento_vl_total'
                         )
                     ); ?>

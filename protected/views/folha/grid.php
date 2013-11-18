@@ -1,5 +1,10 @@
 <script  type='text/javascript'>
 
+var select2propEstabelecimento = {placeholder:'-- Escolha o estabelecimento --',width:'resolve',allowClear:'true'};
+var select2propCategoriaLancamento = {placeholder:'-- Escolha a categoria --',width:'resolve',allowClear:'true'};
+var select2propPessoaLancamento = {placeholder:'-- Escolha um favorecido --',width:'resolve',allowClear:'true'};
+var select2propFormaPagamento = {placeholder:'-- Escolha a forma de pagamento --',width:'resolve',allowClear:'true'};
+
 $(document).ready(function()
 {
     $(".btn-group[data-single-select] .btn").live('click', function(){
@@ -23,19 +28,9 @@ $(document).ready(function()
         _resetForm(false);
     });    
     
-    $("#Lancamento_id_estabelecimento").change(function() {
-        $.ajax({
-            url: "folha/carregaFavorecidos",
-            type: "post",
-            data: { "id_estabelecimento" : $(this).val() },
-            dataType:'text',
-            success: function (html) {
-                $('#Lancamento_id_pessoaLancamento').html(html);
-                $('#Lancamento_id_pessoaLancamento').select2().select2({placeholder:'-- Escolha um favorecido --',width:'resolve'});
-            }
-        });
-    });
-    
+    $("#Lancamento_id_categoriaLancamento").change(function() {
+        carregaFavorecidos($("#Lancamento_id_categoriaLancamento").val());
+    });    
     
     $("form").click(function() {
         var proventos = 0;
@@ -59,6 +54,26 @@ $(document).ready(function()
     });
 });
 
+function carregaFavorecidos(id,id_selecionado)
+{
+    $.ajax({
+        url: "folha/carregaFavorecidos",
+        type: "post",
+        data: { "id_estabelecimento" : id },
+        dataType:'text',
+        success: function (html) {
+            $('#Lancamento_id_pessoaLancamento').html(html);
+            $('#Lancamento_id_pessoaLancamento').select2().select2(select2propPessoaLancamento);
+            
+            if(id_selecionado)
+            {
+                $('#Lancamento_id_pessoaLancamento').select2().select2('val',id_selecionado).select2(select2propPessoaLancamento);
+                $("#Lancamento_id_pessoaLancamento option[value="+id_selecionado+"]").attr('selected', 'selected');
+            }
+        }
+    });
+}
+
 function updateModal(categoria,tipo,reset,novo)
 {
     $('#Lancamento_id_categoriaLancamento').html(categoria);
@@ -77,10 +92,10 @@ function _resetForm(complete)
         $('#Lancamento_id_lancamento').val('');
     }
     
-    $('#Lancamento_id_estabelecimento').select2().select2({val:'',placeholder:'-- Escolha o estabelecimento --',width:'resolve'});
-    $('#Lancamento_id_categoriaLancamento').select2({placeholder:'-- Escolha a categoria --',width:'resolve'});
-    $('#Lancamento_id_pessoaLancamento').select2().select2({placeholder:'-- Escolha uma categoria --',width:'resolve'});
-    $('#Lancamento_id_formaPagamento').select2().select2({placeholder:'-- Escolha a forma de pagamento --',width:'resolve'});
+    $('#Lancamento_id_estabelecimento').select2().select2(select2propEstabelecimento);
+    $('#Lancamento_id_categoriaLancamento').select2(select2propCategoriaLancamento);
+    $('#Lancamento_id_pessoaLancamento').select2().select2(select2propEstabelecimento); //estabelecimento pois é load inicial
+    $('#Lancamento_id_formaPagamento').select2().select2(select2propFormaPagamento);
     
     $('#lancamento')[0].reset();
 }
@@ -113,21 +128,20 @@ $('#gridLancamentos a.update').live('click',function() {
             $("#Lancamento_dt_lancamento").val(l.dt_lancamento);
             $("#Lancamento_vl_lancamento").val(l.vl_lancamento);
             
-            $('#Lancamento_id_estabelecimento').select2().select2('val',l.id_estabelecimento).select2({width:'resolve'});
+            $('#Lancamento_id_estabelecimento').select2().select2('val',l.id_estabelecimento).select2(select2propEstabelecimento);
             $("#Lancamento_id_estabelecimento option[value="+l.id_estabelecimento+"]").attr('selected', 'selected');
             
             $('#Lancamento_id_categoriaLancamento').html(c);
-            $('#Lancamento_id_categoriaLancamento').select2().select2('val',l.id_categoriaLancamento).select2({width:'resolve'});
+            $('#Lancamento_id_categoriaLancamento').select2().select2('val',l.id_categoriaLancamento).select2(select2propCategoriaLancamento);
             $("#Lancamento_id_categoriaLancamento option[value="+l.id_categoriaLancamento+"]").prop('selected', true);
             
             $("#Lancamento_nm_turno").val(l.nm_turno);
             $('div [name="Lancamento_turno"] a').removeClass("active");
             $('div [name="Lancamento_turno"] [value="'+l.nm_turno+'"]').addClass("active");
 
-            $('#Lancamento_id_pessoaLancamento').select2().select2('val',l.id_pessoaLancamento).select2({width:'resolve'});
-            $("#Lancamento_id_pessoaLancamento option[value="+l.id_pessoaLancamento+"]").prop('selected', true);
+            carregaFavorecidos(l.id_estabelecimento,l.id_pessoaLancamento);
             
-            $('#Lancamento_id_formaPagamento').select2().select2('val',l.id_formaPagamento).select2({width:'resolve'});
+            $('#Lancamento_id_formaPagamento').select2().select2('val',l.id_formaPagamento).select2(select2propFormaPagamento);
             $("#Lancamento_id_formaPagamento option[value="+l.id_formaPagamento+"]").prop('selected', true);
 
             $("#Lancamento_de_observacao").val(l.de_observacao);
