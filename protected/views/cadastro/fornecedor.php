@@ -71,7 +71,7 @@ $('#gridFornecedor a.delete').live('click',function() {
 
 function _resetForm()
 {
-    $("#cadastroFornecedor input").val("");
+    $('[name="Pessoa[id_pessoa]"]')[0].value = null;
     $('#cadastroFornecedor')[0].reset();
 }
 </script>

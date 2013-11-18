@@ -55,7 +55,7 @@ $('#gridGrupoEstabelecimento a.delete').live('click',function() {
 
 function _resetForm()
 {
-    $("#cadastroGrupoEstabelecimento input").val("");
+    $('[name="Grupoestabelecimento[id_grupoEstabelecimento]')[1].value = null;
     $('#cadastroGrupoEstabelecimento')[0].reset();
 }
 </script>

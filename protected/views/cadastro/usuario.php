@@ -57,7 +57,7 @@ $('#gridUsuario a.delete').live('click',function() {
 
 function _resetForm()
 {
-    $("#cadastroUsuario input").val("");
+    $('[name="Usuario[id_pessoa]"]')[1].value = null;
     $('#cadastroUsuario')[0].reset();
     $('#Colaborador_id_pessoa').select2('val','').select2({placeholder:'-- Escolha o colaborador --',width:'resolve'});
 }

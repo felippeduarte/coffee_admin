@@ -66,7 +66,7 @@ $('#gridColaborador a.delete').live('click',function() {
 
 function _resetForm()
 {
-    $("#cadastroColaborador input").val("");
+    $('[name="Pessoa[id_pessoa]"]')[0].value = null;
     $('#cadastroColaborador')[0].reset();
     $('#Colaborador_id_cargoColaborador').select2('val','').select2({placeholder:'-- Escolha o cargo --',width:'resolve'});
     $('#Colaborador_id_estabelecimento').select2('val','').select2({placeholder:'-- Escolha o estabelecimento --',width:'resolve'});

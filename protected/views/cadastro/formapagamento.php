@@ -55,7 +55,7 @@ $('#gridFormaPagamento a.delete').live('click',function() {
 
 function _resetForm()
 {
-    $("#cadastroFormaPagamento input").val("");
+    $('[name="Formapagamento[id_formaPagamento]"]')[1].value = null;
     $('#cadastroFormaPagamento')[0].reset();
 }
 </script>

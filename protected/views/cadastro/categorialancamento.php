@@ -74,7 +74,7 @@ $('#gridCategoriaLancamento a.delete').live('click',function() {
 
 function _resetForm()
 {
-    $("#cadastroCategoriaLancamento input").val("");
+    $('[name="Categorialancamento[id_categoriaLancamento]"]')[1].value = null;
     $('#cadastroCategoriaLancamento')[0].reset();
     $('#Categorialancamento_id_categoriaLancamentoPai').select2('val','').select2({placeholder:'-- Escolha a categoria pai --',width:'resolve'});
 }
@@ -189,7 +189,7 @@ $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 
     <div class="modal-header">
         <a class="close" data-dismiss="modal">&times;</a>
-        <h3>CategoriaLancamento</h3>
+        <h3>Categoria Lancamento</h3>
     </div>
     <div class="modal-body">
         <fieldset>

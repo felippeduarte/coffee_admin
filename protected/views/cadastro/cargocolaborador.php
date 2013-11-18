@@ -55,7 +55,7 @@ $('#gridCargoColaborador a.delete').live('click',function() {
 
 function _resetForm()
 {
-    $("#cadastroCargoColaborador input").val("");
+    $('[name="Cargocolaborador[id_cargoColaborador]"]')[1].value = null;
     $('#cadastroCargoColaborador')[0].reset();
 }
 

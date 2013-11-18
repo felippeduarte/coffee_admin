@@ -65,7 +65,8 @@ $('#gridEstabelecimentoFormaPagamento a.delete').live('click',function() {
 
 function _resetForm()
 {
-    $("#cadastroEstabelecimentoFormaPagamento input").val("");
+    $('[name="Estabelecimento[id_estabelecimento]"]')[0].value = null;
+    $('[name="Formapagamento[id_formaPagamento]"]')[0].value = null;
     $('#cadastroEstabelecimentoFormaPagamento')[0].reset();
     $('#EstabelecimentoFormapagamento_id_estabelecimento').select2().select2('val','').select2({placeholder:'-- Escolha o estabelecimento --',width:'resolve'});
     $('#EstabelecimentoFormapagamento_id_formaPagamento').select2().select2('val','').select2({placeholder:'-- Escolha a forma de pagamento --',width:'resolve'});
@@ -125,7 +126,7 @@ $gridColumns = array(
     array(
         'header' => 'Taxa Percentual',
         'name'  => 'nu_taxaPercentual',
-        'value' => '$data->nu_taxaPercentual',
+        'value' => 'Yii::app()->bulebar->trocaDecimalModelParaView($data->nu_taxaPercentual)',
         
         ),
     array(

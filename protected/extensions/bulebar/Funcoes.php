@@ -82,11 +82,6 @@ class Funcoes extends CApplicationComponent
         return $mascara;
     }
     
-    public function adicionaMascaraTaxaPercentual($taxa)
-    {
-        $this->adicionaMascaraString($taxa, '##,##');
-    }
-    
     public function criptografaSenha($senha)
     {
         return md5($senha);
