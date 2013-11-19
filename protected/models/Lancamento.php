@@ -185,8 +185,10 @@ class Lancamento extends CActiveRecord
         {
             $this->lancamentoVinculado();
         }
-        
-        $this->id_lancamento = Yii::app()->db->getLastInsertID();
+        if($this->isNewRecord)
+        {
+            $this->id_lancamento = Yii::app()->db->getLastInsertID();
+        }
         
         return parent::afterSave();
     }
@@ -264,9 +266,6 @@ class Lancamento extends CActiveRecord
     
     public function getLancamentoGrid($dataInicio, $dataFim, $estabelecimento, $categoria)
 	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
 		$criteria = new CDbCriteria;
 
         $criteria->together = true;
@@ -279,7 +278,7 @@ class Lancamento extends CActiveRecord
         );
         
         $criteria->select = array(
-            'id_lancamento','dt_lancamento','vl_lancamento','id_lancamentoVinculado'
+            'id_lancamento','dt_lancamento','vl_lancamento','id_lancamentoVinculado','id_pessoaLancamento'
         );
         
         $condicao = array('t.fl_inativo = 0 AND idCategoriaLancamento.fl_ehFolhaPagamento = 0');

@@ -28,8 +28,8 @@ $(document).ready(function()
         _resetForm(false);
     });    
     
-    $("#Lancamento_id_categoriaLancamento").change(function() {
-        carregaFavorecidos($("#Lancamento_id_categoriaLancamento").val());
+    $("#Lancamento_id_estabelecimento").change(function() {
+        carregaFavorecidos($("#Lancamento_id_estabelecimento").val());
     });    
     
     $("form").click(function() {
@@ -50,7 +50,7 @@ $(document).ready(function()
             descontos = descontos + (valor *100);
         });
         valor = parseInt(proventos-descontos)/100;
-        $('#Lancamento_vl_total').val(valor.toString().replace(".",","));
+        $('#Lancamento_vl_total').val(valor.toString().replace(".",",")).mask('000.000.000.000,00', {reverse: true});
     });
 });
 
@@ -112,7 +112,7 @@ $('#gridLancamentos a.update').live('click',function() {
 
     //ajax para popular modal
     $.ajax({
-        url: "lancamento/getLancamento",
+        url: "folha/getLancamento",
         type: "post",
         data: { "idLancamento" : idLancamento },
         dataType:'json',
@@ -121,12 +121,14 @@ $('#gridLancamentos a.update').live('click',function() {
             var l = data.lancamento;
             var c = data.categoriaLancamento;
             var t = data.tipoCategoriaLancamento;
+            var f = data.folhaDePagamento;
             
             _setModalHeader(t,false);
             
             $("#Lancamento_id_lancamento").val(l.id_lancamento);
             $("#Lancamento_dt_lancamento").val(l.dt_lancamento);
-            $("#Lancamento_vl_lancamento").val(l.vl_lancamento);
+            //remove sinal de negativo
+            $("#Lancamento_vl_total").val((l.vl_lancamento).substr(1));
             
             $('#Lancamento_id_estabelecimento').select2().select2('val',l.id_estabelecimento).select2(select2propEstabelecimento);
             $("#Lancamento_id_estabelecimento option[value="+l.id_estabelecimento+"]").attr('selected', 'selected');
@@ -145,6 +147,29 @@ $('#gridLancamentos a.update').live('click',function() {
             $("#Lancamento_id_formaPagamento option[value="+l.id_formaPagamento+"]").prop('selected', true);
 
             $("#Lancamento_de_observacao").val(l.de_observacao);
+
+            $.each(f, function(index,v) {                
+                //adiciona como provento
+                if(v.tp_categoriaLancamentoFolha === 'P')
+                {
+                    var provento = $('#proventos [name="proventos"]').first().clone(true);
+                    $('#proventos [name="proventos"]').last().after(provento);
+                    
+                    provento.find('input').val(v.vl_lancamento).first().mask('000.000.000.000,00', {reverse: true});
+                    provento.find('select').val(v.id_categoriaLancamento);
+                }
+                //adiciona como desconto
+                else {
+                    var desconto = $('#descontos [name="descontos"]').first().clone(true);
+                    $('#descontos [name="descontos"]').last().after(desconto);
+                    desconto.find('input').val(v.vl_lancamento).first().mask('000.000.000.000,00', {reverse: true});
+                    desconto.find('select').val(v.id_categoriaLancamento);
+                }
+            });
+
+            //remove primeira linha em branco
+            $('#descontos [name="descontos"]').first().remove();
+            $('#proventos [name="proventos"]').first().remove();
 
             $('#modal-cadastro').modal('toggle');
 
@@ -240,11 +265,6 @@ $gridColumns = array(
         'htmlOptions'=>array('style'=>'width: 5px')
         ),
     array(
-        'header' => '<i class="icon-retweet"></i>',
-        'name'   => 'id_lancamentoVinculado',
-        'htmlOptions'=>array('style'=>'width: 5px')
-    ),
-    array(
         'header' => 'Data',
         'name'  => 'dt_lancamento',
         'value' => 'Yii::app()->dateFormatter->format("dd/MM/yyyy",$data->dt_lancamento)',
@@ -278,7 +298,7 @@ $gridColumns = array(
         'header' => 'Favorecido',
         'name'  => 'nm_pessoa',
         'value'  => '$data->idPessoaLancamento->nm_pessoa',
-        'htmlOptions'=>array('style'=>'width: 60px')
+        'htmlOptions'=>array('style'=>'width: 200px')
         ),
     array(
         'header' => 'Valor',

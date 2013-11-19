@@ -42,21 +42,29 @@ class FolhaController extends Controller
 		}
         
         if(isset($_POST['Lancamento']))
-        {
-            
+        {   
             $transacao = Yii::app()->db->beginTransaction();
             
             $modelLancamento = new Lancamento('folhaDePagamento');
             $modelLancamento->attributes = $_POST['Lancamento'];
             $modelLancamento->tp_categoriaLancamento = "D";
+
+            $isNewRecord = empty($_POST['Lancamento']['id_lancamento']) ? true : false;
             
             $erro = false;
             
             if($modelLancamento->validate())
             {
+                $modelLancamento->isNewRecord = $isNewRecord;
                 $modelLancamento->save();
                 $id = $modelLancamento->id_lancamento;
 
+                //se for update, elimina todos os registros da tabela folha
+                if(!$isNewRecord)
+                {
+                    Folhadepagamento::model()->deleteAll('`id_lancamento` = :id_lancamento',array(':id_lancamento'=>$id));
+                }
+                
                 for($i = 0, $c = count($_POST['FolhaDePagamento']['proventos']['vl_lancamento']); $i < $c; $i++)
                 {
                     //se categoria ou valor forem em branco, ignora
@@ -130,6 +138,38 @@ class FolhaController extends Controller
             'estabelecimento' => $estabelecimento,
             'modelLancamento' => $modelLancamento,
         ));
+    }
+    
+    public function actionGetLancamento()
+    {
+        if (!Yii::app()->request->isAjaxRequest) {
+            throw new CHttpException('403', 'Forbidden access.');
+        }
+        
+        $lancamento = Lancamento::model()->findByPk($_POST['idLancamento']);
+        $folha = Folhadepagamento::model()->findAllByAttributes(array('id_lancamento'=>$_POST['idLancamento']));
+        $tipoCategoria = Categorialancamento::model()->findByPk($lancamento->id_categoriaLancamento);     
+        $comboCategoria = Categorialancamento::model()->getHtmlDropdownOptionsCategoriasPorTipo($tipoCategoria->tp_categoriaLancamento);
+        
+        $jsonLancamento = new stdClass();
+        
+        foreach ($lancamento as $key=>$value) {
+            $jsonLancamento->$key = $value;
+        }
+        
+        $jsonFolha = new stdClass();
+        
+        foreach ($folha as $key=>$value) {
+            $jsonFolha->$key = $value;
+        }
+        
+        echo CJSON::encode(array(
+            'categoriaLancamento'=>$comboCategoria,
+            'lancamento'=>$jsonLancamento,
+            'folhaDePagamento'=>$jsonFolha,
+            'tipoCategoriaLancamento'=>$tipoCategoria->tp_categoriaLancamento));
+
+        Yii::app()->end();
     }
     
     public function actionCarregaFavorecidos()

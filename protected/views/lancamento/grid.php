@@ -234,13 +234,13 @@ $gridColumns = array(
         'header' => 'Estabelecimento',
         'name'  => 'nm_estabelecimento',
         'value'  => 'empty($data->id_estabelecimento) ? "" : $data->idEstabelecimento->nm_estabelecimento',
-        'htmlOptions'=>array('style'=>'width: 60px')
+        'htmlOptions'=>array('style'=>'width: 160px')
         ),
     array(
         'header' => 'Categoria',
         'name'  => 'nm_categoriaLancamento',
         'value'  => '$data->idCategoriaLancamento->nm_categoriaLancamento',
-        'htmlOptions'=>array('style'=>'width: 100px')
+        'htmlOptions'=>array('style'=>'width: 150px')
         ),
     array(
         'header' => '!',
@@ -252,7 +252,7 @@ $gridColumns = array(
         'header' => 'Favorecido',
         'name'  => 'nm_pessoa',
         'value'  => 'empty($data->id_pessoaLancamento) ? "" : $data->idPessoaLancamento->nm_pessoa',
-        'htmlOptions'=>array('style'=>'width: 60px')
+        'htmlOptions'=>array('style'=>'width: 200px')
         ),
     array(
         'header' => 'Valor',
@@ -262,7 +262,7 @@ $gridColumns = array(
         'htmlOptions'=>array('style'=>'width: 30px')
         ),
     array(
-		'htmlOptions' => array('nowrap'=>'nowrap','style'=>'10px'),
+		'htmlOptions' => array('nowrap'=>'nowrap','style'=>'5px'),
 		'class'=>'bootstrap.widgets.TbButtonColumn',
         'template'=>'{update}{delete}',
         'deleteConfirmation'=>false,

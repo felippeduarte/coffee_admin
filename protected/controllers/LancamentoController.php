@@ -81,7 +81,7 @@ class LancamentoController extends Controller
         }
         
         $lancamento = Lancamento::model()->findByPk($_POST['idLancamento']);
-        $tipoCategoria = Categorialancamento::model()->findByPk($lancamento->id_categoriaLancamento);        
+        $tipoCategoria = Categorialancamento::model()->findByPk($lancamento->id_categoriaLancamento);     
         $comboCategoria = Categorialancamento::model()->getHtmlDropdownOptionsCategoriasPorTipo($tipoCategoria->tp_categoriaLancamento);
         
         $json = new stdClass();
