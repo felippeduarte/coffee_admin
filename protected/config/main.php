@@ -6,6 +6,7 @@
 // Define a path alias for the Bootstrap extension as it's used internally.
 // In this example we assume that you unzipped the extension under protected/extensions.
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
+Yii::setPathOfAlias('chartjs', dirname(__FILE__).'/../extensions/yii-chartjs');
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
@@ -16,7 +17,7 @@ return array(
 	'name'=>'Bulebar - Controle Financeiro',
 
 	// preloading 'log' component
-	'preload'=>array('log', 'bootstrap'),
+	'preload'=>array('log', 'bootstrap', 'chartjs'),
 
 	// autoloading model and component classes
 	'import'=>array(
@@ -47,6 +48,7 @@ return array(
         'bulebar'=>array(
             'class'=>'application.extensions.bulebar.Funcoes',
         ),
+        'chartjs' => array('class' => 'chartjs.components.ChartJs'),
 		// uncomment the following to enable URLs in path-format
 		
 		'urlManager'=>array(

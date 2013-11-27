@@ -70,17 +70,6 @@ $form->widget('zii.widgets.jui.CJuiDatePicker',array(
 ?>
 
 <?php
-echo CHtml::dropDownlist(
-        'estabelecimento',
-        null,
-        $listaEstabelecimentos,
-        array(
-            'prompt' => '-- Estabelecimento --',
-            'options'=> array($estabelecimento=>array('selected'=>true))
-        ));
-?>
-
-<?php
 $this->widget(
     'bootstrap.widgets.TbButton',
     array('buttonType' => 'submit', 'label' => 'Pesquisar')
@@ -111,8 +100,12 @@ $this->widget('bootstrap.widgets.TbBox', array(
                     array(
                         'class' => 'bootstrap.widgets.TbButtonGroup',
                         'buttons'=>array(
-                            array('label'=>'Lançar Pagamento', 'url'=>'#modal-cadastro', 'htmlOptions' => array(
-                                'data-toggle' => 'modal','class'=>'btn-danger btn-lancamento',)),
+                            array('label'=>'Lançar Pagamento',
+                                  'htmlOptions' => array(
+                                      'class'=>'btn-danger btn-lancamento',
+                                      'id' => 'btn-lancar-pagamento'
+                                      )
+                            ),
                         )
                     )
                 )
@@ -259,8 +252,8 @@ $form = $this->beginWidget(
             </div>
             <div class="row-fluid">
                 <div class="span12 well">
-                        <div class="span12"><h5>Total</h5></div>
-                    <div class="span5">
+                        <h5>Total</h5>
+                    <div class="span12">
                     <?php echo $form->textFieldRow($modelLancamento,'vl_lancamento',
                         array('prepend'=>'R$',
                               'class' => 'input-medium',
@@ -269,7 +262,7 @@ $form = $this->beginWidget(
                         )
                     ); ?>
                     </div>
-                    <div class="span5">
+                    <div class="span12">
                     <?php echo $form->select2Row($modelLancamento,'id_categoriaLancamento',array(
                     'data' => $listaCategorias,
                     'asDropDownList' => true,

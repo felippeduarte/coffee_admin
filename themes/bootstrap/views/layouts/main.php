@@ -12,7 +12,9 @@
 
 <body>
 
-<?php $this->widget('bootstrap.widgets.TbNavbar',array(
+<?php
+
+$this->widget('bootstrap.widgets.TbNavbar',array(
     'brand' => '<img src ="' . Yii::app()->request->baseUrl . '/images/brand.png" /> Controle Financeiro',
     'items'=>array(
         array(
@@ -22,11 +24,15 @@
                 array('label'=>'Lançamentos', 'url'=>array('/lancamento'), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Folha de Pagamento', 'url'=>array('/folha'), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Relatórios', 'url'=>array('/relatorio'), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
-            ),
+                array(
+                    'label' => empty(Yii::app()->session['id_estabelecimento']) ? 'Estabelecimento' : Yii::app()->session['nm_estabelecimento'],
+                    'items' => Estabelecimento::model()->getHtmlDropDownMainMenu(),
+                    'visible'=>!Yii::app()->user->isGuest,
+                ),
+                array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest),
+            )
         ),
-    ),
-)); ?>
+    ))); ?>
 
 <div class="container" id="page">
 

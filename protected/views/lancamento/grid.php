@@ -7,6 +7,32 @@ var select2propFormaPagamento = {placeholder:'-- Escolha a forma de pagamento --
 
 $(document).ready(function()
 {
+    $("#btn-lancar-despesa").live('click', function(){
+        
+        $.ajax({
+            url: "lancamento/carregaCategorias",
+            data: {"tp_categoriaLancamento":"D"},
+            dataType:"text",
+            type: "post",
+            success: function (html) {
+                updateModal(html,'D',true,true);
+            }
+        });
+    });
+    
+    $("#btn-lancar-receita").live('click', function(){
+        
+        $.ajax({
+            url: "lancamento/carregaCategorias",
+            data: {"tp_categoriaLancamento":"R"},
+            dataType:"text",
+            type: "post",
+            success: function (html) {
+                updateModal(html,'R',true,true);
+            }
+        });
+    });
+    
     $(".btn-group[data-single-select] .btn").live('click', function(){
         
         var ativo = $(this).hasClass("active");
@@ -59,6 +85,7 @@ function updateModal(categoria,tipo,reset,novo)
 {
     $('#Lancamento_id_categoriaLancamento').html(categoria);
     _setModalHeader(tipo, novo);
+    _setRequiredFields(tipo);
     
     novo? _resetForm(true) : _resetForm(false);
     
@@ -75,10 +102,13 @@ function _resetForm(complete)
     
     $('#Lancamento_id_estabelecimento').select2().select2(select2propEstabelecimento);
     $('#Lancamento_id_categoriaLancamento').select2(select2propCategoriaLancamento);
-    $('#Lancamento_id_pessoaLancamento').select2().select2(select2propCategoriaLancamento); //categoria pois é load inicial
-    $('#Lancamento_id_formaPagamento').select2().select2(select2propFormaPagamento);
+    $('#Lancamento_id_pessoaLancamento').select2().select2(select2propCategoriaLancamento).select2('val',''); //categoria pois é load inicial
+    $('#Lancamento_id_formaPagamento').select2().select2(select2propFormaPagamento).select2('val','');
+    $('div [name="Lancamento_turno"] a').removeClass("active");
     
     $('#lancamento')[0].reset();
+    
+    $('#Lancamento_id_estabelecimento').select2("val","<?php echo Yii::app()->session['id_estabelecimento'];?>");
 }
 
 function _setModalHeader(tipo, novo)
@@ -91,7 +121,14 @@ function _setModalHeader(tipo, novo)
         $('.modal-header h3').append('Receita'):
         $('.modal-header h3').append('Despesa');
 }
-    
+
+function _setRequiredFields(tipo)
+{
+    (tipo == 'D') ?
+        $("label:contains('Favorecido')").html('Favorecido <span class="required">*</span>'):
+        $("label:contains('Favorecido')").html('Favorecido');
+}
+
 $('#gridLancamentos a.update').live('click',function() {
     var idLancamento = $(this).closest('tr').find('td:eq(0)').text();
 
@@ -107,7 +144,10 @@ $('#gridLancamentos a.update').live('click',function() {
             var c = data.categoriaLancamento;
             var t = data.tipoCategoriaLancamento;
             
+            carregaFavorecidos(l.id_estabelecimento,l.id_pessoaLancamento);
+            
             _setModalHeader(t,false);
+            _setRequiredFields(t);
             
             $("#Lancamento_id_lancamento").val(l.id_lancamento);
             $("#Lancamento_dt_lancamento").val(l.dt_lancamento);
@@ -115,8 +155,6 @@ $('#gridLancamentos a.update').live('click',function() {
             
             $('#Lancamento_id_estabelecimento').select2().select2('val',l.id_estabelecimento).select2(select2propEstabelecimento);
             $("#Lancamento_id_estabelecimento option[value="+l.id_estabelecimento+"]").attr('selected', 'selected');
-            
-            carregaFavorecidos(l.id_estabelecimento,l.id_pessoaLancamento);
             
             $('#Lancamento_id_categoriaLancamento').html(c);
             $('#Lancamento_id_categoriaLancamento').select2().select2('val',l.id_categoriaLancamento).select2(select2propCategoriaLancamento);
@@ -184,10 +222,6 @@ $dataProvider->sort = array(
                     'asc'=>'dt_lancamento',
                     'desc'=>'dt_lancamento DESC',
                 ),
-                'nm_estabelecimento'=>array(
-                    'asc'=>'idEstabelecimento.nm_estabelecimento',
-                    'desc'=>'idEstabelecimento.nm_estabelecimento DESC',
-                ),
                 'nm_categoriaLancamento'=>array(
                     'asc'=>'idCategoriaLancamento.nm_categoriaLancamento',
                     'desc'=>'idCategoriaLancamento.nm_categoriaLancamento DESC',
@@ -229,12 +263,6 @@ $gridColumns = array(
 				'placement' => 'right',
 				'inputclass' => 'span3'
 			),
-        ),
-    array(
-        'header' => 'Estabelecimento',
-        'name'  => 'nm_estabelecimento',
-        'value'  => 'empty($data->id_estabelecimento) ? "" : $data->idEstabelecimento->nm_estabelecimento',
-        'htmlOptions'=>array('style'=>'width: 160px')
         ),
     array(
         'header' => 'Categoria',

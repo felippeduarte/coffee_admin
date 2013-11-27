@@ -31,6 +31,7 @@ class Lancamento extends CActiveRecord
     public $nm_estabelecimento;
     public $nm_categoriaLancamento;
     public $tp_categoriaLancamento;
+    public $soma;
     
 	/**
 	 * Returns the static model of the specified AR class.
@@ -58,7 +59,8 @@ class Lancamento extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_formaPagamento', 'required', 'on'=>'ajax,insert'),
+			array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_formaPagamento', 'required', 'on'=>'ajax_R,insert_R,insert'),
+            array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_pessoaLancamento, id_formaPagamento', 'required', 'on'=>'ajax_D,insert_D'),
             array('dt_lancamento, vl_lancamento, id_categoriaLancamento, id_pessoaLancamento, id_formaPagamento', 'required', 'on'=>'folhaDePagamento,ajaxFolhaDePagamento'),
             array('id_estabelecimento, id_categoriaLancamento, id_pessoaLancamento, id_formaPagamento, id_pessoaUsuario', 'numerical', 'integerOnly'=>true),
 			array('vl_lancamento', 'length', 'max'=>12),
@@ -349,7 +351,7 @@ class Lancamento extends CActiveRecord
 		));
 	}
     
-    public function getLancamentos($dataInicio, $dataFim, $idEstabelecimento=null, $idCategoriaLancamento=null)
+    public function getLancamentos($dataInicio=null, $dataFim=null, $idEstabelecimento=null, $idCategoriaLancamento=null, $tpCategoriaLancamento=null)
     {
         $criteria = new CDbCriteria;
 
@@ -385,6 +387,53 @@ class Lancamento extends CActiveRecord
         if(!empty($idCategoriaLancamento))
         {
             $condicao[] = 't.id_categoriaLancamento = '.(int)$idCategoriaLancamento;
+        }
+        if(!empty($tpCategoriaLancamento))
+        {
+            $condicao[] = 'idCategoriaLancamento.tp_categoriaLancamento = "'.$tpCategoriaLancamento.'"';
+        }
+        
+        $criteria->condition = join(' AND ', $condicao);
+        
+		return $this->findAll($criteria);
+    }
+    
+    public function getLancamentosSumarizado($dataInicio=null, $dataFim=null, $idEstabelecimento=null, $idCategoriaLancamento=null, $tpCategoriaLancamento=null)
+    {
+        $criteria = new CDbCriteria;
+
+        $criteria->together = true;
+        
+        $criteria->with = array(
+            'idEstabelecimento' => array('select'=>'nm_estabelecimento'),
+            'idCategoriaLancamento' => array('select'=>'nm_categoriaLancamento'),
+        );
+        
+        $criteria->select = array('SUM(vl_lancamento) as soma');
+        
+        $condicao = array(
+            't.fl_inativo = 0'
+        );
+        
+        if(!empty($dataInicio))
+        {
+            $condicao[] = 'dt_lancamento >= "'.Yii::app()->bulebar->trocaDataViewParaModel($dataInicio).'"';
+        }
+        if(!empty($dataFim))
+        {
+            $condicao[] = 'dt_lancamento <= "'.Yii::app()->bulebar->trocaDataViewParaModel($dataFim).'"';
+        }
+        if(!empty($idEstabelecimento))
+        {
+            $condicao[] = 't.id_estabelecimento = '.(int)$idEstabelecimento;
+        }
+        if(!empty($idCategoriaLancamento))
+        {
+            $condicao[] = 't.id_categoriaLancamento = '.(int)$idCategoriaLancamento;
+        }
+        if(!empty($tpCategoriaLancamento))
+        {
+            $condicao[] = 'idCategoriaLancamento.tp_categoriaLancamento = "'.$tpCategoriaLancamento.'"';
         }
         
         $criteria->condition = join(' AND ', $condicao);

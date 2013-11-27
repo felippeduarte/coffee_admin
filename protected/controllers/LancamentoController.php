@@ -22,12 +22,12 @@ class LancamentoController extends Controller
         
         $dataInicio = isset($_POST['dataInicio']) ? $_POST['dataInicio'] : date("01/m/Y");
         $dataFim = isset($_POST['dataFim']) ? $_POST['dataFim'] : date("t/m/Y");
-        $estabelecimento = isset($_POST['estabelecimento']) ? $_POST['estabelecimento'] : null;
+        $estabelecimento = isset(Yii::app()->session['id_estabelecimento']) ? Yii::app()->session['id_estabelecimento'] : null;
         $categoria = isset($_POST['categoriaLancamento']) ? $_POST['categoriaLancamento'] : null;
 
         if(isset($_POST['ajax']) && $_POST['ajax']==='lancamento')
 		{
-            $modelLancamento->setScenario('ajax');
+            $modelLancamento->setScenario('ajax_'.$_POST['Lancamento']['tp_categoriaLancamento']);
             echo CActiveForm::validate(array($modelLancamento));
 			Yii::app()->end();
 		}
@@ -41,7 +41,7 @@ class LancamentoController extends Controller
             $modelLancamento->attributes = $_POST['Lancamento'];
             $modelLancamento->tp_categoriaLancamento = $_POST['Lancamento']['tp_categoriaLancamento'];
             
-            $modelLancamento->setScenario('insert');
+            $modelLancamento->setScenario('insert_'.$modelLancamento->tp_categoriaLancamento);
          
             if($modelLancamento->validate())
             {
@@ -59,20 +59,11 @@ class LancamentoController extends Controller
             'dataProvider' => $dataProvider,
             'dataInicio' => $dataInicio,
             'dataFim' => $dataFim,
-            'estabelecimento' => $estabelecimento,
             'categoria' => $categoria,
             'modelLancamento' => new Lancamento(),
         ));
         
 	}
-    
-    public function actionEdit()
-    {
-        var_dump($_POST);
-        var_dump("<hr>");
-        var_dump($_GET);
-        //die();
-    }
     
     public function actionGetLancamento()
     {

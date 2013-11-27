@@ -70,17 +70,6 @@ $form->widget('zii.widgets.jui.CJuiDatePicker',array(
 
 <?php
 echo CHtml::dropDownlist(
-        'estabelecimento',
-        null,
-        $listaEstabelecimentos,
-        array(
-            'prompt' => '-- Estabelecimento --',
-            'options'=> array($estabelecimento=>array('selected'=>true))
-        ));
-?>
-
-<?php
-echo CHtml::dropDownlist(
         'categoriaLancamento',
         null,
         $listaCategorias,
@@ -122,36 +111,18 @@ $this->widget('bootstrap.widgets.TbBox', array(
                         'buttons'=>array(
                             array(
                                 'label'=>'+ Lançar Receita',
-                                'url'=>'#modal-cadastro',
                                 'htmlOptions' => array(
-                                    'data-toggle' => 'modal',
                                     'data-id' => 'R',
                                     'class'=>'btn-success btn-lancamento',
-                                    'ajax' => array(
-                                        'type'=>'POST', 
-                                        'url'=>CController::createUrl('carregaCategorias'),
-                                        'data'=>array('tp_categoriaLancamento'=>'R'),
-                                        'success'=>"js:function(html){ 
-                                            updateModal(html,'R',true,true);
-                                        }",
-                                    ),
+                                    'id'=>'btn-lancar-receita'
                                 ), 
                             ),
                             array(
                                 'label'=>'- Lançar Despesa',
-                                'url'=>'#modal-cadastro',
                                 'htmlOptions' => array(
-                                    'data-toggle' => 'modal',
                                     'data-id' => 'D',
                                     'class'=>'btn-danger btn-lancamento',
-                                    'ajax' => array(
-                                        'type'=>'POST', 
-                                        'url'=>CController::createUrl('carregaCategorias'),
-                                        'data'=>array('tp_categoriaLancamento'=>'D'),
-                                        'success'=>"js:function(html){ 
-                                            updateModal(html,'D',true,true);
-                                        }",
-                                    ),
+                                    'id'=>'btn-lancar-despesa'
                                 )
                             ),
                         )

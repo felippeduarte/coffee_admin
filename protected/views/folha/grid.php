@@ -7,6 +7,12 @@ var select2propFormaPagamento = {placeholder:'-- Escolha a forma de pagamento --
 
 $(document).ready(function()
 {
+    $("#btn-lancar-pagamento").live('click', function(){
+        updateModal(true);
+    });
+    
+    
+    
     $(".btn-group[data-single-select] .btn").live('click', function(){
         
         var ativo = $(this).hasClass("active");
@@ -74,14 +80,12 @@ function carregaFavorecidos(id,id_selecionado)
     });
 }
 
-function updateModal(categoria,tipo,reset,novo)
+function updateModal(novo)
 {
-    $('#Lancamento_id_categoriaLancamento').html(categoria);
-    _setModalHeader(tipo, novo);
+    _setModalHeader(novo);
     
     novo? _resetForm(true) : _resetForm(false);
     
-    $('#Lancamento_tp_categoriaLancamento').val(tipo);
     $('#modal-cadastro').modal({'show':true});
 }
 
@@ -93,14 +97,20 @@ function _resetForm(complete)
     }
     
     $('#Lancamento_id_estabelecimento').select2().select2(select2propEstabelecimento);
-    $('#Lancamento_id_categoriaLancamento').select2(select2propCategoriaLancamento);
-    $('#Lancamento_id_pessoaLancamento').select2().select2(select2propEstabelecimento); //estabelecimento pois é load inicial
-    $('#Lancamento_id_formaPagamento').select2().select2(select2propFormaPagamento);
+    $('#Lancamento_id_categoriaLancamento').select2(select2propCategoriaLancamento).select2('val','');
+    $('#Lancamento_id_pessoaLancamento').select2().select2(select2propEstabelecimento).select2('val',''); //estabelecimento pois é load inicial
+    $('#Lancamento_id_formaPagamento').select2().select2(select2propFormaPagamento).select2('val','');
+    $('div [name="Lancamento_turno"] a').removeClass("active");
+    
+    $('#proventos > [name="proventos"]:gt(0)').remove();
+    $('#descontos > [name="descontos"]:gt(0)').remove();
     
     $('#lancamento')[0].reset();
+    
+    $('#Lancamento_id_estabelecimento').select2("val","<?php echo Yii::app()->session['id_estabelecimento'];?>");
 }
 
-function _setModalHeader(tipo, novo)
+function _setModalHeader(novo)
 {
     novo ?
         $('.modal-header h3').text('Lançar '):

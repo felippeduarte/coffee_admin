@@ -72,6 +72,18 @@ class SiteController extends Controller
 		$this->render('login',array('model'=>$model));
 	}
 
+    public function actionSetEstabelecimento($id)
+    {
+        Yii::app()->session['id_estabelecimento'] = $id;
+        
+        $estabelecimento = Estabelecimento::model()->findByPk($id);
+        
+        Yii::app()->session['nm_estabelecimento'] = $estabelecimento->nm_estabelecimento;
+        
+        $this->redirect(Yii::app()->request->urlReferrer);
+        
+    }
+    
 	/**
 	 * Logs out the current user and redirect to homepage.
 	 */

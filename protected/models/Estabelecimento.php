@@ -134,4 +134,21 @@ class Estabelecimento extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+    
+    public function getHtmlDropDownMainMenu()
+    {
+        $estabelecimentos = $this->getComboEstabelecimento();
+        
+        $retorno = array();
+        
+        foreach($estabelecimentos as $estabelecimento)
+        {
+            $retorno[]= array(
+                'label'=>$estabelecimento->nm_estabelecimento,
+                'url'=>array('/site/setEstabelecimento/id/'.$estabelecimento->id_estabelecimento)
+            );
+        }
+        
+        return $retorno;
+    }
 }
