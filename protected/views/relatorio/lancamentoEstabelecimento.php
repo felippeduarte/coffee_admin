@@ -16,7 +16,8 @@ function send()
             if(data.success == true)
             {
                 $("#flash-message").hide();
-                window.open("data:text/html," + encodeURIComponent(data.relatorio),"_blank");
+                //window.open("data:text/html," + encodeURIComponent(data.relatorio),"_blank");
+                window.open('relatorioGenerico?relatorio='+ encodeURIComponent(data.relatorio),"_blank");
             }
             else {
                 $("#flash-message").html(data.error);

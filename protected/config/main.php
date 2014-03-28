@@ -57,7 +57,8 @@ return array(
 			'rules'=>array(
                 'relatorio/<action:(lancamentoEstabelecimento|'.
                                   'lancamentoFornecedor|'.
-                                  'folhaPagamentoMensal)>'=>'relatorio/<action>',
+                                  'folhaPagamentoMensal|'.
+                                  'relatorioGenerico)>'=>'relatorio/<action>',
                 'relatorio/<action:\w+>'=>'relatorio/index',
                 'cadastro/<action:(getGrupoEstabelecimento|'.
                                   'getEstabelecimento|'.

@@ -398,7 +398,7 @@ class Lancamento extends CActiveRecord
 		return $this->findAll($criteria);
     }
     
-    public function getLancamentosSumarizado($dataInicio=null, $dataFim=null, $idEstabelecimento=null, $idCategoriaLancamento=null, $tpCategoriaLancamento=null)
+    public function getLancamentosSumarizado($dataInicio=null, $dataFim=null, $idEstabelecimento=null, $idCategoriaLancamento=null, $tpCategoriaLancamento=null, $groupby=null)
     {
         $criteria = new CDbCriteria;
 
@@ -407,6 +407,7 @@ class Lancamento extends CActiveRecord
         $criteria->with = array(
             'idEstabelecimento' => array('select'=>'nm_estabelecimento'),
             'idCategoriaLancamento' => array('select'=>'nm_categoriaLancamento'),
+            'idFormaPagamento' => array('select'=>'nm_formaPagamento')
         );
         
         $criteria->select = array('SUM(vl_lancamento) as soma');
@@ -437,6 +438,11 @@ class Lancamento extends CActiveRecord
         }
         
         $criteria->condition = join(' AND ', $condicao);
+        
+        if(!empty($groupby))
+        {
+            $criteria->group = $groupby;
+        }
         
 		return $this->findAll($criteria);
     }

@@ -99,5 +99,13 @@ class RelatorioController extends Controller
                     'estabelecimento' => $estabelecimento
                 ), true);
 	}
+    
+    public function actionRelatorioGenerico()
+    {
+        return $this->renderPartial('relatorioGenerico',
+                array(
+                    'relatorio' => $_GET['relatorio']
+                ));
+    }
 }
 ?>
